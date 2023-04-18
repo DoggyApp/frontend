@@ -11,7 +11,9 @@ export class UserService {
   constructor(private http:HttpClient) { }
 
   getTestValue(): Observable<String> {
-    console.log("inside get test value"); 
-    return this.http.get(this.backendUrl + 'login', { responseType: 'text' });
+    console.log("inside get test value..."); 
+    return this.http.get(
+      "http://registry-service:8080", 
+      { responseType: 'text' });
   }
 }
