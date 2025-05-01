@@ -7,13 +7,13 @@ import { Observable } from 'rxjs';
 })
 export class UserService {
 
-  public backendUrl: String = "http://localhost:8080/" 
+  public backendUrl: String = "http://registry-service:8080" 
   constructor(private http:HttpClient) { }
 
   getTestValue(): Observable<String> {
     console.log("inside get test value..."); 
     return this.http.get(
-      "http://registry-service:8080", 
+      `${this.backendUrl}/api/registry/test`,
       { responseType: 'text' });
   }
 }
