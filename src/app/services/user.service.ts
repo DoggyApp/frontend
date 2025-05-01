@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class UserService {
 
-  public backendUrl: String = "http://registry-service:8080" 
+  public backendUrl: String = "http://a368138a48d444b79b20bcbb219f9d0b-328955209.us-east-1.elb.amazonaws.com/" 
   constructor(private http:HttpClient) { }
 
   getTestValue(): Observable<String> {
