@@ -14,7 +14,7 @@ export class UserService {
     console.log("inside get test value..."); 
     console.log(this.apiUrl); 
     return this.http.get(
-      `${this.apiUrl}/api/registry/test`,
+      `${this.apiUrl}/registry/test`,
       { responseType: 'text' });
   }
 
@@ -22,7 +22,7 @@ export class UserService {
     console.log("inside get backend error test value...");
     console.log(this.apiUrl); 
     return this.http.get(
-      `${this.apiUrl}/api/registry/error-test`,
+      `${this.apiUrl}/registry/error-test`,
       { responseType: 'text' });
   }
 }
