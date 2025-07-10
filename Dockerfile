@@ -13,7 +13,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # i only needed this for local testing, i use an ingress controller on my aws deployment 
-# COPY nginx/nginx.conf /etc/nginx/nginx.conf 
+COPY nginx/nginx.conf /etc/nginx/nginx.conf 
 
 # Copy built Angular app to Nginx's default html location
 COPY --from=build /frontend/dist/frontend /usr/share/nginx/html
