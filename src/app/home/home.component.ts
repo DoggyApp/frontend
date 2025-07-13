@@ -39,11 +39,6 @@ export class HomeComponent implements OnInit {
     }); 
   }
 
-  triggerError() {
-    this.setErrorTestValue("check your email"); 
-    throw new Error('Someone clicked the botton!');
-  }
-
   triggerBackendError() {
     console.log("inside backend error perform test"); 
     this.userService.getBackendErrorTestValue().subscribe((value:String) => {
