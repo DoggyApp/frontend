@@ -1,8 +1,14 @@
-<button><input type = "submit" value = "Test" (click) = "performTest()"></button> 
-<p>
-    {{testValue}}
-</p> 
-<p></p>
-<button (click)="triggerError()">{{errorTestValue}}</button>
-<p></p>
-<button (click)="triggerBackendError()">{{backendErrorTestValue}}</button>
+<div class="container d-flex flex-column justify-content-center align-items-center" style="height: 80vh;">
+
+  <h1 class="display-1">🐶 Doggy App</h1>
+
+  <p class="lead text-center">
+    Track your dog's health, walks, and happiness all in one place.
+  </p>
+
+  <div class="mt-4">
+    <button class="btn btn-primary btn-lg me-3" routerLink="/login">Login</button>
+    <button class="btn btn-success btn-lg" routerLink="/register">Sign Up</button>
+  </div>
+
+</div>

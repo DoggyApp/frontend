@@ -1,0 +1,100 @@
+<div class="calendar">
+    <button 
+    class="btn btn-secondary"
+    [routerLink]="['/profile', dogId]"
+  >
+    ← Back to Profile
+  </button>
+  <!-- Header -->
+  <div class="calendar-header d-flex justify-content-between align-items-center p-3 bg-primary text-white">
+ 
+    <button class="btn btn-light" (click)="previousWeek()">⬅</button>
+
+    <h3 class="mb-0 text-center">
+      {{ weekDays[0] | date:'MMM d' }}
+      -
+      {{ weekDays[6] | date:'MMM d, y' }}
+    </h3>
+
+    <button class="btn btn-light" (click)="nextWeek()">➡</button>
+  </div>
+
+  <!-- Grid -->
+  <div class="calendar-grid d-flex">
+
+    <!-- Time Sidebar -->
+    <div class="time-column border-end">
+      <div *ngFor="let hour of hours" class="time-slot">
+        {{ hour }}:00
+      </div>
+    </div>
+
+    <!-- Days -->
+    <div class="day-column flex-grow-1" *ngFor="let day of weekDays">
+
+      <!-- Day Header -->
+      <div class="day-header text-center border-bottom py-2 bg-light">
+        {{ day | date:'EEE d' }}
+      </div>
+
+      <!-- Hour Cells & Events Container -->
+      <div class="hour-cells-container position-relative">
+        
+        <!-- Hour Slots -->
+        <div *ngFor="let hour of hours" class="hour-cell border-bottom" style="height: 40px;">
+          
+        </div>
+
+        <!-- Events -->
+        <div *ngFor="let event of events; let i = index"
+             class="calendar-event"
+             (click)="openEventDetails(event)"
+             [ngStyle]="getEventStyle(event, day)">
+          {{ event.title }}
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- Floating Add Event Button -->
+<button class="btn btn-success rounded-circle add-event-btn" (click)="openAddEventModal()">
+  <span class="plus"></span>
+</button>
+
+
+
+
+
+
+<div class="modal-backdrop" *ngIf="showAddEventForm">
+    
+  <div class="modal-content p-4 rounded shadow-lg">
+    
+    <h4>Add Event</h4>
+    <button class="close-btn" (click)="closeAddEventModal()">✕</button>
+    <input type="text" [(ngModel)]="newEvent.title" placeholder="Title" class="form-control mb-2" />
+    <input type="text" [(ngModel)]="newEvent.description" placeholder="Description" class="form-control mb-2" />
+    <input type="text" [(ngModel)]="newEvent.place" placeholder="Place" class="form-control mb-2" />
+    <label>Start Time</label>
+    <input type="datetime-local" [(ngModel)]="newEvent.startTime" class="form-control mb-2" />
+    <label>End Time</label>
+    <input type="datetime-local" [(ngModel)]="newEvent.endTime" class="form-control mb-2" />
+
+    <button class="btn btn-primary me-2" (click)="addEvent()">Add</button>
+    
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="selectedEvent">
+  <div class="modal-content p-4 rounded shadow-lg">
+    <h4>{{ selectedEvent.title }}</h4>
+    <p><strong>Description:</strong> {{ selectedEvent.description }}</p>
+    <p><strong>Place:</strong> {{ selectedEvent.place }}</p>
+    <p><strong>Start:</strong> {{ selectedEvent.startTime | date:'short' }}</p>
+    <p><strong>End:</strong> {{ selectedEvent.endTime | date:'short' }}</p>
+
+    <button class="btn btn-secondary" (click)="closeEventDetails()">Close</button>
+  </div>
+</div>

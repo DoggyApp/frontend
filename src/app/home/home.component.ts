@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../services/user.service';
+//import { UserService } from '../services/user/user.service';
 
 @Component({
   selector: 'app-home',
@@ -8,42 +8,47 @@ import { UserService } from '../services/user.service';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private userService:UserService) { }
+  constructor() { }
 
   ngOnInit(): void {
   }
 
-  title = 'frontend';
+  // constructor(private userService:UserService) { }
 
-  public testValue: String = "press the button." ; 
-  public errorTestValue: String = "trigger frontend error" ;
-  public backendErrorTestValue: String = "trigger backend error" ;
+  // ngOnInit(): void {
+  // }
 
-  setTestValue(s : String) {
-    this.testValue = s; 
-  }
+  // title = 'frontend';
 
-  setErrorTestValue(s : String) {
-    this.errorTestValue = s; 
-  }
+  // public testValue: String = "press the button." ; 
+  // public errorTestValue: String = "trigger frontend error" ;
+  // public backendErrorTestValue: String = "trigger backend error" ;
 
-  setBackendErrorTestValue(s : String) {
-    this.backendErrorTestValue = s; 
-  }
+  // setTestValue(s : String) {
+  //   this.testValue = s; 
+  // }
 
-  performTest() {
-    console.log("inside perform test"); 
-    this.userService.getTestValue().subscribe((value:String) => {
-      console.log("inside subscribe function"); 
-      this.testValue = value as String; 
-    }); 
-  }
+  // setErrorTestValue(s : String) {
+  //   this.errorTestValue = s; 
+  // }
 
-  triggerBackendError() {
-    console.log("inside backend error perform test"); 
-    this.userService.getBackendErrorTestValue().subscribe((value:String) => {
-      console.log("inside subscribe function"); 
-    }); 
-  }
+  // setBackendErrorTestValue(s : String) {
+  //   this.backendErrorTestValue = s; 
+  // }
+
+  // performTest() {
+  //   console.log("inside perform test"); 
+  //   this.userService.getTestValue().subscribe((value:String) => {
+  //     console.log("inside subscribe function"); 
+  //     this.testValue = value as String; 
+  //   }); 
+  // }
+
+  // triggerBackendError() {
+  //   console.log("inside backend error perform test"); 
+  //   this.userService.getBackendErrorTestValue().subscribe((value:String) => {
+  //     console.log("inside subscribe function"); 
+  //   }); 
+  // }
 
 }

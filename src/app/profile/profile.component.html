@@ -1,0 +1,62 @@
+<div class="container mt-4" *ngIf="dog">
+
+  <!-- Dog Name -->
+  <h2 class="dog-name mb-4">
+    {{ dog.name }}
+  </h2>
+
+  <!-- Profile Content -->
+  <div class="d-flex profile-layout">
+
+    <!-- Dog Image -->
+    <div class="me-4">
+      <img
+        [src]="dog.image"
+        alt="{{ dog.name }}"
+        class="dog-profile-img"
+      />
+    </div>
+
+    <!-- Dog Details -->
+    <div class="dog-details">
+
+      <div class="detail-block">
+        <h6 class="detail-heading">Breed</h6>
+        <p>{{ dog.breed }}</p>
+      </div>
+
+      <div class="detail-block">
+        <h6 class="detail-heading">Age</h6>
+        <p>{{ dog.age }}</p>
+      </div>
+
+      <div class="detail-block">
+        <h6 class="detail-heading">Weight</h6>
+        <p>{{ dog.weight }}</p>
+      </div>
+
+      <div class="detail-block">
+        <h6 class="detail-heading">Notes</h6>
+        <p>{{ dog.notes }}</p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Back Button -->
+  <button
+    class="btn btn-primary rounded-pill mt-4"
+    routerLink="/dashboard">
+    ← Back to Dashboard
+  </button>
+
+</div>
+<!-- Floating Calendar Button -->
+<a 
+  *ngIf="dog"
+  [routerLink]="['/calendar', dog.id]"
+  class="btn btn-primary rounded-circle calendar-fab shadow-lg"
+>
+  📅
+</a>

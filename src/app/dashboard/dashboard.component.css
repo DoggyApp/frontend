@@ -1,0 +1,45 @@
+/* Dog Image - circle and face crop */
+.dog-img {
+  width: 120px;          /* ~2 inches diameter */
+  height: 120px;         /* keep square for circle */
+  object-fit: cover;     /* crop to fill */
+  object-position: center top; /* focus on face */
+  border-radius: 50%;    /* make it a perfect circle */
+  border: 3px solid #007bff;
+}
+
+.dog-bubble {
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px 15px;   /* smaller bubble, matches image */
+}
+
+/* Floating Action Button */
+.add-dog-fab {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+
+  background-color: #007bff;
+  color: white;
+
+  border: none;
+  border-radius: 50px;
+
+  padding: 15px 22px;
+  font-size: 18px;
+  font-weight: bold;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* Hover animation */
+.add-dog-fab:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}

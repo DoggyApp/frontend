@@ -1,0 +1,232 @@
+.calendar {
+  padding: 20px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+/* GRID */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: 80px repeat(7, 1fr);
+}
+
+/* DAYS */
+.day-column {
+  border-left: 1px solid #ddd;
+}
+
+.day-header {
+  text-align: center;
+  font-weight: bold;
+  background: #f5f5f5;
+  padding: 5px;
+}
+
+.hour-cell {
+  height: 40px;
+  border-bottom: 1px solid #eee;
+  position: relative;
+}
+
+/* Days */
+.day-column {
+  border-left: 1px solid #ddd;
+  position: relative; /* Important for absolute positioning of events */
+}
+
+.calendar-event {
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  transition: transform 0.1s;
+}
+
+.calendar-event:hover {
+  transform: scale(1.02);
+}
+
+/* Time column styling */
+.time-column {
+  width: 40px; /* adjust to fit your design */
+  border-right: 1px solid #ddd;
+  border-bottom: none;
+  border-top: none;
+  line-height: normal; 
+  padding-top: 20px; 
+}
+
+/* Each hour slot */
+.time-slot {
+  height: 40px;           /* must match .hour-cell height */
+  line-height: 40px;      /* centers the text vertically */
+  text-align: right;      /* align hours to the right edge */
+  padding-right: 5px;     /* spacing from the edge */
+  box-sizing: border-box; /* include padding in height */
+  font-size: 12px;
+  color: #555;
+  border-bottom: none; /* optional grid line */
+  border-top:none
+}
+
+.add-event-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  font-size: 36px;           /* bigger + sign */
+  color: white;              /* fully white + */
+  background-color: #0d6efd; /* blue bubble */
+  border: none;
+  border-radius: 50%;        /* makes it a perfect circle */
+  display: flex;
+  align-items: center;       /* vertical center */
+  justify-content: center;   /* horizontal center */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform 0.1s;
+}
+
+.add-event-btn:hover {
+  transform: scale(1.1);     /* subtle hover effect */
+}
+
+.plus {
+  position: relative;
+  width: 24px;     /* width of the plus */
+  height: 24px;    /* height of the plus */
+}
+
+
+.plus::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: white;
+  transform: translateY(-50%);
+  border-radius: 2px;
+}
+
+.plus::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background-color: white;
+  transform: translateX(-50%);
+  border-radius: 2px;       /* slightly rounded edges */
+}
+
+
+
+.add-event-bubble {
+  position: relative;   /* makes child absolute positions relative to this bubble */
+  width: 320px;
+  background-color: #0d6efd;
+  color: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* X button relative to bubble */
+.close-btn {
+  position: absolute;   /* relative to .add-event-bubble */
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: black;
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* Blue Bubble Modal */
+/*.add-event-bubble {
+  position: fixed;
+  bottom: 100px;      
+  right: 20px;
+  width: 320px;
+  background-color: #0d6efd; 
+  color: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 1000;
+}/*
+
+/* Close button in top-left corner */
+/*.close-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: white;
+  cursor: pointer;
+}
+
+/* Bubble title */
+.bubble-title {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* Form inputs */
+.add-event-bubble input,
+.add-event-bubble label {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.add-event-bubble input {
+  color: black;
+}
+
+/* Add button */
+.btn-add {
+  width: 100%;
+  background-color: white;
+  color: #0d6efd;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 0;
+  cursor: pointer;
+}
+
+.btn-add:hover {
+  opacity: 0.9;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  width: 300px;
+}

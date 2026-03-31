@@ -1,0 +1,77 @@
+<div class="register-wrapper d-flex justify-content-center align-items-center">
+
+  <div class="register-bubble text-center p-5 rounded-4 shadow-lg">
+
+    <h2 class="mb-4 text-white fw-bold">Create Account</h2>
+
+    <!-- Error message -->
+    <p *ngIf="registerError" class="register-error">
+      Registration failed
+    </p>
+
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+
+      <div class="mb-3">
+        <input
+          type="text"
+          placeholder="Name"
+          [(ngModel)]="user.name"
+          name="name"
+          required
+          class="form-control form-control-lg rounded-pill"
+        />
+      </div>
+
+      <div class="mb-3">
+        <input
+          type="email"
+          placeholder="Email"
+          [(ngModel)]="user.email"
+          name="email"
+          required
+          class="form-control form-control-lg rounded-pill"
+        />
+      </div>
+
+      <div class="mb-4">
+        <input
+          type="password"
+          placeholder="Password"
+          [(ngModel)]="user.password"
+          name="password"
+          required
+          class="form-control form-control-lg rounded-pill"
+        />
+      </div>
+
+      <div class="mb-4">
+        <input
+          type="password"
+          placeholder="Password"
+          [(ngModel)]="confirmPassword"
+          name="password"
+          required
+          class="form-control form-control-lg rounded-pill"
+        />
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="!registerForm.valid"
+        class="btn btn-light btn-lg rounded-pill w-100 fw-bold"
+      >
+        Sign Up
+      </button>
+
+    </form>
+
+    <p class="mt-4 text-white">
+      Already have an account?
+      <a routerLink="/login" class="text-light fw-bold">
+        Login
+      </a>
+    </p>
+
+  </div>
+
+</div>

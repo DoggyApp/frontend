@@ -1,0 +1,11 @@
+/* Big blue bubble background */
+.login-bubble {
+  background-color: #007bff; /* same blue as home buttons */
+  width: 100%;
+  max-width: 400px;
+}
+
+::placeholder {
+  color: #d1d1d1; /* grey-ish color */
+  opacity: 1; /* ensures color is visible across browsers */
+}
