@@ -1,4 +1,6 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { Event } from 'src/app/models/event';
 
 @Injectable({
@@ -6,40 +8,47 @@ import { Event } from 'src/app/models/event';
 })
 export class EventsService {
 
-  constructor() { }
+  private apiUrl = 'http://localhost:8080/event';
 
-  private events: Event[] = [{
-      title: 'Morning Walk',
-      description: '30 minute walk around neighborhood',
-      place: 'Home Park',
-      startTime: new Date('2026-03-24T08:00'),
-      endTime: new Date('2026-03-24T08:30'),
-      dog: 1
-    },
-    {
-      title: 'Training',
-      description: 'basic commands',
-      place: 'practice room',
-      startTime: new Date('2026-03-24T10:00'),
-      endTime: new Date('2026-03-24T12:00'),
-      dog: 1
-    },
-    {
-      title: 'Morning Walk',
-      description: '30 minute walk around neighborhood',
-      place: 'Home Park',
-      startTime: new Date('2026-03-26T08:00'),
-      endTime: new Date('2026-03-26T08:30'),
-      dog: 1
-    }
-  ]
+  private options = { withCredentials: true };
 
-  getEvents(): Event[] {
-    return this.events;
+  constructor(private http: HttpClient) { }
+
+  // Assumed: GET /event/dog/{dogId}
+  getEventsByDog(dogId: number): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.apiUrl}/dog/${dogId}`, this.options);
   }
 
-  push(newEvent: Event)  {
-    this.events.push(newEvent);
+  // Assumed: GET /event/location/{locationId}
+  getEventsByLocation(locationId: number): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.apiUrl}/location/${locationId}`, this.options);
   }
-      
+
+  // POST /event/add?dogId=1 — user session only
+  createEvent(event: Partial<Event>, dogId: number): Observable<Event> {
+    const params = new HttpParams().set('dogId', dogId.toString());
+    return this.http.post<Event>(`${this.apiUrl}/add`, event, { ...this.options, params });
+  }
+
+  // DELETE /event/{id} — user session, creator only
+  deleteEvent(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, this.options);
+  }
+
+  // PUT /event/{id}/edit — user session, creator only
+  editEvent(id: number, updates: Partial<Event>): Observable<Event> {
+    return this.http.put<Event>(`${this.apiUrl}/${id}/edit`, updates, this.options);
+  }
+
+  // PUT /event/{id}/join — user session only
+  joinEvent(id: number): Observable<Event> {
+    return this.http.put<Event>(`${this.apiUrl}/${id}/join`, {}, this.options);
+  }
+
+  // PUT /event/{id}/dog?dogId=1 — user session only
+  addDogToEvent(eventId: number, dogId: number): Observable<Event> {
+    const params = new HttpParams().set('dogId', dogId.toString());
+    return this.http.put<Event>(`${this.apiUrl}/${eventId}/dog`, {}, { ...this.options, params });
+  }
+
 }

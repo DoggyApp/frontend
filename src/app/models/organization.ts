@@ -4,10 +4,8 @@ import { User } from "./user";
 export interface Organization {
   id: number;
   name: string;
-  breed: string;
-  Email: string;
-  weight: number;
-  password: string;
+  email: string;
+  password?: string; // @JsonIgnore on backend — not present in responses
   employees: User[];
   dogs: Dog[]
 }

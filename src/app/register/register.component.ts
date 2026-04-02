@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../services/user/user.service';
-import { User } from '../models/user';
+import { OrganizationService } from '../services/organization/organization.service';
 import { Router } from '@angular/router';
+import { Organization } from '../models/organization';
 
 @Component({
     selector: 'app-register',
@@ -13,43 +13,39 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private userService: UserService
+    private organizationService: OrganizationService
   ) { }
 
   ngOnInit(): void {
   }
 
-  registerError = ""
+  registerError = '';
 
-  public user: User = {
+  public organization: Organization = {
     id: 0,
     name: '',
     email: '',
-    password: ''
+    password: '',
+    dogs: [],
+    employees: []
   };
 
   confirmPassword = '';
 
   onSubmit() {
-
-    if (this.user.password !== this.confirmPassword) {
+    if (this.organization.password !== this.confirmPassword) {
       alert('Passwords do not match');
       return;
     }
 
-    console.log('Register user:', this.user);
-
-    const registeredUser = this.userService.register(this.user);
-
-    if (registeredUser) {
-      // ✅ Success: route to login
-      this.registerError = '';
-      this.router.navigate(['/login']);
-    } else {
-      // ❌ Failure: email already exists
-      this.registerError = 'Email already registered. Try logging in.';
-    }
-
+    this.organizationService.register(this.organization).subscribe(registeredOrg => {
+      if (registeredOrg) {
+        this.registerError = '';
+        this.router.navigate(['/org-login']);
+      } else {
+        this.registerError = 'You already have an account.';
+      }
+    });
   }
 
 }

@@ -22,19 +22,15 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
   }
 
-onLogin(): void {
-
-    const user = this.userService.authenticate(
-      this.email,
-      this.password
-    );
-
-    if (user) {
-      this.loginError = false;
-      this.router.navigate(['/dashboard']);
-    } else {
-      this.loginError = true;
-    }
+  onLogin(): void {
+    this.userService.login(this.email, this.password).subscribe(user => {
+      if (user) {
+        this.loginError = false;
+        this.router.navigate(['/dashboard']);
+      } else {
+        this.loginError = true;
+      }
+    });
   }
 
 }

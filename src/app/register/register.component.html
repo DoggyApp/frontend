@@ -6,7 +6,7 @@
 
     <!-- Error message -->
     <p *ngIf="registerError" class="register-error">
-      Registration failed
+      {{ registerError }}
     </p>
 
     <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
@@ -14,8 +14,8 @@
       <div class="mb-3">
         <input
           type="text"
-          placeholder="Name"
-          [(ngModel)]="user.name"
+          placeholder="Organization Name"
+          [(ngModel)]="organization.name"
           name="name"
           required
           class="form-control form-control-lg rounded-pill"
@@ -26,18 +26,18 @@
         <input
           type="email"
           placeholder="Email"
-          [(ngModel)]="user.email"
+          [(ngModel)]="organization.email"
           name="email"
           required
           class="form-control form-control-lg rounded-pill"
         />
       </div>
 
-      <div class="mb-4">
+      <div class="mb-3">
         <input
           type="password"
           placeholder="Password"
-          [(ngModel)]="user.password"
+          [(ngModel)]="organization.password"
           name="password"
           required
           class="form-control form-control-lg rounded-pill"
@@ -47,9 +47,9 @@
       <div class="mb-4">
         <input
           type="password"
-          placeholder="Password"
+          placeholder="Confirm Password"
           [(ngModel)]="confirmPassword"
-          name="password"
+          name="confirmPassword"
           required
           class="form-control form-control-lg rounded-pill"
         />
@@ -58,18 +58,24 @@
       <button
         type="submit"
         [disabled]="!registerForm.valid"
-        class="btn btn-light btn-lg rounded-pill w-100 fw-bold"
+        class="btn btn-light btn-lg rounded-pill w-100 fw-bold mb-3"
       >
         Sign Up
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-outline-light btn-lg rounded-pill w-100"
+        routerLink="/org-login"
+      >
+        Go to Sign In
       </button>
 
     </form>
 
     <p class="mt-4 text-white">
       Already have an account?
-      <a routerLink="/login" class="text-light fw-bold">
-        Login
-      </a>
+      <a routerLink="/org-login" class="text-light fw-bold">Login</a>
     </p>
 
   </div>

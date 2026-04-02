@@ -1,62 +1,206 @@
 <div class="container mt-4" *ngIf="dog">
 
-  <!-- Dog Name -->
-  <h2 class="dog-name mb-4">
-    {{ dog.name }}
-  </h2>
+  <!-- Dog Header -->
+  <h2 class="dog-name mb-4">{{ dog.name }}</h2>
 
-  <!-- Profile Content -->
-  <div class="d-flex profile-layout">
-
-    <!-- Dog Image -->
+  <div class="d-flex profile-layout mb-5">
     <div class="me-4">
-      <img
-        [src]="dog.image"
-        alt="{{ dog.name }}"
-        class="dog-profile-img"
-      />
+      <img [src]="dog.image" alt="{{ dog.name }}" class="dog-profile-img" />
     </div>
-
-    <!-- Dog Details -->
     <div class="dog-details">
-
       <div class="detail-block">
         <h6 class="detail-heading">Breed</h6>
         <p>{{ dog.breed }}</p>
       </div>
-
       <div class="detail-block">
         <h6 class="detail-heading">Age</h6>
         <p>{{ dog.age }}</p>
       </div>
-
       <div class="detail-block">
         <h6 class="detail-heading">Weight</h6>
-        <p>{{ dog.weight }}</p>
+        <p>{{ dog.weight }} lbs</p>
       </div>
-
-      <div class="detail-block">
-        <h6 class="detail-heading">Notes</h6>
-        <p>{{ dog.notes }}</p>
-      </div>
-
     </div>
-
   </div>
 
-  <!-- Back Button -->
-  <button
-    class="btn btn-primary rounded-pill mt-4"
-    routerLink="/dashboard">
-    ← Back to Dashboard
-  </button>
+  <!-- ── Vaccines ─────────────────────────────────────── -->
+  <div class="section mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="section-heading vaccine-heading mb-0">Vaccines</h5>
+      <button class="btn btn-sm btn-outline-primary rounded-pill" (click)="openAddVaccineForm()">+ Add Vaccine</button>
+    </div>
+
+    <div *ngFor="let vaccine of vaccines" class="vaccine-card mb-3 p-3 rounded-4"
+         [class.expired]="isExpired(vaccine.expirationDate)"
+         [class.expiring-soon]="!isExpired(vaccine.expirationDate) && isExpiringSoon(vaccine.expirationDate)"
+         [class.vaccine-ok]="!isExpired(vaccine.expirationDate) && !isExpiringSoon(vaccine.expirationDate)">
+
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <h6 class="fw-bold mb-1">
+            {{ vaccine.name }}
+            <span *ngIf="vaccine.required" class="badge bg-secondary ms-2 fw-normal" style="font-size: 11px;">Required</span>
+          </h6>
+          <p class="mb-0 small text-muted">
+            Last given: <strong>{{ vaccine.vaccinatedDate | date:'MMM d, y' }}</strong>
+            &nbsp;|&nbsp;
+            Expires: <strong>{{ vaccine.expirationDate | date:'MMM d, y' }}</strong>
+          </p>
+          <p *ngIf="isExpired(vaccine.expirationDate)" class="mb-0 small text-danger fw-semibold mt-1">Expired</p>
+          <p *ngIf="!isExpired(vaccine.expirationDate) && isExpiringSoon(vaccine.expirationDate)" class="mb-0 small text-warning fw-semibold mt-1">Expiring within 30 days</p>
+        </div>
+        <button
+          *ngIf="!vaccine.required"
+          class="btn btn-sm btn-outline-danger rounded-pill"
+          (click)="deleteVaccine(vaccine.id)"
+        >
+          Delete
+        </button>
+      </div>
+
+      <!-- Date picker + Mark as Given -->
+      <div class="d-flex align-items-center gap-2 mt-3">
+        <input
+          type="date"
+          class="form-control form-control-sm rounded-pill"
+          style="max-width: 180px;"
+          [max]="todayStr()"
+          [(ngModel)]="vaccinationDates[vaccine.id]"
+          [name]="'vaccDate_' + vaccine.id"
+        />
+        <button class="btn btn-sm btn-primary rounded-pill" (click)="markAsGiven(vaccine)">
+          Mark as Given
+        </button>
+      </div>
+    </div>
+
+    <p *ngIf="vaccines.length === 0" class="text-muted fst-italic">No vaccines loaded.</p>
+  </div>
+
+  <!-- ── Notes ────────────────────────────────────────── -->
+  <div class="section mb-5">
+    <h5 class="section-heading">Notes</h5>
+
+    <div class="add-row mb-3">
+      <input type="text" class="form-control rounded-pill" placeholder="Add a note..."
+             [(ngModel)]="newNote" (keyup.enter)="addNote()" />
+      <button class="btn btn-primary rounded-pill ms-2" (click)="addNote()">Add</button>
+    </div>
+
+    <div *ngFor="let note of dog.notes" class="item-row">
+      <ng-container *ngIf="editingNoteId !== note.id">
+        <span class="item-text">{{ note.note }}</span>
+        <div class="item-actions">
+          <button class="btn btn-sm btn-outline-primary rounded-pill" (click)="startEditNote(note)">Edit</button>
+          <button class="btn btn-sm btn-outline-danger rounded-pill" (click)="deleteNote(note.id)">Delete</button>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="editingNoteId === note.id">
+        <input type="text" class="form-control rounded-pill" [(ngModel)]="editingNoteText" />
+        <div class="item-actions">
+          <button class="btn btn-sm btn-primary rounded-pill" (click)="saveNote(note.id)">Save</button>
+          <button class="btn btn-sm btn-outline-secondary rounded-pill" (click)="cancelEditNote()">Cancel</button>
+        </div>
+      </ng-container>
+    </div>
+    <p *ngIf="dog.notes.length === 0" class="text-muted fst-italic">No notes yet.</p>
+  </div>
+
+  <!-- ── Alerts ───────────────────────────────────────── -->
+  <div class="section mb-5">
+    <h5 class="section-heading alert-heading">Alerts</h5>
+
+    <div class="add-row mb-3">
+      <input type="text" class="form-control rounded-pill" placeholder="Add an alert..."
+             [(ngModel)]="newAlert" (keyup.enter)="addAlert()" />
+      <button class="btn btn-danger rounded-pill ms-2" (click)="addAlert()">Add</button>
+    </div>
+
+    <div *ngFor="let alert of dog.alerts" class="item-row alert-item">
+      <ng-container *ngIf="editingAlertId !== alert.id">
+        <span class="item-text">{{ alert.alert }}</span>
+        <div class="item-actions">
+          <button class="btn btn-sm btn-outline-danger rounded-pill" (click)="startEditAlert(alert)">Edit</button>
+          <button class="btn btn-sm btn-danger rounded-pill" (click)="deleteAlert(alert.id)">Delete</button>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="editingAlertId === alert.id">
+        <input type="text" class="form-control rounded-pill" [(ngModel)]="editingAlertText" />
+        <div class="item-actions">
+          <button class="btn btn-sm btn-danger rounded-pill" (click)="saveAlert(alert.id)">Save</button>
+          <button class="btn btn-sm btn-outline-secondary rounded-pill" (click)="cancelEditAlert()">Cancel</button>
+        </div>
+      </ng-container>
+    </div>
+    <p *ngIf="dog.alerts.length === 0" class="text-muted fst-italic">No alerts yet.</p>
+  </div>
+
+  <!-- ── Likes ────────────────────────────────────────── -->
+  <div class="section mb-5">
+    <h5 class="section-heading likes-heading">Likes</h5>
+
+    <div class="add-row mb-3">
+      <input type="text" class="form-control rounded-pill" placeholder="Add a like..."
+             [(ngModel)]="newLike" (keyup.enter)="addLike()" />
+      <button class="btn btn-success rounded-pill ms-2" (click)="addLike()">Add</button>
+    </div>
+
+    <div *ngFor="let like of dog.likes" class="item-row likes-item">
+      <ng-container *ngIf="editingLikeId !== like.id">
+        <span class="item-text">{{ like.like }}</span>
+        <div class="item-actions">
+          <button class="btn btn-sm btn-outline-success rounded-pill" (click)="startEditLike(like)">Edit</button>
+          <button class="btn btn-sm btn-outline-danger rounded-pill" (click)="deleteLike(like.id)">Delete</button>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="editingLikeId === like.id">
+        <input type="text" class="form-control rounded-pill" [(ngModel)]="editingLikeText" />
+        <div class="item-actions">
+          <button class="btn btn-sm btn-success rounded-pill" (click)="saveLike(like.id)">Save</button>
+          <button class="btn btn-sm btn-outline-secondary rounded-pill" (click)="cancelEditLike()">Cancel</button>
+        </div>
+      </ng-container>
+    </div>
+    <p *ngIf="dog.likes.length === 0" class="text-muted fst-italic">No likes yet.</p>
+  </div>
+
+  <button class="btn btn-primary rounded-pill mb-5" routerLink="/dashboard">← Back to Dashboard</button>
 
 </div>
+
+<!-- Add Custom Vaccine Modal -->
+<div class="modal-overlay" *ngIf="showAddVaccineForm">
+  <div class="modal-bubble p-4 rounded-4 shadow-lg">
+    <h5 class="fw-bold mb-3">Add Custom Vaccine</h5>
+
+    <form (ngSubmit)="submitAddVaccine()" #vaccineForm="ngForm">
+      <div class="mb-3">
+        <label class="form-label text-muted">Vaccine Name</label>
+        <input type="text" placeholder="e.g. Leptospirosis"
+               [(ngModel)]="newVaccine.name" name="vaccineName" required
+               class="form-control rounded-pill" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label text-muted">Date Given</label>
+        <input type="date" [(ngModel)]="newVaccine.vaccinatedDate" name="vaccinatedDate"
+               [max]="todayStr()" required class="form-control rounded-pill" />
+      </div>
+      <div class="mb-4">
+        <label class="form-label text-muted">Expiration Date</label>
+        <input type="date" [(ngModel)]="newVaccine.expirationDate" name="expirationDate"
+               required class="form-control rounded-pill" />
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" [disabled]="!vaccineForm.valid" class="btn btn-primary rounded-pill flex-grow-1">Add</button>
+        <button type="button" class="btn btn-outline-secondary rounded-pill flex-grow-1" (click)="closeAddVaccineForm()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- Floating Calendar Button -->
-<a 
-  *ngIf="dog"
-  [routerLink]="['/calendar', dog.id]"
-  class="btn btn-primary rounded-circle calendar-fab shadow-lg"
->
+<a *ngIf="dog" [routerLink]="['/calendar', dog.id]"
+   class="btn btn-primary rounded-circle calendar-fab shadow-lg">
   📅
 </a>

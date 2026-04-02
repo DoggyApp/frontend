@@ -13,19 +13,35 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { DogCardComponent } from './dog-card/dog-card.component';
 import { ProfileComponent } from './profile/profile.component';
 import { CalendarComponent } from './calendar/calendar.component';
+import { OrgLoginComponent } from './org-login/org-login.component';
+import { OrgDashboardComponent } from './org-dashboard/org-dashboard.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
+import { AddDogComponent } from './add-dog/add-dog.component';
+import { ScheduleComponent } from './schedule/schedule.component';
 
-@NgModule({ declarations: [
-        AppComponent,
-        NotFoundComponent,
-        HomeComponent,
-        LoginComponent,
-        RegisterComponent,
-        DashboardComponent,
-        DogCardComponent,
-        ProfileComponent,
-        CalendarComponent
-    ],
-    bootstrap: [AppComponent], imports: [BrowserModule,
-        AppRoutingModule,
-        FormsModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
+@NgModule({
+  declarations: [
+    AppComponent,
+    NotFoundComponent,
+    HomeComponent,
+    LoginComponent,
+    RegisterComponent,
+    DashboardComponent,
+    DogCardComponent,
+    ProfileComponent,
+    CalendarComponent,
+    OrgLoginComponent,
+    OrgDashboardComponent,
+    UserProfileComponent,
+    AddDogComponent,
+    ScheduleComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule
+  ],
+  providers: [provideHttpClient(withInterceptorsFromDi())],
+  bootstrap: [AppComponent]
+})
 export class AppModule { }

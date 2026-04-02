@@ -1,7 +1,6 @@
 /* Dog Name */
 .dog-name {
   font-weight: bold;
-  text-align: left;
 }
 
 /* Layout */
@@ -11,8 +10,8 @@
 
 /* Dog Image */
 .dog-profile-img {
-  width: 240px;   /* ~2.5 inches */
-  height: 384px;  /* ~4 inches */
+  width: 240px;
+  height: 384px;
   object-fit: cover;
   object-position: center;
   border-radius: 12px;
@@ -24,16 +23,111 @@
   max-width: 400px;
 }
 
-/* Individual Detail Blocks */
 .detail-block {
   margin-bottom: 15px;
 }
 
-/* Blue Headings */
 .detail-heading {
   color: #007bff;
   font-weight: bold;
   margin-bottom: 2px;
+}
+
+/* Sections */
+.section {
+  border-top: 2px solid #e9ecef;
+  padding-top: 20px;
+}
+
+.section-heading {
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 16px;
+}
+
+.alert-heading {
+  color: #dc3545;
+}
+
+.likes-heading {
+  color: #198754;
+}
+
+/* Add Row */
+.add-row {
+  display: flex;
+  align-items: center;
+}
+
+/* Item Rows */
+.item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background-color: #f8f9fa;
+  margin-bottom: 8px;
+  gap: 10px;
+}
+
+.alert-item {
+  background-color: #fff5f5;
+}
+
+.likes-item {
+  background-color: #f0fff4;
+}
+
+.item-text {
+  flex: 1;
+}
+
+.item-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Vaccines */
+.vaccine-heading {
+  color: #6f42c1;
+}
+
+.vaccine-card {
+  border: 2px solid transparent;
+}
+
+.vaccine-ok {
+  background-color: #f0fff4;
+  border-color: #198754;
+}
+
+.expiring-soon {
+  background-color: #fffbea;
+  border-color: #ffc107;
+}
+
+.expired {
+  background-color: #fff5f5;
+  border-color: #dc3545;
+}
+
+/* Add vaccine modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-bubble {
+  background: white;
+  width: 100%;
+  max-width: 420px;
 }
 
 /* Floating Calendar Button */
@@ -47,5 +141,5 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000; /* makes sure it’s on top */
+  z-index: 1000;
 }

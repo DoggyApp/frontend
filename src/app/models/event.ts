@@ -1,14 +1,14 @@
-import { Time } from "@angular/common";
 import { User } from "./user";
 import { Dog } from "./dog";
 
 export interface Event {
-  dog: number
-  startTime: Date;
-  endTime: Date; 
-  title: string; 
-  place: string;
+  id: number;
+  event: string;       // event name / title
   description: string;
-  trainers: User[]; 
-  dogs : Dog[];
+  startTime: string;   // ISO: "2026-04-06T09:00:00"
+  endTime: string;
+  place: string;
+  creator?: User;
+  trainers: User[];
+  dogs: Dog[];
 }

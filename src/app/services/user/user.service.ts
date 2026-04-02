@@ -1,6 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-//import { HttpClient } from '@angular/common/http';
-//import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { User } from 'src/app/models/user';
 
 @Injectable({
@@ -8,60 +9,63 @@ import { User } from 'src/app/models/user';
 })
 export class UserService {
 
-  constructor() { }
+  private apiUrl = 'http://localhost:8080/user';
 
-  private users: User[] = [
-    {
-      id: 1,
-      name: 'Sara',
-      email: 'sara@email.com',
-      password: '12345'
-    },
-    {
-      id: 2,
-      name: 'Lisa',
-      email: 'lisa@email.com',
-      password: '12345'
-    }
-  ]
+  private options = { withCredentials: true };
 
-  getUsers(): User[] {
-    return this.users;
-  }
-    
-  getUsersById(id: number): User | undefined {
-    return this.users.find(user => user.id === id);
+  constructor(private http: HttpClient) { }
+
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}s`, this.options);
   }
 
-  authenticate(email: string, password: string): User | null {
-
-    const user = this.users.find(
-      u => u.email === email && u.password === password
+  getUsersById(id: number): Observable<User | null> {
+    return this.http.get<User>(`${this.apiUrl}/${id}`, this.options).pipe(
+      catchError(() => of(null))
     );
-
-    return user ?? null;
   }
 
-  register(newUser: Omit<User, 'id'>): User | null {
-    // Check if email is already taken
-    const exists = this.users.some(u => u.email === newUser.email);
-    if (exists) {
-      return null; // registration failed
-    }
-
-    const id = this.users.length + 1; // simple auto-increment
-    const user: User = { id, ...newUser };
-    this.users.push(user);
-    return user; // registration succeeded
+  login(email: string, password: string): Observable<User | null> {
+    return this.http.post<User>(`${this.apiUrl}/login`, { email, password }, this.options).pipe(
+      catchError(() => of(null))
+    );
   }
 
+  getSession(): Observable<User | null> {
+    return this.http.get<User>(`${this.apiUrl}/session`, this.options).pipe(
+      catchError(() => of(null))
+    );
+  }
 
-  // public apiUrl: String = (window as any)._env_.LOAD_BALANCER_URL; 
-  // constructor(private http:HttpClient) { }
+  logout(): Observable<string> {
+    return this.http.post<string>(`${this.apiUrl}/logout`, {}, this.options);
+  }
+
+  changePassword(oldPassword: string, newPassword: string): Observable<string> {
+    return this.http.put<string>(`${this.apiUrl}/password`, { oldPassword, newPassword }, this.options);
+  }
+
+  register(newUser: Omit<User, 'id'>): Observable<User | null> {
+    return this.http.post<User>(`${this.apiUrl}/register`, newUser, this.options).pipe(
+      catchError(() => of(null))
+    );
+  }
+
+  // Organization session required
+  addUser(user: Omit<User, 'id'>): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/add`, user, this.options);
+  }
+
+  deleteUser(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, this.options);
+  }
+
+  // -- AWS EKS reference (for future deployment) --
+  // public apiUrl: String = (window as any)._env_.LOAD_BALANCER_URL;
 
   // getTestValue(): Observable<String> {
-  //   console.log("inside get test value..."); 
-  //   console.log(this.apiUrl); 
+  //   console.log("inside get test value...");
+  //   console.log(this.apiUrl);
   //   return this.http.get(
   //     `${this.apiUrl}/registry/test`,
   //     { responseType: 'text' });
@@ -69,9 +73,10 @@ export class UserService {
 
   // getBackendErrorTestValue(): Observable<String> {
   //   console.log("inside get backend error test value...");
-  //   console.log(this.apiUrl); 
+  //   console.log(this.apiUrl);
   //   return this.http.get(
   //     `${this.apiUrl}/registry/error-test`,
   //     { responseType: 'text' });
   // }
+
 }

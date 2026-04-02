@@ -50,7 +50,7 @@
              class="calendar-event"
              (click)="openEventDetails(event)"
              [ngStyle]="getEventStyle(event, day)">
-          {{ event.title }}
+          {{ event.event }}
         </div>
 
       </div>
@@ -74,7 +74,7 @@
     
     <h4>Add Event</h4>
     <button class="close-btn" (click)="closeAddEventModal()">✕</button>
-    <input type="text" [(ngModel)]="newEvent.title" placeholder="Title" class="form-control mb-2" />
+    <input type="text" [(ngModel)]="newEvent.event" placeholder="Title" class="form-control mb-2" />
     <input type="text" [(ngModel)]="newEvent.description" placeholder="Description" class="form-control mb-2" />
     <input type="text" [(ngModel)]="newEvent.place" placeholder="Place" class="form-control mb-2" />
     <label>Start Time</label>
@@ -89,7 +89,7 @@
 
 <div class="modal-backdrop" *ngIf="selectedEvent">
   <div class="modal-content p-4 rounded shadow-lg">
-    <h4>{{ selectedEvent.title }}</h4>
+    <h4>{{ selectedEvent.event }}</h4>
     <p><strong>Description:</strong> {{ selectedEvent.description }}</p>
     <p><strong>Place:</strong> {{ selectedEvent.place }}</p>
     <p><strong>Start:</strong> {{ selectedEvent.startTime | date:'short' }}</p>
