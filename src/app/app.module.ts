@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -14,25 +14,18 @@ import { DogCardComponent } from './dog-card/dog-card.component';
 import { ProfileComponent } from './profile/profile.component';
 import { CalendarComponent } from './calendar/calendar.component';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    NotFoundComponent,
-    HomeComponent,
-    LoginComponent,
-    RegisterComponent,
-    DashboardComponent,
-    DogCardComponent,
-    ProfileComponent,
-    CalendarComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule, 
-    HttpClientModule,
-    FormsModule 
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        NotFoundComponent,
+        HomeComponent,
+        LoginComponent,
+        RegisterComponent,
+        DashboardComponent,
+        DogCardComponent,
+        ProfileComponent,
+        CalendarComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        FormsModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule { }
