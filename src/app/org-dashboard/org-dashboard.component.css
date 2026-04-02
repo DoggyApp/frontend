@@ -1,0 +1,68 @@
+/* Employee Card */
+.employee-card {
+  background-color: #f8f9fa;
+  transition: transform 0.2s;
+}
+
+.employee-card:hover {
+  transform: translateY(-3px);
+}
+
+.employee-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+/* Floating Action Buttons */
+.fab-stack {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.add-fab {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 15px 22px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.add-fab:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+/* Add Employee Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-bubble {
+  background: white;
+  width: 100%;
+  max-width: 400px;
+}

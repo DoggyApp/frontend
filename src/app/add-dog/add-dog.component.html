@@ -1,0 +1,69 @@
+<!-- Top Bar -->
+<div class="bg-primary text-white d-flex justify-content-between align-items-center px-4 py-3 shadow-sm">
+  <h3 class="mb-0">Add Dog</h3>
+  <button class="btn btn-light rounded-pill px-4 py-2" (click)="goBack()">Cancel</button>
+</div>
+
+<div class="container mt-4" style="max-width: 560px;">
+  <div class="p-4 rounded-4 shadow-sm" style="background: #f8f9fa;">
+
+    <p *ngIf="submitError" class="text-danger">{{ submitError }}</p>
+
+    <form (ngSubmit)="onSubmit()" #addDogForm="ngForm">
+
+      <h6 class="form-section-heading">Dog Information</h6>
+
+      <div class="mb-3">
+        <label class="form-label text-muted">Name</label>
+        <input type="text" [(ngModel)]="newDog.name" name="name" required
+               class="form-control rounded-pill" placeholder="e.g. Buddy" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label text-muted">Breed</label>
+        <input type="text" [(ngModel)]="newDog.breed" name="breed" required
+               class="form-control rounded-pill" placeholder="e.g. Golden Retriever" />
+      </div>
+
+      <div class="row mb-3">
+        <div class="col">
+          <label class="form-label text-muted">Age (years)</label>
+          <input type="number" [(ngModel)]="newDog.age" name="age" required min="0"
+                 class="form-control rounded-pill" />
+        </div>
+        <div class="col">
+          <label class="form-label text-muted">Weight (lbs)</label>
+          <input type="number" [(ngModel)]="newDog.weight" name="weight" required min="0"
+                 class="form-control rounded-pill" />
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label text-muted">Image URL</label>
+        <input type="text" [(ngModel)]="newDog.image" name="image"
+               class="form-control rounded-pill" placeholder="https://..." />
+      </div>
+
+      <h6 class="form-section-heading">Vaccination Dates</h6>
+      <p class="text-muted small mb-3">Expiration dates are calculated automatically. Pre-filled with today — change if vaccines were given on a different date.</p>
+
+      <div class="mb-3">
+        <label class="form-label text-muted">Bordetella Date Given</label>
+        <input type="date" [(ngModel)]="bordetellaDate" name="bordetellaDate" required
+               [max]="todayStr()" class="form-control rounded-pill" />
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label text-muted">Rabies Date Given</label>
+        <input type="date" [(ngModel)]="rabiesDate" name="rabiesDate" required
+               [max]="todayStr()" class="form-control rounded-pill" />
+      </div>
+
+      <button type="submit" [disabled]="!addDogForm.valid"
+              class="btn btn-primary rounded-pill w-100 fw-bold">
+        Add Dog
+      </button>
+
+    </form>
+  </div>
+</div>

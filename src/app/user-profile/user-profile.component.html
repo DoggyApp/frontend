@@ -1,0 +1,99 @@
+<!-- Top Bar -->
+<div class="bg-primary text-white d-flex justify-content-between align-items-center px-4 py-3 shadow-sm">
+  <h3 class="mb-0">My Profile</h3>
+  <button class="btn btn-light rounded-pill px-4 py-2" routerLink="/dashboard">Back to Dashboard</button>
+</div>
+
+<div class="container mt-4" style="max-width: 600px;">
+
+  <!-- Tabs -->
+  <ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab === 'profile'" (click)="setTab('profile')">
+        Profile
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab === 'security'" (click)="setTab('security')">
+        Security
+      </button>
+    </li>
+  </ul>
+
+  <!-- Profile Tab -->
+  <div *ngIf="activeTab === 'profile' && user">
+    <div class="profile-card p-4 rounded-4 shadow-sm">
+      <div class="profile-avatar mb-3">
+        {{ user.firstName[0] }}{{ user.lastName[0] }}
+      </div>
+      <h4 class="fw-bold mb-1">{{ user.firstName }} {{ user.lastName }}</h4>
+      <p class="text-muted mb-3">{{ user.email }}</p>
+
+      <hr>
+
+      <div class="row mt-3">
+        <div class="col-5 text-muted fw-semibold">First Name</div>
+        <div class="col-7">{{ user.firstName }}</div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-5 text-muted fw-semibold">Last Name</div>
+        <div class="col-7">{{ user.lastName }}</div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-5 text-muted fw-semibold">Email</div>
+        <div class="col-7">{{ user.email }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Security Tab -->
+  <div *ngIf="activeTab === 'security'">
+    <div class="profile-card p-4 rounded-4 shadow-sm">
+      <h5 class="fw-bold mb-4">Change Password</h5>
+
+      <p *ngIf="passwordError" class="text-danger">{{ passwordError }}</p>
+      <p *ngIf="passwordSuccess" class="text-success">{{ passwordSuccess }}</p>
+
+      <form (ngSubmit)="submitChangePassword()" #passwordForm="ngForm">
+        <div class="mb-3">
+          <label class="form-label text-muted">Current Password</label>
+          <input
+            type="password"
+            [(ngModel)]="oldPassword"
+            name="oldPassword"
+            required
+            class="form-control rounded-pill"
+          />
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-muted">New Password</label>
+          <input
+            type="password"
+            [(ngModel)]="newPassword"
+            name="newPassword"
+            required
+            class="form-control rounded-pill"
+          />
+        </div>
+        <div class="mb-4">
+          <label class="form-label text-muted">Confirm New Password</label>
+          <input
+            type="password"
+            [(ngModel)]="confirmNewPassword"
+            name="confirmNewPassword"
+            required
+            class="form-control rounded-pill"
+          />
+        </div>
+        <button
+          type="submit"
+          [disabled]="!passwordForm.valid"
+          class="btn btn-primary rounded-pill w-100"
+        >
+          Update Password
+        </button>
+      </form>
+    </div>
+  </div>
+
+</div>
