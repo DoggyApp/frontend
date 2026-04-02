@@ -7,9 +7,10 @@ import { UserService } from '../services/user/user.service';
 import { OrganizationService } from '../services/organization/organization.service';
 
 @Component({
-  selector: 'app-org-dashboard',
-  templateUrl: './org-dashboard.component.html',
-  styleUrls: ['./org-dashboard.component.css']
+    selector: 'app-org-dashboard',
+    templateUrl: './org-dashboard.component.html',
+    styleUrls: ['./org-dashboard.component.css'],
+    standalone: false
 })
 export class OrgDashboardComponent implements OnInit {
 

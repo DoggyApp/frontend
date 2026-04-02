@@ -3,9 +3,10 @@ import { Dog } from '../models/dog';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-dog-card',
-  templateUrl: './dog-card.component.html',
-  styleUrls: ['./dog-card.component.css']
+    selector: 'app-dog-card',
+    templateUrl: './dog-card.component.html',
+    styleUrls: ['./dog-card.component.css'],
+    standalone: false
 })
 export class DogCardComponent implements OnInit {
 

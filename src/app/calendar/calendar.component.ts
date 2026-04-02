@@ -4,9 +4,10 @@ import { Event } from '../models/event';
 import { EventsService } from '../services/event/events.service';
 
 @Component({
-  selector: 'app-calendar',
-  templateUrl: './calendar.component.html',
-  styleUrls: ['./calendar.component.css']
+    selector: 'app-calendar',
+    templateUrl: './calendar.component.html',
+    styleUrls: ['./calendar.component.css'],
+    standalone: false
 })
 export class CalendarComponent implements OnInit {
 
