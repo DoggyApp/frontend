@@ -1,6 +1,7 @@
 import { Alert } from "./alert";
 import { Like } from "./like";
 import { Note } from "./Note";
+import { Owner } from "./owner";
 import { User } from "./user";
 import { Vaccine } from "./vaccine";
 
@@ -16,4 +17,5 @@ export interface Dog {
   trainer: User;
   vaccines: Vaccine[];
   alerts: Alert[];
+  owner?: Owner;
 }

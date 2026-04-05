@@ -2,7 +2,8 @@
 <div class="bg-primary text-white d-flex justify-content-between align-items-center px-4 py-3 shadow-sm">
   <h3 class="mb-0">My Organization</h3>
   <div class="d-flex gap-2">
-    <button class="btn btn-light rounded-pill px-4 py-2" routerLink="/schedule">Schedule</button>
+    <button class="btn btn-light rounded-pill px-4 py-2" routerLink="/org-calendar">Calendar</button>
+    <button class="btn btn-light rounded-pill px-4 py-2" routerLink="/org-profile">Profile</button>
     <button class="btn btn-outline-light rounded-pill px-4 py-2" (click)="logout()">Logout</button>
   </div>
 </div>
@@ -20,15 +21,22 @@
         Employees
       </button>
     </li>
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab === 'locations'" (click)="setTab('locations')">
+        Locations
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab === 'clients'" (click)="setTab('clients')">
+        Clients
+      </button>
+    </li>
   </ul>
 
   <!-- Dogs Tab -->
   <div *ngIf="activeTab === 'dogs'" class="row g-3">
     <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let dog of dogs">
-      <app-dog-card [dog]="dog"></app-dog-card>
-      <button class="btn btn-outline-danger btn-sm rounded-pill w-100 mt-1" (click)="deleteDog(dog.id)">
-        Remove Dog
-      </button>
+      <app-dog-card [dog]="dog" [showRemove]="true" (removed)="deleteDog(dog.id)"></app-dog-card>
     </div>
     <p *ngIf="dogs.length === 0" class="text-muted">No dogs yet.</p>
   </div>
@@ -48,6 +56,38 @@
       </div>
     </div>
     <p *ngIf="employees.length === 0" class="text-muted">No employees yet.</p>
+  </div>
+
+  <!-- Locations Tab -->
+  <div *ngIf="activeTab === 'locations'" class="row g-3">
+    <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let location of locations">
+      <div class="employee-card p-3 rounded-4 shadow-sm text-center">
+        <div class="employee-avatar mb-2" style="font-size: 18px;">
+          {{ location.name[0] }}
+        </div>
+        <h5 class="mb-1">{{ location.name }}</h5>
+        <p class="mb-1 text-muted small">{{ location.address }}</p>
+        <button class="btn btn-outline-danger btn-sm rounded-pill" (click)="deleteLocation(location.id)">
+          Remove
+        </button>
+      </div>
+    </div>
+    <p *ngIf="locations.length === 0" class="text-muted">No locations yet.</p>
+  </div>
+
+  <!-- Clients Tab -->
+  <div *ngIf="activeTab === 'clients'">
+    <p *ngIf="clients.length === 0" class="text-muted">No clients yet.</p>
+    <div *ngFor="let client of clients" class="client-section mb-4">
+      <h5 class="fw-semibold mb-1">{{ client.name }}</h5>
+      <p class="text-muted small mb-2">{{ client.email }} &bull; {{ client.phoneNumber }}</p>
+      <div class="row g-3">
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let dog of client.dogs">
+          <app-dog-card [dog]="dog"></app-dog-card>
+        </div>
+      </div>
+      <hr>
+    </div>
   </div>
 </div>
 
@@ -110,8 +150,49 @@
   </div>
 </div>
 
+<!-- Add Location Modal -->
+<div class="modal-overlay" *ngIf="showAddLocationForm">
+  <div class="modal-bubble p-4 rounded-4 shadow-lg">
+    <h5 class="mb-3 fw-bold">Add Location</h5>
+
+    <form (ngSubmit)="submitAddLocation()" #addLocationForm="ngForm">
+      <div class="mb-3">
+        <input
+          type="text"
+          placeholder="Location Name"
+          [(ngModel)]="newLocation.name"
+          name="name"
+          required
+          class="form-control rounded-pill"
+        />
+      </div>
+      <div class="mb-4">
+        <input
+          #addressInput
+          type="text"
+          placeholder="Address"
+          name="address"
+          required
+          class="form-control rounded-pill"
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" [disabled]="!addressConfirmed" class="btn btn-primary rounded-pill flex-grow-1">
+          Add
+        </button>
+        <button type="button" class="btn btn-outline-secondary rounded-pill flex-grow-1" (click)="closeAddLocationModal()">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- Floating Action Buttons -->
 <div class="fab-stack">
-  <button class="add-fab shadow-lg" (click)="openAddEmployeeModal()">+ Add Employee</button>
-  <button class="add-fab shadow-lg" routerLink="/add-dog">+ Add Dog</button>
+  <button *ngIf="activeTab === 'dogs'" class="add-fab shadow-lg" routerLink="/add-dog">+ Add Dog</button>
+  <button *ngIf="activeTab === 'employees'" class="add-fab shadow-lg" (click)="openAddEmployeeModal()">+ Add Employee</button>
+  <button *ngIf="activeTab === 'locations'" class="add-fab shadow-lg" (click)="openAddLocationModal()">+ Add Location</button>
 </div>

@@ -19,12 +19,8 @@ export class LocationService {
     return this.http.get<Location[]>(`${this.apiUrl}/all`, this.options);
   }
 
-  // Body is a plain string — Spring @RequestBody String name
-  addLocation(name: string): Observable<Location> {
-    return this.http.post<Location>(`${this.apiUrl}/add`, name, {
-      ...this.options,
-      headers: { 'Content-Type': 'text/plain' }
-    });
+  addLocation(name: string, address: string): Observable<Location> {
+    return this.http.post<Location>(`${this.apiUrl}/add`, { name, address, offsite: false }, this.options);
   }
 
   deleteLocation(id: number): Observable<void> {

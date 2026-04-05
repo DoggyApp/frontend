@@ -2,8 +2,8 @@
 
   <!-- Top Bar -->
   <div class="cal-topbar">
-    <button class="btn btn-secondary btn-sm" [routerLink]="['/profile', dogId]">← Back to Profile</button>
-    <h4 class="mb-0">{{ profileDog?.name }}'s Calendar</h4>
+    <button class="btn btn-secondary btn-sm" routerLink="/dashboard">← Dashboard</button>
+    <h4 class="mb-0">My Calendar</h4>
   </div>
 
   <!-- Week Navigation -->
@@ -70,8 +70,7 @@
     </div>
     <div class="chips mb-3">
       <span class="chip" *ngFor="let d of selectedDogs">
-        {{ d.name }}
-        <button class="chip-remove" (click)="removeDogFromForm(d.id)" [disabled]="d.id === dogId">✕</button>
+        {{ d.name }} <button class="chip-remove" (click)="removeDogFromForm(d.id)">✕</button>
       </span>
     </div>
 
@@ -108,6 +107,7 @@
 
     <!-- Creator actions -->
     <ng-container *ngIf="isCreator">
+      <!-- Add dog -->
       <div class="position-relative mb-2">
         <label class="form-label small fw-semibold">Add Dog</label>
         <input type="text" [(ngModel)]="popupDogSearch" (input)="onPopupDogSearch()"
@@ -117,11 +117,13 @@
         </ul>
       </div>
 
+      <!-- Edit toggle -->
       <button class="btn btn-outline-primary btn-sm mb-2 me-2" (click)="openEditForm()" *ngIf="!showEditForm">
         Edit Event
       </button>
       <button class="btn btn-danger btn-sm mb-2" (click)="deleteEvent()">Delete</button>
 
+      <!-- Edit form -->
       <div *ngIf="showEditForm" class="mt-2 border-top pt-3">
         <input type="text" [(ngModel)]="editForm.event" placeholder="Title" class="form-control mb-2" />
         <input type="text" [(ngModel)]="editForm.description" placeholder="Description" class="form-control mb-2" />

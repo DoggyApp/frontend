@@ -7,5 +7,7 @@ export interface Organization {
   email: string;
   password?: string; // @JsonIgnore on backend — not present in responses
   employees: User[];
-  dogs: Dog[]
+  dogs: Dog[];
+  subscriptionStart?: string;
+  subscriptionExpiration?: string;
 }

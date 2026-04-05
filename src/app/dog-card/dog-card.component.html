@@ -1,12 +1,12 @@
 <div class="dog-card">
-
-  <img [src]="dog.image" alt="dog">
-
-  <h3>{{ dog.name }}</h3>
-
-  <p>{{ dog.breed }}</p>
-  <p>{{ dog.age }} years old</p>
-
-  <button (click)="viewProfile()">View Profile</button>
-
+  <div class="dog-img-wrapper">
+    <img [src]="dog.image" alt="{{ dog.name }}" (error)="onImgError($event)">
+  </div>
+  <div class="dog-card-body">
+    <h3>{{ dog.name }}</h3>
+    <p>{{ dog.breed }}</p>
+    <p>{{ dog.age }} years old</p>
+    <button class="view-btn" (click)="viewProfile()">View Profile</button>
+    <button *ngIf="showRemove" class="remove-btn" (click)="removed.emit()">Remove Dog</button>
+  </div>
 </div>

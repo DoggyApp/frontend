@@ -1,0 +1,124 @@
+<!-- Top Bar -->
+<div class="bg-primary text-white d-flex justify-content-between align-items-center px-4 py-3 shadow-sm">
+  <h3 class="mb-0">Organization Profile</h3>
+  <button class="btn btn-outline-light rounded-pill px-4 py-2" routerLink="/org-dashboard">
+    &larr; Back to Dashboard
+  </button>
+</div>
+
+<div class="container mt-4" style="max-width: 600px;">
+
+  <!-- Profile Info -->
+  <div class="card rounded-4 shadow-sm mb-4">
+    <div class="card-body p-4">
+      <h5 class="fw-bold mb-3">Organization Info</h5>
+
+      <div *ngIf="profileSuccess" class="alert alert-success rounded-pill py-2">{{ profileSuccess }}</div>
+      <div *ngIf="profileError" class="alert alert-danger rounded-pill py-2">{{ profileError }}</div>
+
+      <form (ngSubmit)="saveProfile()" #profileFormRef="ngForm">
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Organization Name</label>
+          <input
+            type="text"
+            class="form-control rounded-pill"
+            [(ngModel)]="profileForm.name"
+            name="name"
+            required
+          />
+        </div>
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Email</label>
+          <input
+            type="email"
+            class="form-control rounded-pill"
+            [(ngModel)]="profileForm.email"
+            name="email"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          [disabled]="!profileFormRef.valid"
+          class="btn btn-primary rounded-pill px-4"
+        >
+          Save Changes
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Change Password -->
+  <div class="card rounded-4 shadow-sm mb-4">
+    <div class="card-body p-4">
+      <h5 class="fw-bold mb-3">Change Password</h5>
+
+      <div *ngIf="passwordSuccess" class="alert alert-success rounded-pill py-2">{{ passwordSuccess }}</div>
+      <div *ngIf="passwordError" class="alert alert-danger rounded-pill py-2">{{ passwordError }}</div>
+
+      <form (ngSubmit)="savePassword()" #passwordFormRef="ngForm">
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Current Password</label>
+          <input
+            type="password"
+            class="form-control rounded-pill"
+            [(ngModel)]="passwordForm.oldPassword"
+            name="oldPassword"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">New Password</label>
+          <input
+            type="password"
+            class="form-control rounded-pill"
+            [(ngModel)]="passwordForm.newPassword"
+            name="newPassword"
+            required
+          />
+        </div>
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Confirm New Password</label>
+          <input
+            type="password"
+            class="form-control rounded-pill"
+            [(ngModel)]="passwordForm.confirmPassword"
+            name="confirmPassword"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          [disabled]="!passwordFormRef.valid"
+          class="btn btn-primary rounded-pill px-4"
+        >
+          Change Password
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Membership -->
+  <div class="card rounded-4 shadow-sm mb-4">
+    <div class="card-body p-4">
+      <h5 class="fw-bold mb-3">Membership</h5>
+
+      <div class="mb-2">
+        <span class="fw-semibold">Start Date:</span>
+        <span class="ms-2">{{ org?.subscriptionStart ? (org!.subscriptionStart | date:'mediumDate') : 'N/A' }}</span>
+      </div>
+      <div class="mb-3">
+        <span class="fw-semibold">Expiry Date:</span>
+        <span class="ms-2">{{ org?.subscriptionExpiration ? (org!.subscriptionExpiration | date:'mediumDate') : 'N/A' }}</span>
+      </div>
+
+      <div *ngIf="renewSuccess" class="alert alert-success rounded-pill py-2">{{ renewSuccess }}</div>
+      <div *ngIf="renewError" class="alert alert-danger rounded-pill py-2">{{ renewError }}</div>
+
+      <button class="btn btn-success rounded-pill px-4 mt-2" (click)="renewMembership()">
+        Renew Membership
+      </button>
+    </div>
+  </div>
+
+</div>

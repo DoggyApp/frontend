@@ -17,7 +17,9 @@ import { OrgLoginComponent } from './org-login/org-login.component';
 import { OrgDashboardComponent } from './org-dashboard/org-dashboard.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { AddDogComponent } from './add-dog/add-dog.component';
-import { ScheduleComponent } from './schedule/schedule.component';
+import { OrgCalendarComponent } from './org-calendar/org-calendar.component';
+import { UserCalendarComponent } from './user-calendar/user-calendar.component';
+import { OrgProfileComponent } from './org-profile/org-profile.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,9 @@ import { ScheduleComponent } from './schedule/schedule.component';
     OrgDashboardComponent,
     UserProfileComponent,
     AddDogComponent,
-    ScheduleComponent
+    OrgCalendarComponent,
+    UserCalendarComponent,
+    OrgProfileComponent
   ],
   imports: [
     BrowserModule,

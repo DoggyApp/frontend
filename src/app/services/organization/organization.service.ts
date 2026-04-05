@@ -39,6 +39,18 @@ export class OrganizationService {
     );
   }
 
+  updateProfile(name: string, email: string): Observable<Organization> {
+    return this.http.put<Organization>(`${this.apiUrl}/profile`, { name, email }, this.options);
+  }
+
+  changePassword(oldPassword: string, newPassword: string): Observable<string> {
+    return this.http.put<string>(`${this.apiUrl}/password`, { oldPassword, newPassword }, this.options);
+  }
+
+  renew(): Observable<Organization> {
+    return this.http.put<Organization>(`${this.apiUrl}/renew`, {}, this.options);
+  }
+
   // -- AWS EKS reference (for future deployment) --
   // private apiUrl = (window as any)._env_.LOAD_BALANCER_URL;
 

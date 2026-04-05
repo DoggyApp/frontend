@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { CalendarEvent } from '../models/event';
 import { Location } from '../models/location';
@@ -11,28 +11,26 @@ import { DogService } from '../services/dog/dog.service';
 import { UserService } from '../services/user/user.service';
 
 @Component({
-  selector: 'app-calendar',
-  templateUrl: './calendar.component.html',
-  styleUrls: ['./calendar.component.css'],
+  selector: 'app-user-calendar',
+  templateUrl: './user-calendar.component.html',
+  styleUrls: ['./user-calendar.component.css'],
   standalone: false
 })
-export class CalendarComponent implements OnInit {
+export class UserCalendarComponent implements OnInit {
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
     private eventsService: EventsService,
     private locationService: LocationService,
     private dogService: DogService,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router
   ) {}
 
-  dogId!: number;
   currentUser: User | null = null;
-  profileDog: Dog | null = null;
   events: CalendarEvent[] = [];
   locations: Location[] = [];
   allDogs: Dog[] = [];
+  allUsers: User[] = [];
 
   currentDate = new Date();
   weekDays: Date[] = [];
@@ -58,20 +56,21 @@ export class CalendarComponent implements OnInit {
   popupFilteredDogs: Dog[] = [];
 
   ngOnInit(): void {
-    this.dogId = Number(this.route.snapshot.paramMap.get('id'));
-    this.generateWeek();
     this.userService.getSession().subscribe(user => {
       if (!user) { this.router.navigate(['/login']); return; }
       this.currentUser = user;
+      this.loadEvents();
     });
-    this.eventsService.getEventsByDog(this.dogId).subscribe(events => this.events = events);
-    this.dogService.getDogById(this.dogId).subscribe(dog => this.profileDog = dog);
+    this.generateWeek();
     this.locationService.getLocations().subscribe(locs => this.locations = locs);
     this.dogService.getDogs().subscribe(dogs => this.allDogs = dogs);
   }
 
   loadEvents(): void {
-    this.eventsService.getEventsByDog(this.dogId).subscribe(events => this.events = events);
+    if (!this.currentUser) return;
+    this.eventsService.getEventsByUser(this.currentUser.id).subscribe(events => {
+      this.events = events;
+    });
   }
 
   // ── Week grid ──────────────────────────────────────────
@@ -115,8 +114,7 @@ export class CalendarComponent implements OnInit {
 
   openAddEventForm(): void {
     this.newEvent = { event: '', description: '', location: undefined, startTime: '', endTime: '' };
-    // Pre-select the profile dog
-    this.selectedDogs = this.profileDog ? [this.profileDog] : [];
+    this.selectedDogs = [];
     this.dogSearch = '';
     this.filteredDogs = [];
     this.showAddEventForm = true;
@@ -139,8 +137,6 @@ export class CalendarComponent implements OnInit {
   }
 
   removeDogFromForm(dogId: number): void {
-    // Don't allow removing the profile dog
-    if (dogId === this.dogId) return;
     this.selectedDogs = this.selectedDogs.filter(d => d.id !== dogId);
   }
 

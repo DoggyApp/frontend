@@ -4,4 +4,6 @@ export interface Location {
   id: number;
   name: string;
   organization: Organization;
+  address: string;
+  offsite: boolean;
 }

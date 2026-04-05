@@ -180,8 +180,3 @@
   padding: 0;
   line-height: 1;
 }
-
-.chip-remove:disabled {
-  opacity: 0.3;
-  cursor: default;
-}

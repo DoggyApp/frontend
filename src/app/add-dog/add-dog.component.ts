@@ -5,7 +5,8 @@ import { DogService } from '../services/dog/dog.service';
 @Component({
   selector: 'app-add-dog',
   templateUrl: './add-dog.component.html',
-  styleUrls: ['./add-dog.component.css']
+  styleUrls: ['./add-dog.component.css'],
+  standalone: false
 })
 export class AddDogComponent implements OnInit {
 

@@ -3,6 +3,38 @@
   font-weight: bold;
 }
 
+/* Owner Badge */
+.owner-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  background: #f0f4ff;
+  border: 1px solid #c7d4f7;
+  border-radius: 12px;
+  padding: 10px 16px;
+  min-width: 180px;
+}
+
+.owner-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6c757d;
+  margin-bottom: 4px;
+}
+
+.owner-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.owner-contact {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
 /* Layout */
 .profile-layout {
   align-items: flex-start;
