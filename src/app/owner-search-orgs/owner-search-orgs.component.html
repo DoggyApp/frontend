@@ -1,0 +1,72 @@
+<app-owner-nav></app-owner-nav>
+
+<div class="page-content">
+  <h2 class="page-title">Search Organizations</h2>
+
+  <!-- Search bars -->
+  <div class="search-row">
+    <div class="search-field">
+      <label class="search-label">Name</label>
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Search by organization name…"
+               [(ngModel)]="nameQuery" (keyup.enter)="searchByName()" />
+        <button class="btn btn-primary" (click)="searchByName()">Search</button>
+      </div>
+    </div>
+    <div class="search-field">
+      <label class="search-label">Service</label>
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Search by service offered…"
+               [(ngModel)]="serviceQuery" (keyup.enter)="searchByService()" />
+        <button class="btn btn-primary" (click)="searchByService()">Search</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-meta">
+    <span *ngIf="!nameQuery && !serviceQuery" class="text-muted">
+      Showing organizations within 40 miles of your location
+    </span>
+    <span *ngIf="nameQuery" class="text-muted">
+      Showing results for name "{{ nameQuery }}"
+    </span>
+    <span *ngIf="serviceQuery" class="text-muted">
+      Showing results for service "{{ serviceQuery }}"
+    </span>
+    <button *ngIf="nameQuery || serviceQuery" class="btn btn-sm btn-link text-muted clear-btn"
+            (click)="clearSearch()">Clear</button>
+  </div>
+
+  <p *ngIf="locationError" class="alert alert-warning">{{ locationError }}</p>
+
+  <div *ngIf="loading" class="text-center py-5 text-muted">Finding organizations…</div>
+
+  <p *ngIf="!loading && loaded && displayedOrgs.length === 0" class="empty-state">
+    No organizations found.
+  </p>
+
+  <div class="org-grid" *ngIf="!loading && displayedOrgs.length > 0">
+    <div class="org-card" *ngFor="let org of displayedOrgs">
+      <div class="org-avatar">{{ org.name[0] }}</div>
+      <div class="org-info">
+        <h5 class="org-name">{{ org.name }}</h5>
+        <p class="org-title" *ngIf="org.title">{{ org.title }}</p>
+        <p class="org-title text-muted fst-italic" *ngIf="!org.title">No title</p>
+        <div class="org-rating">
+          <span class="rating-star">★</span>
+          <span class="rating-value">{{ getRating(org.id) }}</span>
+        </div>
+      </div>
+      <div class="org-actions">
+        <button class="btn btn-sm btn-outline-primary rounded-pill"
+                (click)="viewProfile(org.id)">View Profile</button>
+        <button class="btn btn-sm rounded-pill"
+                [class.btn-warning]="!isFavorite(org.id)"
+                [class.btn-outline-secondary]="isFavorite(org.id)"
+                (click)="toggleFavorite(org)">
+          {{ isFavorite(org.id) ? '★ Saved' : '☆ Save' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

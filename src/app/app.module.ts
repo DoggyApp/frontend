@@ -23,6 +23,12 @@ import { OrgProfileComponent } from './org-profile/org-profile.component';
 import { OwnerLoginComponent } from './owner-login/owner-login.component';
 import { OwnerDashboardComponent } from './owner-dashboard/owner-dashboard.component';
 import { OwnerRegisterComponent } from './owner-register/owner-register.component';
+import { OwnerNavComponent } from './owner-nav/owner-nav.component';
+import { OwnerCalendarComponent } from './owner-calendar/owner-calendar.component';
+import { OwnerEditProfileComponent } from './owner-edit-profile/owner-edit-profile.component';
+import { OwnerFriendsComponent } from './owner-friends/owner-friends.component';
+import { OwnerSearchOrgsComponent } from './owner-search-orgs/owner-search-orgs.component';
+import { PublicOrgProfileComponent } from './public-org-profile/public-org-profile.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +50,13 @@ import { OwnerRegisterComponent } from './owner-register/owner-register.componen
     OrgProfileComponent,
     OwnerLoginComponent,
     OwnerDashboardComponent,
-    OwnerRegisterComponent
+    OwnerRegisterComponent,
+    OwnerNavComponent,
+    OwnerCalendarComponent,
+    OwnerEditProfileComponent,
+    OwnerFriendsComponent,
+    OwnerSearchOrgsComponent,
+    PublicOrgProfileComponent
   ],
   imports: [
     BrowserModule,

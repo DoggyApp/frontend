@@ -1,0 +1,55 @@
+<app-owner-nav></app-owner-nav>
+
+<div class="page-content">
+  <h2 class="page-title">Edit Profile</h2>
+  <p class="page-sub">Update your name, contact info, and address. Your handle and birthday cannot be changed.</p>
+
+  <div class="edit-card">
+    <p *ngIf="saveError" class="alert alert-danger py-2">{{ saveError }}</p>
+    <p *ngIf="saveSuccess" class="alert alert-success py-2">Changes saved!</p>
+
+    <div class="d-flex gap-3 mb-3">
+      <div class="flex-fill">
+        <label class="form-label">First Name</label>
+        <input type="text" [(ngModel)]="firstName" class="form-control rounded-pill" />
+      </div>
+      <div class="flex-fill">
+        <label class="form-label">Last Name</label>
+        <input type="text" [(ngModel)]="lastName" class="form-control rounded-pill" />
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" [(ngModel)]="email" class="form-control rounded-pill" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Phone Number</label>
+      <input type="text" [(ngModel)]="phoneNumber" class="form-control rounded-pill" />
+    </div>
+
+    <div class="mb-1">
+      <label class="form-label">Home Address</label>
+      <div #autocompleteContainer class="autocomplete-container"></div>
+      <p *ngIf="address" class="address-confirm">✓ {{ address }}</p>
+    </div>
+
+    <div class="readonly-fields mt-4">
+      <div class="readonly-item">
+        <span class="readonly-label">Handle</span>
+        <span class="readonly-value">@{{ owner?.handle }}</span>
+      </div>
+      <div class="readonly-item">
+        <span class="readonly-label">Birthday</span>
+        <span class="readonly-value">{{ owner?.birthday | date:'MMMM d, yyyy' }}</span>
+      </div>
+    </div>
+
+    <button class="btn btn-warning btn-lg rounded-pill w-100 mt-4 text-white fw-semibold"
+            [disabled]="!isFormValid()"
+            (click)="onSave()">
+      Save Changes
+    </button>
+  </div>
+</div>

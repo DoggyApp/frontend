@@ -1,4 +1,5 @@
 import { Dog } from "./dog";
+import { Organization } from "./organization";
 
 export interface Owner {
   id: number;
@@ -8,6 +9,9 @@ export interface Owner {
   email: string;
   password?: string;
   phoneNumber: string;
+  address?: string;
+  birthday?: string;
   dogs: Dog[];
   friends?: Owner[];
+  favoriteOrganizations?: Organization[];
 }

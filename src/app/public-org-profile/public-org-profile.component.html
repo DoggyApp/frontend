@@ -1,0 +1,58 @@
+<app-owner-nav></app-owner-nav>
+
+<div class="page-content">
+
+  <button class="btn btn-link back-link px-0 mb-4" (click)="goBack()">← Back to search</button>
+
+  <div *ngIf="loading" class="text-center py-5 text-muted">Loading…</div>
+
+  <div *ngIf="!loading && !org" class="text-muted">Organization not found.</div>
+
+  <ng-container *ngIf="!loading && org">
+    <div class="org-header">
+      <div class="org-avatar">{{ org.name[0] }}</div>
+      <div class="org-header-info">
+        <h2 class="mb-0">{{ org.name }}</h2>
+        <p class="org-type text-muted mb-1" *ngIf="org.title">{{ org.title }}</p>
+        <div class="header-rating mb-2">
+          <span class="rating-star">★</span>
+          <span class="rating-value">{{ formattedRating }}</span>
+        </div>
+        <button class="btn rounded-pill px-4"
+                [class.btn-warning]="!isFavorite"
+                [class.btn-outline-secondary]="isFavorite"
+                (click)="toggleFavorite()">
+          {{ isFavorite ? '★ Saved to Favorites' : '☆ Save to Favorites' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Services -->
+    <div class="profile-section">
+      <h5 class="section-title">Services</h5>
+      <div *ngIf="services.length === 0" class="text-muted fst-italic">No services listed.</div>
+      <ul class="service-list" *ngIf="services.length > 0">
+        <li class="service-item" *ngFor="let s of services">
+          <span class="service-name">{{ s.name }}</span>
+          <span class="service-desc text-muted" *ngIf="s.description">— {{ s.description }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Reviews -->
+    <div class="profile-section">
+      <h5 class="section-title">Reviews</h5>
+      <div *ngIf="!org.reviews || org.reviews.length === 0" class="text-muted fst-italic">No reviews yet.</div>
+      <div class="review-list" *ngIf="org.reviews && org.reviews.length > 0">
+        <div class="review-item" *ngFor="let r of org.reviews">
+          <div class="review-stars">
+            <span *ngFor="let i of [1,2,3,4,5]"
+                  [class.filled]="i <= r.rating">★</span>
+          </div>
+          <p class="review-comment mb-0">{{ r.comment }}</p>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+</div>

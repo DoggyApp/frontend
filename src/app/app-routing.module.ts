@@ -18,6 +18,11 @@ import { OrgProfileComponent } from './org-profile/org-profile.component';
 import { OwnerLoginComponent } from './owner-login/owner-login.component';
 import { OwnerDashboardComponent } from './owner-dashboard/owner-dashboard.component';
 import { OwnerRegisterComponent } from './owner-register/owner-register.component';
+import { OwnerCalendarComponent } from './owner-calendar/owner-calendar.component';
+import { OwnerEditProfileComponent } from './owner-edit-profile/owner-edit-profile.component';
+import { OwnerFriendsComponent } from './owner-friends/owner-friends.component';
+import { OwnerSearchOrgsComponent } from './owner-search-orgs/owner-search-orgs.component';
+import { PublicOrgProfileComponent } from './public-org-profile/public-org-profile.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -35,9 +40,15 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'profile/:id', component: ProfileComponent },
   { path: 'calendar/:id', component: CalendarComponent },
+  // Owner routes
   { path: 'owner-login', component: OwnerLoginComponent },
   { path: 'owner-register', component: OwnerRegisterComponent },
   { path: 'owner-dashboard', component: OwnerDashboardComponent },
+  { path: 'owner-calendar', component: OwnerCalendarComponent },
+  { path: 'owner-edit-profile', component: OwnerEditProfileComponent },
+  { path: 'owner-friends', component: OwnerFriendsComponent },
+  { path: 'owner-search-orgs', component: OwnerSearchOrgsComponent },
+  { path: 'public-org-profile/:id', component: PublicOrgProfileComponent },
   { path: '**', redirectTo: 'not-found' },
 ];
 

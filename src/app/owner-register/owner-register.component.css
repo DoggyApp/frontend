@@ -43,6 +43,15 @@
 .text-success-light { color: #d1fae5; }
 .text-danger-light  { color: #fee2e2; }
 
+/* Google Places autocomplete */
+.autocomplete-container {
+  width: 100%;
+}
+.autocomplete-container gmp-place-autocomplete {
+  display: block;
+  width: 100%;
+}
+
 ::placeholder {
   color: #d1d1d1;
   opacity: 1;

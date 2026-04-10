@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Owner } from 'src/app/models/owner';
 import { Organization } from 'src/app/models/organization';
+import { Service } from 'src/app/models/service';
 import { CalendarEvent } from 'src/app/models/event';
 
 @Injectable({
@@ -18,7 +19,7 @@ export class OwnerService {
   constructor(private http: HttpClient) { }
 
   // POST /owner/register
-  register(owner: { firstName: string; lastName: string; email: string; password: string; phoneNumber: string; handle: string }): Observable<Owner | null> {
+  register(owner: { firstName: string; lastName: string; email: string; password: string; phoneNumber: string; handle: string; address: string; birthday: string }): Observable<Owner | null> {
     return this.http.post<Owner>(`${this.apiUrl}/register`, owner, this.options).pipe(
       catchError(() => of(null))
     );
@@ -83,5 +84,71 @@ export class OwnerService {
   searchOwners(handle: string): Observable<Owner[]> {
     const params = new HttpParams().set('handle', handle);
     return this.http.get<Owner[]>(`${this.apiUrl}/search`, { ...this.options, params });
+  }
+
+  // PUT /owner/profile — update editable profile fields
+  updateProfile(data: { firstName: string; lastName: string; email: string; phoneNumber: string; address: string }): Observable<Owner> {
+    return this.http.put<Owner>(`${this.apiUrl}/profile`, data, this.options);
+  }
+
+  // GET /owner/favorites — get favorite organizations
+  getFavoriteOrgs(): Observable<Organization[]> {
+    return this.http.get<Organization[]>(`${this.apiUrl}/favorites`, this.options).pipe(
+      catchError(() => of([]))
+    );
+  }
+
+  // POST /owner/favorite/{orgId} — add org to favorites
+  addFavoriteOrg(orgId: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/favorite/${orgId}`, {}, this.options);
+  }
+
+  // DELETE /owner/favorite/{orgId} — remove org from favorites
+  removeFavoriteOrg(orgId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/favorite/${orgId}`, this.options);
+  }
+
+  // GET /owner/my-events — all events tied to owner's dogs
+  getMyEvents(): Observable<CalendarEvent[]> {
+    return this.http.get<CalendarEvent[]>(`${this.apiUrl}/my-events`, this.options).pipe(
+      catchError(() => of([]))
+    );
+  }
+
+  // GET /owner/org/{orgId} — get a single org by id (for customer-facing profile)
+  getOrgById(orgId: number): Observable<Organization | null> {
+    return this.http.get<Organization>(`${this.apiUrl}/org/${orgId}`, this.options).pipe(
+      catchError(() => of(null))
+    );
+  }
+
+  // GET /owner/search-orgs/name?name= — search organizations by name
+  searchOrgsByName(name: string): Observable<Organization[]> {
+    const params = new HttpParams().set('name', name);
+    return this.http.get<Organization[]>(`${this.apiUrl}/search-orgs/name`, { ...this.options, params }).pipe(
+      catchError(() => of([]))
+    );
+  }
+
+  // GET /owner/search-orgs/service?service= — search organizations by service name
+  searchOrgsByService(serviceName: string): Observable<Organization[]> {
+    const params = new HttpParams().set('service', serviceName);
+    return this.http.get<Organization[]>(`${this.apiUrl}/search-orgs/service`, { ...this.options, params }).pipe(
+      catchError(() => of([]))
+    );
+  }
+
+  // GET /owner/org/{orgId}/services — get all services offered by an org
+  getOrgServices(orgId: number): Observable<Service[]> {
+    return this.http.get<Service[]>(`${this.apiUrl}/org/${orgId}/services`, this.options).pipe(
+      catchError(() => of([]))
+    );
+  }
+
+  // GET /owner/org/{orgId}/mean-rating — get mean review rating (1 decimal place, computed on backend)
+  getOrgMeanRating(orgId: number): Observable<number | null> {
+    return this.http.get<number>(`${this.apiUrl}/org/${orgId}/mean-rating`, this.options).pipe(
+      catchError(() => of(null))
+    );
   }
 }

@@ -1,0 +1,59 @@
+.page-content {
+  max-width: 580px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+.page-title { font-weight: 700; margin-bottom: 4px; }
+.page-sub { color: #6c757d; margin-bottom: 28px; font-size: 14px; }
+
+.edit-card {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 20px;
+  padding: 28px 28px 24px;
+}
+
+.autocomplete-container {
+  width: 100%;
+}
+
+.autocomplete-container gmp-place-autocomplete {
+  display: block;
+  width: 100%;
+}
+
+.address-confirm {
+  font-size: 12px;
+  color: #6c757d;
+  margin: 4px 0 0 8px;
+}
+
+.readonly-fields {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.readonly-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.readonly-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6c757d;
+}
+
+.readonly-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+}
