@@ -14,6 +14,7 @@ export class ClientService {
 
   constructor(private http: HttpClient) { }
 
+  // GET /owner/all — returns all owners associated with the logged-in org
   getClients(): Observable<Owner[]> {
     return this.http.get<Owner[]>(`${this.apiUrl}/all`, this.options);
   }

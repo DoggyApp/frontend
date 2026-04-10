@@ -1,5 +1,6 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, NgZone, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { AppComponent } from '../app.component';
 import { Dog } from '../models/dog';
 import { User } from '../models/user';
 import { Location } from '../models/location';
@@ -10,7 +11,6 @@ import { OrganizationService } from '../services/organization/organization.servi
 import { LocationService } from '../services/location/location.service';
 import { ClientService } from '../client.service';
 
-declare const google: any;
 
 @Component({
     selector: 'app-org-dashboard',
@@ -26,10 +26,12 @@ export class OrgDashboardComponent implements OnInit {
     private organizationService: OrganizationService,
     private locationService: LocationService,
     private clientService: ClientService,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef
   ) { }
 
-  @ViewChild('addressInput') addressInputRef!: ElementRef<HTMLInputElement>;
+  @ViewChild('autocompleteContainer') autocompleteContainerRef!: ElementRef<HTMLDivElement>;
 
   activeTab: 'dogs' | 'employees' | 'locations' | 'clients' = 'dogs';
   dogs: Dog[] = [];
@@ -42,7 +44,6 @@ export class OrgDashboardComponent implements OnInit {
 
   showAddLocationForm = false;
   newLocation = { name: '', address: '' };
-  addressConfirmed = false;
 
   ngOnInit(): void {
     this.organizationService.getSession().subscribe(org => {
@@ -100,42 +101,45 @@ export class OrgDashboardComponent implements OnInit {
 
   openAddLocationModal() {
     this.showAddLocationForm = true;
-    this.addressConfirmed = false;
-    // Wait for *ngIf to render the input before attaching autocomplete
+    this.newLocation = { name: '', address: '' };
     setTimeout(() => this.initAutocomplete(), 0);
   }
 
-  private initAutocomplete() {
-    const input = this.addressInputRef?.nativeElement;
-    if (!input || typeof google === 'undefined') return;
+  private async initAutocomplete(): Promise<void> {
+    await AppComponent.mapsReady;
 
-    const autocomplete = new google.maps.places.Autocomplete(input, {
+    const container = this.autocompleteContainerRef?.nativeElement;
+    if (!container) return;
+
+    const { PlaceAutocompleteElement } = await (window as any).google.maps.importLibrary('places') as any;
+
+    const placeAutocomplete = new PlaceAutocompleteElement({
       types: ['address'],
-      componentRestrictions: { country: 'us' }
+      includedRegionCodes: ['us']
     });
 
-    autocomplete.addListener('place_changed', () => {
-      const place = autocomplete.getPlace();
-      if (place.formatted_address) {
-        this.newLocation.address = place.formatted_address;
-        this.addressConfirmed = true;
-      }
-    });
+    container.innerHTML = '';
+    container.appendChild(placeAutocomplete);
 
-    // If the user edits the field after confirming, require re-selection
-    input.addEventListener('input', () => {
-      this.addressConfirmed = false;
-    });
+    const handleSelect = () => {
+      const address: string = (placeAutocomplete as any).value ?? '';
+      this.ngZone.run(() => {
+        this.newLocation.address = address;
+        this.cdr.detectChanges();
+      });
+    };
+
+    placeAutocomplete.addEventListener('gmp-placeselect', handleSelect);
+    placeAutocomplete.addEventListener('gmp-select', handleSelect);
   }
 
   closeAddLocationModal() {
     this.showAddLocationForm = false;
     this.newLocation = { name: '', address: '' };
-    this.addressConfirmed = false;
   }
 
   submitAddLocation() {
-    if (!this.addressConfirmed) return;
+    if (!this.newLocation.name.trim() || !this.newLocation.address.trim()) return;
     this.locationService.addLocation(this.newLocation.name, this.newLocation.address).subscribe(created => {
       this.locations.push(created);
       this.closeAddLocationModal();

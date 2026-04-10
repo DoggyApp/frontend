@@ -12,31 +12,23 @@
 <div class="container mt-4">
   <ul class="nav nav-tabs mb-4">
     <li class="nav-item">
-      <button class="nav-link" [class.active]="activeTab === 'dogs'" (click)="setTab('dogs')">
-        Dogs
-      </button>
+      <button class="nav-link" [class.active]="activeTab === 'dogs'" (click)="setTab('dogs')">Dogs</button>
     </li>
     <li class="nav-item">
-      <button class="nav-link" [class.active]="activeTab === 'employees'" (click)="setTab('employees')">
-        Employees
-      </button>
+      <button class="nav-link" [class.active]="activeTab === 'employees'" (click)="setTab('employees')">Employees</button>
     </li>
     <li class="nav-item">
-      <button class="nav-link" [class.active]="activeTab === 'locations'" (click)="setTab('locations')">
-        Locations
-      </button>
+      <button class="nav-link" [class.active]="activeTab === 'locations'" (click)="setTab('locations')">Locations</button>
     </li>
     <li class="nav-item">
-      <button class="nav-link" [class.active]="activeTab === 'clients'" (click)="setTab('clients')">
-        Clients
-      </button>
+      <button class="nav-link" [class.active]="activeTab === 'clients'" (click)="setTab('clients')">Clients</button>
     </li>
   </ul>
 
   <!-- Dogs Tab -->
   <div *ngIf="activeTab === 'dogs'" class="row g-3">
     <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let dog of dogs">
-      <app-dog-card [dog]="dog" [showRemove]="true" (removed)="deleteDog(dog.id)"></app-dog-card>
+      <app-dog-card [dog]="dog"></app-dog-card>
     </div>
     <p *ngIf="dogs.length === 0" class="text-muted">No dogs yet.</p>
   </div>
@@ -75,18 +67,18 @@
     <p *ngIf="locations.length === 0" class="text-muted">No locations yet.</p>
   </div>
 
-  <!-- Clients Tab -->
+  <!-- Clients Tab — read-only, owners add themselves -->
   <div *ngIf="activeTab === 'clients'">
+    <p class="text-muted small mb-3">Clients appear here when owners add your organization.</p>
     <p *ngIf="clients.length === 0" class="text-muted">No clients yet.</p>
-    <div *ngFor="let client of clients" class="client-section mb-4">
-      <h5 class="fw-semibold mb-1">{{ client.name }}</h5>
+    <div *ngFor="let client of clients" class="client-section mb-4 p-3 rounded-4 shadow-sm bg-white">
+      <h5 class="fw-semibold mb-0">{{ client.firstName }} {{ client.lastName }}</h5>
       <p class="text-muted small mb-2">{{ client.email }} &bull; {{ client.phoneNumber }}</p>
       <div class="row g-3">
         <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let dog of client.dogs">
           <app-dog-card [dog]="dog"></app-dog-card>
         </div>
       </div>
-      <hr>
     </div>
   </div>
 </div>
@@ -98,44 +90,20 @@
 
     <form (ngSubmit)="submitAddEmployee()" #addEmployeeForm="ngForm">
       <div class="mb-3">
-        <input
-          type="text"
-          placeholder="First Name"
-          [(ngModel)]="newEmployee.firstName"
-          name="firstName"
-          required
-          class="form-control rounded-pill"
-        />
+        <input type="text" placeholder="First Name" [(ngModel)]="newEmployee.firstName"
+               name="firstName" required class="form-control rounded-pill" />
       </div>
       <div class="mb-3">
-        <input
-          type="text"
-          placeholder="Last Name"
-          [(ngModel)]="newEmployee.lastName"
-          name="lastName"
-          required
-          class="form-control rounded-pill"
-        />
+        <input type="text" placeholder="Last Name" [(ngModel)]="newEmployee.lastName"
+               name="lastName" required class="form-control rounded-pill" />
       </div>
       <div class="mb-3">
-        <input
-          type="email"
-          placeholder="Email"
-          [(ngModel)]="newEmployee.email"
-          name="email"
-          required
-          class="form-control rounded-pill"
-        />
+        <input type="email" placeholder="Email" [(ngModel)]="newEmployee.email"
+               name="email" required class="form-control rounded-pill" />
       </div>
       <div class="mb-4">
-        <input
-          type="password"
-          placeholder="Password"
-          [(ngModel)]="newEmployee.password"
-          name="password"
-          required
-          class="form-control rounded-pill"
-        />
+        <input type="password" placeholder="Password" [(ngModel)]="newEmployee.password"
+               name="password" required class="form-control rounded-pill" />
       </div>
 
       <div class="d-flex gap-2">
@@ -157,29 +125,16 @@
 
     <form (ngSubmit)="submitAddLocation()" #addLocationForm="ngForm">
       <div class="mb-3">
-        <input
-          type="text"
-          placeholder="Location Name"
-          [(ngModel)]="newLocation.name"
-          name="name"
-          required
-          class="form-control rounded-pill"
-        />
+        <input type="text" placeholder="Location Name" [(ngModel)]="newLocation.name"
+               name="name" required class="form-control rounded-pill" />
       </div>
       <div class="mb-4">
-        <input
-          #addressInput
-          type="text"
-          placeholder="Address"
-          name="address"
-          required
-          class="form-control rounded-pill"
-          autocomplete="off"
-        />
+        <div #autocompleteContainer class="autocomplete-container"></div>
       </div>
 
       <div class="d-flex gap-2">
-        <button type="submit" [disabled]="!addressConfirmed" class="btn btn-primary rounded-pill flex-grow-1">
+        <button type="submit" [disabled]="!newLocation.name.trim() || !newLocation.address.trim()"
+                class="btn btn-primary rounded-pill flex-grow-1">
           Add
         </button>
         <button type="button" class="btn btn-outline-secondary rounded-pill flex-grow-1" (click)="closeAddLocationModal()">
@@ -192,7 +147,6 @@
 
 <!-- Floating Action Buttons -->
 <div class="fab-stack">
-  <button *ngIf="activeTab === 'dogs'" class="add-fab shadow-lg" routerLink="/add-dog">+ Add Dog</button>
   <button *ngIf="activeTab === 'employees'" class="add-fab shadow-lg" (click)="openAddEmployeeModal()">+ Add Employee</button>
   <button *ngIf="activeTab === 'locations'" class="add-fab shadow-lg" (click)="openAddLocationModal()">+ Add Location</button>
 </div>

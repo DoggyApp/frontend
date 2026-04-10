@@ -1,0 +1,49 @@
+.register-bubble {
+  background-color: #f59e0b;
+  width: 100%;
+  max-width: 480px;
+}
+
+.form-error {
+  color: #fff;
+  background: rgba(0,0,0,0.25);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 14px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Handle input with @ prefix */
+.handle-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.at-sign {
+  position: absolute;
+  left: 18px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #6c757d;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.handle-input {
+  padding-left: 34px !important;
+}
+
+.handle-feedback {
+  min-height: 20px;
+  padding-left: 8px;
+}
+
+.text-success-light { color: #d1fae5; }
+.text-danger-light  { color: #fee2e2; }
+
+::placeholder {
+  color: #d1d1d1;
+  opacity: 1;
+}

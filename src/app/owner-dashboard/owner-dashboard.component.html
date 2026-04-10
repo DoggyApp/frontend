@@ -1,0 +1,177 @@
+<!-- Top Bar -->
+<div class="topbar">
+  <div>
+    <h3 class="mb-0">{{ currentOwner?.firstName }} {{ currentOwner?.lastName }}'s Dashboard</h3>
+    <span class="handle-badge">@{{ currentOwner?.handle }}</span>
+  </div>
+  <button class="btn btn-outline-light rounded-pill px-4" (click)="logout()">Logout</button>
+</div>
+
+<!-- Tabs -->
+<div class="container mt-4">
+  <ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab === 'dogs'" (click)="setTab('dogs')">My Dogs</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab === 'orgs'" (click)="setTab('orgs')">Organizations Nearby</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab === 'events'" (click)="setTab('events')">Events Nearby</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab === 'friends'" (click)="setTab('friends')">Friends</button>
+    </li>
+  </ul>
+
+  <!-- ── My Dogs Tab ──────────────────────────────────── -->
+  <div *ngIf="activeTab === 'dogs'">
+    <div class="row g-3">
+      <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let dog of currentOwner?.dogs">
+        <app-dog-card [dog]="dog"></app-dog-card>
+      </div>
+    </div>
+    <p *ngIf="!currentOwner?.dogs?.length" class="text-muted">No dogs on your account.</p>
+  </div>
+
+  <!-- ── Organizations Nearby Tab ─────────────────────── -->
+  <div *ngIf="activeTab === 'orgs'">
+    <div class="radius-bar mb-4">
+      <label class="radius-label">Search radius</label>
+      <div class="d-flex align-items-center gap-3">
+        <input type="range" min="1" max="50" step="1" [(ngModel)]="orgsRadius"
+               (change)="onOrgsRadiusChange()" class="form-range radius-slider" />
+        <span class="radius-value">{{ orgsRadius }} mi</span>
+      </div>
+    </div>
+
+    <p *ngIf="locationError" class="text-danger small">{{ locationError }}</p>
+    <div *ngIf="orgsLoading" class="text-center py-5 text-muted">Finding organizations…</div>
+
+    <div *ngIf="!orgsLoading">
+      <p *ngIf="nearbyOrgs.length === 0 && orgsLoaded" class="text-muted">
+        No organizations found within {{ orgsRadius }} mile{{ orgsRadius === 1 ? '' : 's' }}.
+      </p>
+      <div class="row g-3">
+        <div class="col-sm-6 col-md-4" *ngFor="let org of nearbyOrgs">
+          <div class="info-card p-3 rounded-4 shadow-sm">
+            <div class="info-avatar org-avatar mb-2">{{ org.name[0] }}</div>
+            <h5 class="mb-1 fw-semibold">{{ org.name }}</h5>
+            <p class="text-muted small mb-0">{{ org.email }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Events Nearby Tab ────────────────────────────── -->
+  <div *ngIf="activeTab === 'events'">
+    <div class="radius-bar mb-4">
+      <label class="radius-label">Search radius</label>
+      <div class="d-flex align-items-center gap-3">
+        <input type="range" min="1" max="50" step="1" [(ngModel)]="eventsRadius"
+               (change)="onEventsRadiusChange()" class="form-range radius-slider" />
+        <span class="radius-value">{{ eventsRadius }} mi</span>
+      </div>
+    </div>
+
+    <p *ngIf="locationError" class="text-danger small">{{ locationError }}</p>
+    <div *ngIf="eventsLoading" class="text-center py-5 text-muted">Finding events…</div>
+
+    <div *ngIf="!eventsLoading">
+      <p *ngIf="nearbyEvents.length === 0 && eventsLoaded" class="text-muted">
+        No events found within {{ eventsRadius }} mile{{ eventsRadius === 1 ? '' : 's' }}.
+      </p>
+      <div class="event-list">
+        <div class="event-card p-3 rounded-4 shadow-sm mb-3" *ngFor="let ev of nearbyEvents">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h5 class="mb-1 fw-semibold">{{ ev.event }}</h5>
+              <p class="mb-1 text-muted small">{{ ev.description }}</p>
+              <p class="mb-1 small">
+                <span class="me-3">📍 {{ ev.location?.name }}</span>
+                <span class="text-muted">{{ ev.location?.address }}</span>
+              </p>
+            </div>
+            <div class="event-time text-end">
+              <div class="fw-semibold">{{ ev.startTime | date:'MMM d' }}</div>
+              <div class="text-muted small">{{ ev.startTime | date:'h:mm a' }} – {{ ev.endTime | date:'h:mm a' }}</div>
+            </div>
+          </div>
+
+          <div class="mt-2" *ngIf="ev.attendees?.length">
+            <div class="detail-label">Attendees</div>
+            <div class="avatar-row">
+              <div class="avatar-bubble" *ngFor="let a of ev.attendees">
+                <div class="avatar-circle user-circle">{{ a.firstName[0] }}{{ a.lastName[0] }}</div>
+                <span class="avatar-name">{{ a.firstName }} {{ a.lastName }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-2" *ngIf="ev.dogs?.length">
+            <div class="detail-label">Dogs</div>
+            <div class="avatar-row">
+              <div class="avatar-bubble" *ngFor="let d of ev.dogs">
+                <div class="avatar-circle dog-circle">{{ d.name[0] }}</div>
+                <span class="avatar-name">{{ d.name }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Friends Tab ──────────────────────────────────── -->
+  <div *ngIf="activeTab === 'friends'">
+
+    <!-- Search -->
+    <div class="friend-search-box mb-4">
+      <label class="form-label fw-semibold">Find dog owners</label>
+      <div class="position-relative">
+        <input type="text" [(ngModel)]="friendSearch" (input)="onFriendSearch()"
+               placeholder="Search by @handle…" class="form-control rounded-pill" />
+        <div class="search-results" *ngIf="friendSearchResults.length > 0">
+          <div class="search-result-item" *ngFor="let r of friendSearchResults"
+               (click)="addFriend(r)">
+            <div class="avatar-circle user-circle sm-circle">{{ r.firstName[0] }}{{ r.lastName[0] }}</div>
+            <div class="flex-grow-1">
+              <div class="fw-semibold">{{ r.firstName }} {{ r.lastName }}</div>
+              <div class="text-muted small">@{{ r.handle }} &bull; {{ r.dogs?.length }} dog{{ r.dogs?.length === 1 ? '' : 's' }}</div>
+            </div>
+            <span class="add-badge">+ Add</span>
+          </div>
+        </div>
+        <div class="search-results" *ngIf="friendSearch.trim() && !friendSearchLoading && friendSearchResults.length === 0">
+          <div class="search-result-item text-muted">No results found</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Friends list -->
+    <p class="text-muted" *ngIf="friends.length === 0">No friends yet. Search by @handle above to add some!</p>
+    <div class="row g-3">
+      <div class="col-sm-6 col-md-4" *ngFor="let friend of friends">
+        <div class="info-card p-3 rounded-4 shadow-sm">
+          <div class="d-flex align-items-center gap-3 mb-2">
+            <div class="info-avatar friend-avatar">{{ friend.firstName[0] }}{{ friend.lastName[0] }}</div>
+            <div class="flex-grow-1">
+              <h5 class="mb-0 fw-semibold">{{ friend.firstName }} {{ friend.lastName }}</h5>
+              <p class="text-muted small mb-0">@{{ friend.handle }}</p>
+            </div>
+          </div>
+          <div class="avatar-row mb-2" *ngIf="friend.dogs?.length">
+            <div class="avatar-bubble" *ngFor="let d of friend.dogs">
+              <div class="avatar-circle dog-circle">{{ d.name[0] }}</div>
+              <span class="avatar-name">{{ d.name }}</span>
+            </div>
+          </div>
+          <button class="btn btn-outline-danger btn-sm rounded-pill w-100"
+                  (click)="removeFriend(friend.id)">Remove Friend</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

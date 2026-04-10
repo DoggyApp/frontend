@@ -11,6 +11,6 @@ export interface CalendarEvent {
   location?: Location;
   address?: string;
   creator?: User;
-  trainers: User[];
+  attendees: User[];
   dogs: Dog[];
 }

@@ -169,7 +169,7 @@ export class UserCalendarComponent implements OnInit {
 
   isAlreadyJoined(): boolean {
     return !!this.currentUser &&
-      (this.selectedEvent?.trainers ?? []).some(t => t.id === this.currentUser!.id);
+      (this.selectedEvent?.attendees ?? []).some(t => t.id === this.currentUser!.id);
   }
 
   joinEvent(): void {

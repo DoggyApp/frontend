@@ -2,8 +2,12 @@ import { Dog } from "./dog";
 
 export interface Owner {
   id: number;
-  name: string;
+  firstName: string;
+  lastName: string;
+  handle: string;
   email: string;
+  password?: string;
   phoneNumber: string;
-  dogs: Dog[]
+  dogs: Dog[];
+  friends?: Owner[];
 }

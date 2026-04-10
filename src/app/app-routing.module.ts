@@ -15,6 +15,9 @@ import { AddDogComponent } from './add-dog/add-dog.component';
 import { OrgCalendarComponent } from './org-calendar/org-calendar.component';
 import { UserCalendarComponent } from './user-calendar/user-calendar.component';
 import { OrgProfileComponent } from './org-profile/org-profile.component';
+import { OwnerLoginComponent } from './owner-login/owner-login.component';
+import { OwnerDashboardComponent } from './owner-dashboard/owner-dashboard.component';
+import { OwnerRegisterComponent } from './owner-register/owner-register.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -32,6 +35,9 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'profile/:id', component: ProfileComponent },
   { path: 'calendar/:id', component: CalendarComponent },
+  { path: 'owner-login', component: OwnerLoginComponent },
+  { path: 'owner-register', component: OwnerRegisterComponent },
+  { path: 'owner-dashboard', component: OwnerDashboardComponent },
   { path: '**', redirectTo: 'not-found' },
 ];
 
