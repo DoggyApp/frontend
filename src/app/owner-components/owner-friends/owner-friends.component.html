@@ -1,0 +1,92 @@
+<app-owner-nav></app-owner-nav>
+
+<div class="page-content">
+
+  <div class="page-header">
+    <h2 class="page-title">Friends</h2>
+
+    <!-- Requests dropdown button -->
+    <div class="requests-wrapper">
+      <button class="btn-requests" (click)="toggleRequestsDropdown()">
+        Requests
+        <span class="req-badge" *ngIf="pendingRequests.length > 0">{{ pendingRequests.length }}</span>
+        <span class="dropdown-arrow">{{ showRequestsDropdown ? '▲' : '▼' }}</span>
+      </button>
+
+      <div class="requests-dropdown" *ngIf="showRequestsDropdown">
+        <p class="dropdown-empty" *ngIf="pendingRequests.length === 0">No pending requests</p>
+        <div class="request-row" *ngFor="let req of pendingRequests">
+          <div class="req-avatar">{{ req.sender.firstName[0] }}{{ req.sender.lastName[0] }}</div>
+          <div class="req-info">
+            <div class="req-name">{{ req.sender.firstName }} {{ req.sender.lastName }}</div>
+            <div class="req-handle">&#64;{{ req.sender.handle }}</div>
+          </div>
+          <div class="req-actions">
+            <button class="btn btn-sm btn-success rounded-pill" (click)="acceptRequest(req)">Accept</button>
+            <button class="btn btn-sm btn-outline-secondary rounded-pill" (click)="rejectRequest(req)">Reject</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search box -->
+  <div class="search-section">
+    <div class="position-relative">
+      <input
+        type="text"
+        [(ngModel)]="friendSearch"
+        (input)="onFriendSearch()"
+        placeholder="Search by &#64;handle to add a friend…"
+        class="form-control rounded-pill search-input"
+      />
+
+      <!-- Spinner -->
+      <div class="search-results" *ngIf="friendSearchLoading">
+        <div class="search-result-item text-muted">Searching…</div>
+      </div>
+
+      <!-- Result -->
+      <div class="search-results" *ngIf="friendSearchResult && !friendSearchLoading">
+        <div class="search-result-item" (click)="sendFriendRequest(friendSearchResult!)">
+          <div class="friend-avatar sm">{{ friendSearchResult!.firstName[0] }}{{ friendSearchResult!.lastName[0] }}</div>
+          <div class="flex-grow-1">
+            <div class="fw-semibold">{{ friendSearchResult!.firstName }} {{ friendSearchResult!.lastName }}</div>
+            <div class="text-muted small">&#64;{{ friendSearchResult!.handle }}</div>
+          </div>
+          <span class="add-badge">+ Add</span>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div class="search-results" *ngIf="friendSearch.trim() && !friendSearchLoading && !friendSearchResult && friendSearchError">
+        <div class="search-result-item text-muted">{{ friendSearchError }}</div>
+      </div>
+
+      <!-- Request sent confirmation -->
+      <p class="sent-msg" *ngIf="requestSent">Friend request sent!</p>
+    </div>
+  </div>
+
+  <!-- Friends list -->
+  <p *ngIf="friends.length === 0" class="empty-state">No friends yet. Search by &#64;handle above to connect with other owners.</p>
+
+  <div class="friends-grid" *ngIf="friends.length > 0">
+    <div class="friend-card" *ngFor="let friend of friends">
+      <div class="friend-avatar lg">{{ friend.firstName[0] }}{{ friend.lastName[0] }}</div>
+      <div class="friend-card-body">
+        <h5 class="card-name">{{ friend.firstName }} {{ friend.lastName }}</h5>
+        <p class="card-sub">&#64;{{ friend.handle }}</p>
+        <p class="card-sub">{{ friend.dogs.length }} dog{{ friend.dogs.length === 1 ? '' : 's' }}</p>
+        <button class="btn btn-sm btn-outline-primary rounded-pill mt-2"
+                [routerLink]="['/owner-public-profile', friend.handle]">View Profile</button>
+        <button
+          class="btn btn-sm btn-outline-danger rounded-pill mt-2"
+          (click)="removeFriend(friend.handle)">
+          Remove
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -7,40 +7,39 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { HomeComponent } from './home/home.component';
-import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { DogCardComponent } from './dog-card/dog-card.component';
-import { ProfileComponent } from './profile/profile.component';
-import { CalendarComponent } from './calendar/calendar.component';
-import { OrgLoginComponent } from './org-login/org-login.component';
-import { OrgDashboardComponent } from './org-dashboard/org-dashboard.component';
-import { UserProfileComponent } from './user-profile/user-profile.component';
-import { AddDogComponent } from './add-dog/add-dog.component';
-import { OrgCalendarComponent } from './org-calendar/org-calendar.component';
-import { UserCalendarComponent } from './user-calendar/user-calendar.component';
-import { OrgProfileComponent } from './org-profile/org-profile.component';
-import { OwnerLoginComponent } from './owner-login/owner-login.component';
-import { OwnerDashboardComponent } from './owner-dashboard/owner-dashboard.component';
-import { OwnerRegisterComponent } from './owner-register/owner-register.component';
-import { OwnerNavComponent } from './owner-nav/owner-nav.component';
-import { OwnerCalendarComponent } from './owner-calendar/owner-calendar.component';
-import { OwnerEditProfileComponent } from './owner-edit-profile/owner-edit-profile.component';
-import { OwnerFriendsComponent } from './owner-friends/owner-friends.component';
-import { OwnerSearchOrgsComponent } from './owner-search-orgs/owner-search-orgs.component';
-import { PublicOrgProfileComponent } from './public-org-profile/public-org-profile.component';
+import { UserLoginComponent } from './user-components/user-login/user-login.component';
+import { UserDashboardComponent } from './user-components/user-dashboard/user-dashboard.component';
+import { DogCardComponent } from './dog-components/dog-card/dog-card.component';
+import { DogProfileComponent } from './dog-components/dog-profile/dog-profile.component';
+import { DogCalendarComponent } from './dog-components/dog-calendar/dog-calendar.component';
+import { OrgLoginComponent } from './organization-components/org-login/org-login.component';
+import { OrgDashboardComponent } from './organization-components/org-dashboard/org-dashboard.component';
+import { UserProfileComponent } from './user-components/user-profile/user-profile.component';
+import { AddDogComponent } from './dog-components/add-dog/add-dog.component';
+import { OrgCalendarComponent } from './organization-components/org-calendar/org-calendar.component';
+import { UserCalendarComponent } from './user-components/user-calendar/user-calendar.component';
+import { OrgProfileComponent } from './organization-components/org-profile/org-profile.component';
+import { OwnerLoginComponent } from './owner-components/owner-login/owner-login.component';
+import { OwnerDashboardComponent } from './owner-components/owner-dashboard/owner-dashboard.component';
+import { OwnerRegisterComponent } from './owner-components/owner-register/owner-register.component';
+import { OwnerNavComponent } from './owner-components/owner-nav/owner-nav.component';
+import { OwnerCalendarComponent } from './owner-components/owner-calendar/owner-calendar.component';
+import { OwnerEditProfileComponent } from './owner-components/owner-edit-profile/owner-edit-profile.component';
+import { OwnerFriendsComponent } from './owner-components/owner-friends/owner-friends.component';
+import { OwnerSearchOrgsComponent } from './owner-components/owner-search-orgs/owner-search-orgs.component';
+import { PublicOrgProfileComponent } from './owner-components/public-org-profile/public-org-profile.component';
+import { OwnerPublicProfileComponent } from './owner-components/owner-public-profile/owner-public-profile.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NotFoundComponent,
     HomeComponent,
-    LoginComponent,
-    RegisterComponent,
-    DashboardComponent,
+    UserLoginComponent,
+    UserDashboardComponent,
     DogCardComponent,
-    ProfileComponent,
-    CalendarComponent,
+    DogProfileComponent,
+    DogCalendarComponent,
     OrgLoginComponent,
     OrgDashboardComponent,
     UserProfileComponent,
@@ -56,7 +55,8 @@ import { PublicOrgProfileComponent } from './public-org-profile/public-org-profi
     OwnerEditProfileComponent,
     OwnerFriendsComponent,
     OwnerSearchOrgsComponent,
-    PublicOrgProfileComponent
+    PublicOrgProfileComponent,
+    OwnerPublicProfileComponent
   ],
   imports: [
     BrowserModule,

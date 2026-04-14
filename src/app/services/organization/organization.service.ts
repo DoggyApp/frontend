@@ -1,15 +1,23 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Organization } from 'src/app/models/organization';
+import { Dog } from 'src/app/models/dog';
+import { Note } from 'src/app/models/Note';
+import { Alert } from 'src/app/models/alert';
+import { Like } from 'src/app/models/like';
+import { Vaccine } from 'src/app/models/vaccine';
+import { CalendarEvent } from 'src/app/models/event';
+import { Location } from 'src/app/models/location';
+import { User } from 'src/app/models/user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrganizationService {
 
-  private apiUrl = 'http://localhost:8080/organization';
+  private apiUrl = 'http://localhost:8083/organization';
 
   // withCredentials must be true on every request so the browser
   // includes the session cookie that Spring sets on login.
@@ -49,6 +57,89 @@ export class OrganizationService {
 
   renew(): Observable<Organization> {
     return this.http.put<Organization>(`${this.apiUrl}/renew`, {}, this.options);
+  }
+
+  // ── Dog methods ───────────────────────────────────────
+
+  // GET /organization/dogs
+  getDogs(): Observable<Dog[]> {
+    return this.http.get<Dog[]>(`${this.apiUrl}/dogs`, this.options).pipe(
+      catchError(() => of([]))
+    );
+  }
+
+  // GET /organization/dog/{id}
+  getDogById(id: number): Observable<Dog | null> {
+    return this.http.get<Dog>(`${this.apiUrl}/dog/${id}`, this.options).pipe(
+      catchError(() => of(null))
+    );
+  }
+
+  // POST /organization/dog/add
+  addDog(dog: { name: string; breed: string; age: number; weight: number; image: string }, bordetellaDate: string, rabiesDate: string): Observable<Dog> {
+    const params = new HttpParams()
+      .set('bordetellaDate', bordetellaDate)
+      .set('rabiesDate', rabiesDate);
+    return this.http.post<Dog>(`${this.apiUrl}/dog/add`, dog, { ...this.options, params });
+  }
+
+  // DELETE /organization/dog/{id}
+  deleteDog(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/dog/${id}`, this.options);
+  }
+
+  // ── Event methods ─────────────────────────────────────────────────────────
+
+  // GET /organization/event/dog/{dogId}
+  getEventsByDog(dogId: number): Observable<CalendarEvent[]> {
+    return this.http.get<CalendarEvent[]>(`${this.apiUrl}/event/dog/${dogId}`, this.options).pipe(
+      catchError(() => of([]))
+    );
+  }
+
+  // GET /organization/event/location/{locationId}
+  getEventsByLocation(locationId: number): Observable<CalendarEvent[]> {
+    return this.http.get<CalendarEvent[]>(`${this.apiUrl}/event/location/${locationId}`, this.options).pipe(
+      catchError(() => of([]))
+    );
+  }
+
+  // GET /organization/event/user/{userId}
+  getEventsByUser(userId: number): Observable<CalendarEvent[]> {
+    return this.http.get<CalendarEvent[]>(`${this.apiUrl}/event/user/${userId}`, this.options).pipe(
+      catchError(() => of([]))
+    );
+  }
+
+  // ── Location methods ──────────────────────────────────────────────────────
+
+  // GET /organization/locations
+  getLocations(): Observable<Location[]> {
+    return this.http.get<Location[]>(`${this.apiUrl}/locations`, this.options).pipe(
+      catchError(() => of([]))
+    );
+  }
+
+  // POST /organization/location/add
+  addLocation(name: string, address: string): Observable<Location> {
+    return this.http.post<Location>(`${this.apiUrl}/location/add`, { name, address, offsite: false }, this.options);
+  }
+
+  // DELETE /organization/location/{id}
+  deleteLocation(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/location/${id}`, this.options);
+  }
+
+  // ── User management ───────────────────────────────────────────────────────
+
+  // POST /organization/user/add
+  addUser(user: Omit<User, 'id'>): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/user/add`, user, this.options);
+  }
+
+  // DELETE /organization/user/{id}
+  deleteUser(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/user/${id}`, this.options);
   }
 
   // -- AWS EKS reference (for future deployment) --

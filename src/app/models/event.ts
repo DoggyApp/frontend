@@ -1,4 +1,5 @@
 import { User } from "./user";
+import { Owner } from "./owner";
 import { Dog } from "./dog";
 import { Location } from "./location";
 
@@ -10,7 +11,8 @@ export interface CalendarEvent {
   endTime: string;
   location?: Location;
   address?: string;
-  creator?: User;
+  creator?: User;        // set when an org User created the event
+  ownerCreator?: Owner;  // set when an Owner created the event
   attendees: User[];
   dogs: Dog[];
 }

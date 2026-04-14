@@ -1,5 +1,0 @@
-export interface Vaccine {
-  id: number;
-  vaccine: string;
-  expiration: Date;
-}
