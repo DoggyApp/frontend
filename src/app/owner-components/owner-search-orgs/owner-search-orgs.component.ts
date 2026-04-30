@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Organization } from '../../models/organization';
+import { OrgPublic } from '../../models/org-public';
 import { OwnerService } from '../../services/owner/owner.service';
 
 @Component({
@@ -16,8 +16,8 @@ export class OwnerSearchOrgsComponent implements OnInit {
   nameQuery = '';
   serviceQuery = '';
 
-  nearbyOrgs: Organization[] = [];
-  displayedOrgs: Organization[] = [];
+  nearbyOrgs: OrgPublic[] = [];
+  displayedOrgs: OrgPublic[] = [];
   orgRatings = new Map<number, number | null>();
   favoriteOrgIds = new Set<number>();
 
@@ -113,7 +113,7 @@ export class OwnerSearchOrgsComponent implements OnInit {
     this.loadRatings(this.displayedOrgs);
   }
 
-  private loadRatings(orgs: Organization[]): void {
+  private loadRatings(orgs: OrgPublic[]): void {
     orgs.forEach(org => {
       if (!this.orgRatings.has(org.id)) {
         this.ownerService.getOrgMeanRating(org.id).subscribe(rating => {
@@ -135,7 +135,7 @@ export class OwnerSearchOrgsComponent implements OnInit {
     return this.favoriteOrgIds.has(orgId);
   }
 
-  toggleFavorite(org: Organization): void {
+  toggleFavorite(org: OrgPublic): void {
     if (this.isFavorite(org.id)) {
       this.ownerService.removeFavoriteOrg(org.id).subscribe(() => {
         this.favoriteOrgIds.delete(org.id);

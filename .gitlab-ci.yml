@@ -1,0 +1,62 @@
+# frontend/.gitlab-ci.yml
+# frontend/.gitlab-ci.yml
+
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  IMAGE_NAME: $ECR_REGISTRY/doggyapp/frontend
+  DOCKER_TAG: $CI_COMMIT_SHORT_SHA
+
+default:
+  tags:
+    - k8s
+
+test:
+  stage: test
+  image: node:22
+  cache:
+    key: "$CI_PROJECT_NAME-npm"
+    paths:
+      - node_modules/
+  variables:
+    CHROME_BIN: /usr/bin/chromium
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq chromium
+  script:
+    - npm ci
+    - npm run test -- --watch=false --browsers=ChromeHeadlessNoSandbox
+  coverage: '/Lines\s*:\s*(\d+\.?\d*)%/'
+
+build:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:v1.23.0-debug
+    entrypoint: [""]
+  script:
+    # Angular compiles environment files into the JS bundle at build time, so the key
+    # must be injected here — it cannot be done at container startup like LOAD_BALANCER_URL.
+    # Add GOOGLE_MAPS_API_KEY as a masked, protected variable in GitLab group CI/CD settings.
+    - sed -i "s/googleMapsApiKey: ''/googleMapsApiKey: '$GOOGLE_MAPS_API_KEY'/" $CI_PROJECT_DIR/src/environments/environment.prod.ts
+    - /kaniko/executor
+      --context $CI_PROJECT_DIR
+      --dockerfile $CI_PROJECT_DIR/Dockerfile
+      --destination $IMAGE_NAME:$DOCKER_TAG
+      --destination $IMAGE_NAME:latest
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+deploy:
+  stage: deploy
+  image: bitnami/kubectl:1.29.4
+  environment:
+    name: production
+  script:
+    - kubectl config use-context doggyapp/pipeline-config:doggy-agent
+    - kubectl set image deployment/webapp webapp=$IMAGE_NAME:$DOCKER_TAG -n default
+    - kubectl rollout status deployment/webapp -n default --timeout=180s
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  needs: [build]

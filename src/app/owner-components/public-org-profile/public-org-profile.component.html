@@ -34,7 +34,6 @@
       <ul class="service-list" *ngIf="services.length > 0">
         <li class="service-item" *ngFor="let s of services">
           <span class="service-name">{{ s.name }}</span>
-          <span class="service-desc text-muted" *ngIf="s.description">— {{ s.description }}</span>
         </li>
       </ul>
     </div>
@@ -51,6 +50,49 @@
           </div>
           <p class="review-comment mb-0">{{ r.comment }}</p>
         </div>
+      </div>
+    </div>
+
+    <!-- Register a Dog -->
+    <div class="profile-section">
+      <h5 class="section-title">Register a Dog</h5>
+
+      <div *ngIf="myDogs.length === 0" class="text-muted fst-italic">You have no dogs to register.</div>
+
+      <div *ngIf="myDogs.length > 0">
+        <!-- Per-dog status badges -->
+        <div class="dog-registration-list mb-3">
+          <div class="dog-reg-row d-flex align-items-center gap-2 mb-2" *ngFor="let dog of myDogs">
+            <span class="dog-reg-name fw-semibold">{{ dog.name }}</span>
+            <span *ngIf="requestStatus(dog.id) === 'PENDING'"
+                  class="badge bg-warning text-dark">Pending</span>
+            <span *ngIf="requestStatus(dog.id) === 'ACCEPTED'"
+                  class="badge bg-success">Registered</span>
+            <span *ngIf="requestStatus(dog.id) === 'REJECTED'"
+                  class="badge bg-danger">Rejected</span>
+          </div>
+        </div>
+
+        <!-- Send request form -->
+        <div class="d-flex gap-2 align-items-center">
+          <select class="form-select form-select-sm rounded-pill w-auto"
+                  [(ngModel)]="selectedDogId" name="selectedDog">
+            <option [ngValue]="null" disabled>Select a dog…</option>
+            <option *ngFor="let dog of myDogs"
+                    [ngValue]="dog.id"
+                    [disabled]="requestStatus(dog.id) !== null">
+              {{ dog.name }}{{ requestStatus(dog.id) ? ' (' + requestStatus(dog.id) + ')' : '' }}
+            </option>
+          </select>
+          <button class="btn btn-primary btn-sm rounded-pill"
+                  [disabled]="selectedDogId === null"
+                  (click)="sendRegistrationRequest()">
+            Send Request
+          </button>
+        </div>
+
+        <div *ngIf="registrationSuccess" class="text-success small mt-2">{{ registrationSuccess }}</div>
+        <div *ngIf="registrationError" class="text-danger small mt-2">{{ registrationError }}</div>
       </div>
     </div>
   </ng-container>

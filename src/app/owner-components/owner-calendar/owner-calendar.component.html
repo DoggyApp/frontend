@@ -107,8 +107,8 @@
         <button
           *ngFor="let f of friends"
           class="pill-btn"
-          [class.selected]="createInvitedFriendIds.has(f.id)"
-          (click)="toggleCreateFriend(f.id)">
+          [class.selected]="createInvitedFriendIds.has(f.handle)"
+          (click)="toggleCreateFriend(f.handle)">
           {{ f.firstName }} {{ f.lastName }}
         </button>
       </div>
@@ -169,6 +169,28 @@
           <span class="dog-name">{{ d.name }}</span>
           <button class="btn btn-sm btn-outline-danger rounded-pill ms-auto"
                   (click)="removeDog(d)">Remove</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Owner attendees -->
+    <div class="popup-section" *ngIf="selectedEvent.ownerAttendees?.length">
+      <div class="detail-label">Owners Attending</div>
+      <div class="attendee-list">
+        <div class="attendee-row" *ngFor="let o of selectedEvent.ownerAttendees">
+          <div class="avatar-circle">{{ o.firstName[0] }}{{ o.lastName[0] }}</div>
+          <span>{{ o.firstName }} {{ o.lastName }} <span class="text-muted small">&#64;{{ o.handle }}</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- User attendees -->
+    <div class="popup-section" *ngIf="selectedEvent.attendees?.length">
+      <div class="detail-label">Staff Attending</div>
+      <div class="attendee-list">
+        <div class="attendee-row" *ngFor="let u of selectedEvent.attendees">
+          <div class="avatar-circle user-circle">{{ u.firstName[0] }}{{ u.lastName[0] }}</div>
+          <span>{{ u.firstName }} {{ u.lastName }}</span>
         </div>
       </div>
     </div>

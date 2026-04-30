@@ -27,9 +27,9 @@
 
       <div class="row mb-3">
         <div class="col">
-          <label class="form-label text-muted">Age (years)</label>
-          <input type="number" [(ngModel)]="newDog.age" name="age" required min="0"
-                 class="form-control rounded-pill" />
+          <label class="form-label text-muted">Birthday</label>
+          <input type="date" [(ngModel)]="newDog.birthday" name="birthday" required
+                 [max]="todayStr()" class="form-control rounded-pill" />
         </div>
         <div class="col">
           <label class="form-label text-muted">Weight (lbs)</label>

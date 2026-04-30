@@ -14,5 +14,6 @@ export interface CalendarEvent {
   creator?: User;        // set when an org User created the event
   ownerCreator?: Owner;  // set when an Owner created the event
   attendees: User[];
+  ownerAttendees: Owner[];
   dogs: Dog[];
 }

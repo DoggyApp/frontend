@@ -2,7 +2,10 @@
 
   <!-- Dog Header -->
   <div class="d-flex justify-content-between align-items-start mb-4">
-    <h2 class="dog-name mb-0">{{ dog.name }}</h2>
+    <div class="d-flex align-items-center gap-3">
+      <h2 class="dog-name mb-0">{{ dog.name }}</h2>
+      <button class="btn btn-sm btn-outline-secondary rounded-pill" (click)="openEditDogModal()">Edit</button>
+    </div>
     <div *ngIf="dog.owner" class="owner-badge">
       <span class="owner-label">Owner</span>
       <span class="owner-name">{{ dog.owner.firstName }} {{ dog.owner.lastName }}</span>
@@ -19,6 +22,10 @@
       <div class="detail-block">
         <h6 class="detail-heading">Breed</h6>
         <p>{{ dog.breed }}</p>
+      </div>
+      <div class="detail-block">
+        <h6 class="detail-heading">Birthday</h6>
+        <p>{{ dog.birthday | date:'MMM d, y' }}</p>
       </div>
       <div class="detail-block">
         <h6 class="detail-heading">Age</h6>
@@ -204,6 +211,43 @@
         <button type="button" class="btn btn-outline-secondary rounded-pill flex-grow-1" (click)="closeAddVaccineForm()">Cancel</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- Edit Dog Modal -->
+<div *ngIf="showEditDogModal" class="modal-backdrop d-flex justify-content-center align-items-center">
+  <div class="modal-card p-4 rounded-4 shadow-lg" style="max-width: 480px; width: 100%; background: white;">
+    <h5 class="mb-4">Edit Dog Info</h5>
+
+    <div class="mb-3">
+      <label class="form-label text-muted">Name</label>
+      <input type="text" [(ngModel)]="dogEditForm.name" class="form-control rounded-pill" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label text-muted">Breed</label>
+      <input type="text" [(ngModel)]="dogEditForm.breed" class="form-control rounded-pill" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label text-muted">Birthday</label>
+      <input type="date" [(ngModel)]="dogEditForm.birthday" [max]="todayStr()" class="form-control rounded-pill" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label text-muted">Weight (lbs)</label>
+      <input type="number" [(ngModel)]="dogEditForm.weight" min="0" class="form-control rounded-pill" />
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label text-muted">Image URL</label>
+      <input type="text" [(ngModel)]="dogEditForm.image" class="form-control rounded-pill" />
+    </div>
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary rounded-pill flex-grow-1" (click)="saveDogEdit()">Save</button>
+      <button class="btn btn-outline-secondary rounded-pill flex-grow-1" (click)="closeEditDogModal()">Cancel</button>
+    </div>
   </div>
 </div>
 

@@ -34,7 +34,7 @@ export class OwnerRegisterComponent implements AfterViewInit {
   // Step 2 — dog info (optional)
   dogName = '';
   dogBreed = '';
-  dogAge: number | null = null;
+  dogBirthday = '';
   dogWeight: number | null = null;
   bordetellaDate = this.todayStr();
   rabiesDate = this.todayStr();
@@ -137,7 +137,7 @@ export class OwnerRegisterComponent implements AfterViewInit {
     return !!(
       this.dogName.trim() &&
       this.dogBreed.trim() &&
-      this.dogAge !== null && this.dogAge > 0 &&
+      this.dogBirthday.trim() &&
       this.dogWeight !== null && this.dogWeight > 0 &&
       this.bordetellaDate &&
       this.rabiesDate
@@ -179,7 +179,7 @@ export class OwnerRegisterComponent implements AfterViewInit {
     if (!this.isDogFormValid()) return;
 
     this.ownerService.addDog(
-      { name: this.dogName, breed: this.dogBreed, age: this.dogAge!, weight: this.dogWeight!, image: '' },
+      { name: this.dogName, breed: this.dogBreed, birthday: this.dogBirthday, weight: this.dogWeight!, image: '' },
       this.bordetellaDate,
       this.rabiesDate
     ).subscribe({

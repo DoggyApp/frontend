@@ -25,6 +25,12 @@ export class OwnerEditProfileComponent implements AfterViewInit {
   saveSuccess = false;
   saveError = '';
 
+  oldPassword = '';
+  newPassword = '';
+  confirmPassword = '';
+  passwordSuccess = false;
+  passwordError = '';
+
   constructor(
     private ownerService: OwnerService,
     private router: Router,
@@ -103,6 +109,40 @@ export class OwnerEditProfileComponent implements AfterViewInit {
       },
       error: () => {
         this.saveError = 'Failed to save changes. Please try again.';
+      }
+    });
+  }
+
+  isPasswordFormValid(): boolean {
+    return !!(
+      this.oldPassword &&
+      this.newPassword &&
+      this.confirmPassword &&
+      this.newPassword === this.confirmPassword
+    );
+  }
+
+  onChangePassword(): void {
+    if (this.newPassword !== this.confirmPassword) {
+      this.passwordError = 'New passwords do not match.';
+      return;
+    }
+    this.passwordError = '';
+    this.passwordSuccess = false;
+
+    this.ownerService.changePassword(this.oldPassword, this.newPassword).subscribe({
+      next: () => {
+        this.passwordSuccess = true;
+        this.oldPassword = '';
+        this.newPassword = '';
+        this.confirmPassword = '';
+      },
+      error: (err) => {
+        if (err.status === 403) {
+          this.passwordError = 'Current password is incorrect.';
+        } else {
+          this.passwordError = 'Failed to update password. Please try again.';
+        }
       }
     });
   }

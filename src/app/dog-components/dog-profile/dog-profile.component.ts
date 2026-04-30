@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService } from '../services/user/user.service';
-import { Dog } from '../models/dog';
-import { Note } from '../models/Note';
-import { Alert } from '../models/alert';
-import { Like } from '../models/like';
-import { Vaccine } from '../models/vaccine';
+import { UserService } from '../../services/user/user.service';
+import { OwnerService } from '../../services/owner/owner.service';
+import { Dog } from '../../models/dog';
+import { Note } from '../../models/Note';
+import { Alert } from '../../models/alert';
+import { Like } from '../../models/like';
+import { Vaccine } from '../../models/vaccine';
 
 @Component({
     selector: 'app-dog-profile',
@@ -18,11 +19,40 @@ export class DogProfileComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private ownerService: OwnerService
   ) { }
 
   dog: Dog | null = null;
   dogId!: number;
+
+  // ── Edit dog ────────────────────────────────────────────
+  showEditDogModal = false;
+  dogEditForm = { name: '', breed: '', birthday: '', weight: 0, image: '' };
+
+  openEditDogModal(): void {
+    if (!this.dog) return;
+    this.dogEditForm = {
+      name: this.dog.name,
+      breed: this.dog.breed,
+      birthday: this.dog.birthday,
+      weight: this.dog.weight,
+      image: this.dog.image
+    };
+    this.showEditDogModal = true;
+  }
+
+  closeEditDogModal(): void {
+    this.showEditDogModal = false;
+  }
+
+  saveDogEdit(): void {
+    if (!this.dog) return;
+    this.ownerService.updateDog(this.dog.id, this.dogEditForm).subscribe(updated => {
+      this.dog = updated;
+      this.showEditDogModal = false;
+    });
+  }
 
   // ── Notes ──────────────────────────────────────────────
   newNote = '';

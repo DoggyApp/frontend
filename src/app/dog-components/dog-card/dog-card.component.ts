@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { Dog } from '../models/dog';
+import { Dog } from '../../models/dog';
 import { Router } from '@angular/router';
 
 @Component({

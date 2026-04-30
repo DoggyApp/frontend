@@ -2,19 +2,18 @@ import { Alert } from "./alert";
 import { Like } from "./like";
 import { Note } from "./Note";
 import { Owner } from "./owner";
-import { User } from "./user";
 import { Vaccine } from "./vaccine";
 
 export interface Dog {
   id: number;
   name: string;
   breed: string;
-  age: number;
+  birthday: string;
+  age: string;       // calculated by backend — read only, do not send on create
   weight: number;
   notes: Note[];
   image: string;
   likes: Like[];
-  trainer: User;
   vaccines: Vaccine[];
   alerts: Alert[];
   owner?: Owner;

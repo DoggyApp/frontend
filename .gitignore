@@ -37,9 +37,8 @@ yarn-error.log
 testem.log
 /typings
 
-# Environment files (contain API keys)
+# environment.ts contains the real Google Maps API key for local dev — never commit it
 src/environments/environment.ts
-src/environments/environment.prod.ts
 
 # System files
 .DS_Store

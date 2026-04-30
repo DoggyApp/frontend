@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Owner } from '../models/owner';
-import { OwnerService } from '../services/owner/owner.service';
+import { Owner } from '../../models/owner';
+import { OwnerService } from '../../services/owner/owner.service';
 
 @Component({
   selector: 'app-owner-nav',

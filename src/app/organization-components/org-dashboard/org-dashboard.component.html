@@ -26,11 +26,44 @@
   </ul>
 
   <!-- Dogs Tab -->
-  <div *ngIf="activeTab === 'dogs'" class="row g-3">
-    <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let dog of dogs">
-      <app-dog-card [dog]="dog"></app-dog-card>
+  <div *ngIf="activeTab === 'dogs'">
+
+    <!-- Registration Requests dropdown -->
+    <div class="reg-requests-wrapper d-inline-block mb-3 position-relative">
+      <button class="btn btn-outline-primary btn-sm rounded-pill"
+              (click)="toggleRegistrationRequestsDropdown()">
+        Registration Requests
+        <span *ngIf="pendingRegistrationRequests.length > 0"
+              class="badge bg-danger ms-1">{{ pendingRegistrationRequests.length }}</span>
+      </button>
+      <div *ngIf="showRegistrationRequestsDropdown"
+           class="requests-dropdown shadow rounded-4 p-3 bg-white position-absolute mt-1"
+           style="min-width: 300px; z-index: 100;">
+        <p *ngIf="pendingRegistrationRequests.length === 0" class="text-muted mb-0 small">
+          No pending requests.
+        </p>
+        <div *ngFor="let req of pendingRegistrationRequests"
+             class="d-flex align-items-center justify-content-between gap-2 mb-2">
+          <div>
+            <span class="fw-semibold">{{ req.dog.name }}</span>
+            <span class="text-muted small"> — {{ req.owner.firstName }} {{ req.owner.lastName }}</span>
+          </div>
+          <div class="d-flex gap-1">
+            <button class="btn btn-success btn-sm rounded-pill px-3"
+                    (click)="acceptRegistrationRequest(req)">Accept</button>
+            <button class="btn btn-outline-danger btn-sm rounded-pill px-3"
+                    (click)="rejectRegistrationRequest(req)">Reject</button>
+          </div>
+        </div>
+      </div>
     </div>
-    <p *ngIf="dogs.length === 0" class="text-muted">No dogs yet.</p>
+
+    <div class="row g-3">
+      <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let dog of dogs">
+        <app-dog-card [dog]="dog"></app-dog-card>
+      </div>
+      <p *ngIf="dogs.length === 0" class="text-muted">No dogs yet.</p>
+    </div>
   </div>
 
   <!-- Employees Tab -->

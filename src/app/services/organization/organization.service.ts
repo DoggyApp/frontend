@@ -2,8 +2,10 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 import { Organization } from 'src/app/models/organization';
 import { Dog } from 'src/app/models/dog';
+import { RegistrationRequest } from 'src/app/models/registration-request';
 import { Note } from 'src/app/models/Note';
 import { Alert } from 'src/app/models/alert';
 import { Like } from 'src/app/models/like';
@@ -17,7 +19,7 @@ import { User } from 'src/app/models/user';
 })
 export class OrganizationService {
 
-  private apiUrl = 'http://localhost:8083/organization';
+  private apiUrl = environment.orgApiUrl;
 
   // withCredentials must be true on every request so the browser
   // includes the session cookie that Spring sets on login.
@@ -76,7 +78,7 @@ export class OrganizationService {
   }
 
   // POST /organization/dog/add
-  addDog(dog: { name: string; breed: string; age: number; weight: number; image: string }, bordetellaDate: string, rabiesDate: string): Observable<Dog> {
+  addDog(dog: { name: string; breed: string; birthday: string; weight: number; image: string }, bordetellaDate: string, rabiesDate: string): Observable<Dog> {
     const params = new HttpParams()
       .set('bordetellaDate', bordetellaDate)
       .set('rabiesDate', rabiesDate);
@@ -140,6 +142,25 @@ export class OrganizationService {
   // DELETE /organization/user/{id}
   deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/user/${id}`, this.options);
+  }
+
+  // ── Registration Requests ─────────────────────────────────────────────────
+
+  // GET /organization/registration-requests/pending
+  getPendingRegistrationRequests(): Observable<RegistrationRequest[]> {
+    return this.http.get<RegistrationRequest[]>(`${this.apiUrl}/registration-requests/pending`, this.options).pipe(
+      catchError(() => of([]))
+    );
+  }
+
+  // POST /organization/registration-request/{requestId}/accept
+  acceptRegistrationRequest(requestId: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/registration-request/${requestId}/accept`, {}, this.options);
+  }
+
+  // POST /organization/registration-request/{requestId}/reject
+  rejectRegistrationRequest(requestId: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/registration-request/${requestId}/reject`, {}, this.options);
   }
 
   // -- AWS EKS reference (for future deployment) --

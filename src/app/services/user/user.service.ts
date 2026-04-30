@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 import { User } from 'src/app/models/user';
 import { Dog } from 'src/app/models/dog';
 import { Note } from 'src/app/models/Note';
@@ -16,7 +17,7 @@ import { Location } from 'src/app/models/location';
 })
 export class UserService {
 
-  private apiUrl = 'http://localhost:8082/user';
+  private apiUrl = environment.userApiUrl;
 
   private options = { withCredentials: true };
 
@@ -175,6 +176,11 @@ export class UserService {
   // PUT /user/event/{id}/edit
   editEvent(id: number, updates: Partial<CalendarEvent>): Observable<CalendarEvent> {
     return this.http.put<CalendarEvent>(`${this.apiUrl}/event/${id}/edit`, updates, this.options);
+  }
+
+  // POST /user/event/{id}/attend
+  joinEvent(_eventId: number): Observable<string> {
+    return of('building');
   }
 
   // POST /user/event/{eventId}/dog/{dogId}

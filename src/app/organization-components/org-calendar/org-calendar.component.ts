@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CalendarEvent } from '../models/event';
-import { Location } from '../models/location';
-import { OrganizationService } from '../services/organization/organization.service';
+import { CalendarEvent } from '../../models/event';
+import { Location } from '../../models/location';
+import { OrganizationService } from '../../services/organization/organization.service';
 
 @Component({
   selector: 'app-org-calendar',

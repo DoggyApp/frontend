@@ -153,7 +153,24 @@
 }
 
 .dog-circle { background: #f59e0b; }
+.user-circle { background: #6366f1; }
 .avatar-name { font-size: 12px; font-weight: 500; }
+
+.attendee-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.attendee-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  font-size: 14px;
+}
 
 /* ── FAB ── */
 

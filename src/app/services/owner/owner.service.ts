@@ -2,10 +2,10 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 import { Owner } from 'src/app/models/owner';
 import { OwnerPublicSearch, OwnerPublicFriend } from 'src/app/models/owner-public';
 import { OrgPublic } from 'src/app/models/org-public';
-import { Organization } from 'src/app/models/organization';
 import { Service } from 'src/app/models/service';
 import { CalendarEvent } from 'src/app/models/event';
 import { Dog } from 'src/app/models/dog';
@@ -14,6 +14,7 @@ import { Alert } from 'src/app/models/alert';
 import { Like } from 'src/app/models/like';
 import { Vaccine } from 'src/app/models/vaccine';
 import { FriendRequest } from 'src/app/models/friend-request';
+import { RegistrationRequest } from 'src/app/models/registration-request';
 import { EventInvitation } from 'src/app/models/event-invitation';
 
 @Injectable({
@@ -21,7 +22,7 @@ import { EventInvitation } from 'src/app/models/event-invitation';
 })
 export class OwnerService {
 
-  private apiUrl = 'http://localhost:8080/owner';
+  private apiUrl = environment.ownerApiUrl;
 
   private options = { withCredentials: true };
 
@@ -85,6 +86,11 @@ export class OwnerService {
     return this.http.put<Owner>(`${this.apiUrl}/profile`, data, this.options);
   }
 
+  // PUT /owner/password
+  changePassword(oldPassword: string, newPassword: string): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/password`, { oldPassword, newPassword }, this.options);
+  }
+
   // ── Search ────────────────────────────────────────────────────────────────
 
   // GET /owner/search?handle=
@@ -100,7 +106,7 @@ export class OwnerService {
 
   // POST /owner/dog/add
   addDog(
-    dog: { name: string; breed: string; age: number; weight: number; image: string },
+    dog: { name: string; breed: string; birthday: string; weight: number; image: string },
     bordetellaDate: string,
     rabiesDate: string
   ): Observable<Dog> {
@@ -108,6 +114,11 @@ export class OwnerService {
       .set('bordetellaDate', bordetellaDate)
       .set('rabiesDate', rabiesDate);
     return this.http.post<Dog>(`${this.apiUrl}/dog/add`, dog, { ...this.options, params });
+  }
+
+  // PUT /owner/dog/{id}
+  updateDog(dogId: number, updates: Partial<{ name: string; breed: string; birthday: string; weight: number; image: string }>): Observable<Dog> {
+    return this.http.put<Dog>(`${this.apiUrl}/dog/${dogId}`, updates, this.options);
   }
 
   // GET /owner/dogs — returns only dogs belonging to the session owner
@@ -281,11 +292,28 @@ export class OwnerService {
     return this.http.post<void>(`${this.apiUrl}/friend-request/${requestId}/reject`, {}, this.options);
   }
 
+  // ── Registration Requests ─────────────────────────────────────────────────
+
+  // POST /owner/registration-request?dogId=&orgId=
+  sendRegistrationRequest(dogId: number, orgId: number): Observable<RegistrationRequest> {
+    const params = new HttpParams()
+      .set('dogId', dogId.toString())
+      .set('orgId', orgId.toString());
+    return this.http.post<RegistrationRequest>(`${this.apiUrl}/registration-request`, {}, { ...this.options, params });
+  }
+
+  // GET /owner/registration-requests/sent
+  getSentRegistrationRequests(): Observable<RegistrationRequest[]> {
+    return this.http.get<RegistrationRequest[]>(`${this.apiUrl}/registration-requests/sent`, this.options).pipe(
+      catchError(() => of([]))
+    );
+  }
+
   // ── Event Invitations ─────────────────────────────────────────────────────
 
-  // POST /owner/event/{eventId}/invite/{friendId}
-  sendInvitation(eventId: number, friendId: number): Observable<EventInvitation> {
-    return this.http.post<EventInvitation>(`${this.apiUrl}/event/${eventId}/invite/${friendId}`, {}, this.options);
+  // POST /owner/event/{eventId}/invite-by-handle/{handle}
+  sendInvitation(eventId: number, handle: string): Observable<EventInvitation> {
+    return this.http.post<EventInvitation>(`${this.apiUrl}/event/${eventId}/invite-by-handle/${handle}`, {}, this.options);
   }
 
   // GET /owner/invitations
@@ -364,12 +392,12 @@ export class OwnerService {
   }
 
   // GET /owner/nearby-orgs?lat=&lng=&miles=
-  getNearbyOrganizations(lat: number, lng: number, miles: number): Observable<Organization[]> {
+  getNearbyOrganizations(lat: number, lng: number, miles: number): Observable<OrgPublic[]> {
     const params = new HttpParams()
       .set('lat', lat.toString())
       .set('lng', lng.toString())
       .set('miles', miles.toString());
-    return this.http.get<Organization[]>(`${this.apiUrl}/nearby-orgs`, { ...this.options, params });
+    return this.http.get<OrgPublic[]>(`${this.apiUrl}/nearby-orgs`, { ...this.options, params });
   }
 
   // GET /owner/nearby-events?lat=&lng=&miles=

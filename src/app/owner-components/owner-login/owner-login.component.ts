@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { OwnerService } from '../services/owner/owner.service';
+import { OwnerService } from '../../services/owner/owner.service';
 
 @Component({
   selector: 'app-owner-login',

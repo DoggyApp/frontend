@@ -5,7 +5,7 @@
   <div class="dog-card-body">
     <h3>{{ dog.name }}</h3>
     <p>{{ dog.breed }}</p>
-    <p>{{ dog.age }} years old</p>
+    <p>{{ dog.age }} old</p>
     <button class="view-btn" (click)="viewProfile()">View Profile</button>
     <button *ngIf="showRemove" class="remove-btn" (click)="removed.emit()">Remove Dog</button>
   </div>

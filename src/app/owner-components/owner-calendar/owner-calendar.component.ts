@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
-import { CalendarEvent } from '../models/event';
-import { Owner } from '../models/owner';
-import { Dog } from '../models/dog';
-import { EventInvitation } from '../models/event-invitation';
-import { OwnerService } from '../services/owner/owner.service';
+import { CalendarEvent } from '../../models/event';
+import { Owner } from '../../models/owner';
+import { OwnerPublicFriend } from '../../models/owner-public';
+import { Dog } from '../../models/dog';
+import { EventInvitation } from '../../models/event-invitation';
+import { OwnerService } from '../../services/owner/owner.service';
 
 export interface CalendarItem {
   type: 'event' | 'invitation';
@@ -25,7 +26,7 @@ export class OwnerCalendarComponent implements OnInit {
   events: CalendarEvent[] = [];
   invitations: EventInvitation[] = [];
   currentOwner: Owner | null = null;
-  friends: Owner[] = [];
+  friends: OwnerPublicFriend[] = [];
   loading = true;
 
   // ── Merged calendar list ─────────────────────────────────────────────────
@@ -50,7 +51,7 @@ export class OwnerCalendarComponent implements OnInit {
   showEditForm = false;
   editForm: Partial<CalendarEvent> = {};
   showInvitePanel = false;
-  inviteSentTo: Set<number> = new Set();
+  inviteSentTo: Set<string> = new Set();
 
   // ── Invitation popup ─────────────────────────────────────────────────────
 
@@ -60,7 +61,7 @@ export class OwnerCalendarComponent implements OnInit {
 
   showCreateForm = false;
   createForm: Partial<CalendarEvent> = { event: '', description: '', address: '', startTime: '', endTime: '' };
-  createInvitedFriendIds: Set<number> = new Set();
+  createInvitedFriendIds: Set<string> = new Set();
   createAddedDogIds: Set<number> = new Set();
   createLoading = false;
 
@@ -123,11 +124,11 @@ export class OwnerCalendarComponent implements OnInit {
     this.showCreateForm = false;
   }
 
-  toggleCreateFriend(friendId: number): void {
-    if (this.createInvitedFriendIds.has(friendId)) {
-      this.createInvitedFriendIds.delete(friendId);
+  toggleCreateFriend(handle: string): void {
+    if (this.createInvitedFriendIds.has(handle)) {
+      this.createInvitedFriendIds.delete(handle);
     } else {
-      this.createInvitedFriendIds.add(friendId);
+      this.createInvitedFriendIds.add(handle);
     }
   }
 
@@ -211,20 +212,20 @@ export class OwnerCalendarComponent implements OnInit {
 
   // ── Invite friends (from event popup) ────────────────────────────────────
 
-  get invitableFriends(): Owner[] {
+  get invitableFriends(): OwnerPublicFriend[] {
     if (!this.selectedEvent) return [];
-    return this.friends.filter(f => !this.inviteSentTo.has(f.id));
+    return this.friends.filter(f => !this.inviteSentTo.has(f.handle));
   }
 
   toggleInvitePanel(): void {
     this.showInvitePanel = !this.showInvitePanel;
   }
 
-  inviteFriend(friend: Owner): void {
+  inviteFriend(friend: OwnerPublicFriend): void {
     if (!this.selectedEvent) return;
-    this.ownerService.sendInvitation(this.selectedEvent.id, friend.id).subscribe({
-      next: () => this.inviteSentTo.add(friend.id),
-      error: () => this.inviteSentTo.add(friend.id)
+    this.ownerService.sendInvitation(this.selectedEvent.id, friend.handle).subscribe({
+      next: () => this.inviteSentTo.add(friend.handle),
+      error: () => this.inviteSentTo.add(friend.handle)
     });
   }
 

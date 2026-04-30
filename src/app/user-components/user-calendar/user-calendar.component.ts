@@ -168,10 +168,7 @@ export class UserCalendarComponent implements OnInit {
 
   joinEvent(): void {
     if (!this.selectedEvent) return;
-    this.userService.joinEvent(this.selectedEvent.id).subscribe(updated => {
-      this.replaceEvent(updated);
-      this.selectedEvent = updated;
-    });
+    this.userService.joinEvent(this.selectedEvent.id).subscribe();
   }
 
   // ── Edit ──────────────────────────────────────────────
@@ -212,9 +209,7 @@ export class UserCalendarComponent implements OnInit {
 
   addDogToEvent(dog: Dog): void {
     if (!this.selectedEvent) return;
-    this.userService.addDogToEvent(this.selectedEvent.id, dog.id).subscribe(updated => {
-      this.replaceEvent(updated);
-      this.selectedEvent = updated;
+    this.userService.addDogToEvent(this.selectedEvent.id, dog.id).subscribe(() => {
       this.popupDogSearch = '';
       this.popupFilteredDogs = [];
     });

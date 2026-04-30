@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { OwnerService } from '../services/owner/owner.service';
+import { OwnerService } from '../../services/owner/owner.service';
 
 @Component({
   selector: 'app-add-dog',
@@ -17,7 +17,7 @@ export class AddDogComponent implements OnInit {
 
   ngOnInit(): void { }
 
-  newDog = { name: '', breed: '', age: 0, weight: 0, image: '' };
+  newDog = { name: '', breed: '', birthday: '', weight: 0, image: '' };
   bordetellaDate = this.todayStr();
   rabiesDate = this.todayStr();
   submitError = '';
