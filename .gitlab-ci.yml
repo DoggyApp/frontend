@@ -1,5 +1,4 @@
 # frontend/.gitlab-ci.yml
-# frontend/.gitlab-ci.yml
 
 stages:
   - test
