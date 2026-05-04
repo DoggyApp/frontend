@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { UserDashboardComponent } from './user-dashboard.component';
 
@@ -8,7 +10,8 @@ describe('UserDashboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ UserDashboardComponent ]
+      declarations: [UserDashboardComponent],
+      imports: [RouterTestingModule, HttpClientTestingModule]
     })
     .compileComponents();
   });

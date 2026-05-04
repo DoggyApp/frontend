@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { OrgLoginComponent } from './org-login.component';
 
@@ -8,7 +10,8 @@ describe('OrgLoginComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ OrgLoginComponent ]
+      declarations: [OrgLoginComponent],
+      imports: [RouterTestingModule, HttpClientTestingModule]
     })
     .compileComponents();
   });

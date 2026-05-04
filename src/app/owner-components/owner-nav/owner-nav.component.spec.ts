@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { OwnerNavComponent } from './owner-nav.component';
 
@@ -8,7 +10,8 @@ describe('OwnerNavComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OwnerNavComponent]
+      declarations: [OwnerNavComponent],
+      imports: [RouterTestingModule, HttpClientTestingModule]
     })
     .compileComponents();
 
