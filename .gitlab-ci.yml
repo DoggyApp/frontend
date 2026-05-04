@@ -38,7 +38,9 @@ build:
     # Angular compiles environment files into the JS bundle at build time, so the key
     # must be injected here — it cannot be done at container startup like LOAD_BALANCER_URL.
     # Add GOOGLE_MAPS_API_KEY as a masked, protected variable in GitLab group CI/CD settings.
-    - sed -i "s/googleMapsApiKey: ''/googleMapsApiKey: '$GOOGLE_MAPS_API_KEY'/" $CI_PROJECT_DIR/src/environments/environment.prod.ts
+    - >-
+      sed -i "s/googleMapsApiKey: ''/googleMapsApiKey: '$GOOGLE_MAPS_API_KEY'/"
+      $CI_PROJECT_DIR/src/environments/environment.prod.ts
     - /kaniko/executor
       --context $CI_PROJECT_DIR
       --dockerfile $CI_PROJECT_DIR/Dockerfile
