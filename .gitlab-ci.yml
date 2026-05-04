@@ -49,12 +49,13 @@ build:
 
 deploy:
   stage: deploy
-  image: bitnami/kubectl:1.29.4
+  image: alpine/k8s:1.29.4
   environment:
     name: production
   script:
-    - kubectl config use-context doggyapp/pipeline-config:doggy-agent
-    - kubectl set image deployment/webapp webapp=$IMAGE_NAME:$DOCKER_TAG -n default
+    - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
+    - sed -i "s|IMAGE_PLACEHOLDER|$IMAGE_NAME:$DOCKER_TAG|g" k8s/deployment.yaml
+    - kubectl apply -f k8s/deployment.yaml
     - kubectl rollout status deployment/webapp -n default --timeout=180s
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
