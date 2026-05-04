@@ -8,8 +8,6 @@ import { Owner } from '../../models/owner';
 import { RegistrationRequest } from '../../models/registration-request';
 import { UserService } from '../../services/user/user.service';
 import { OrganizationService } from '../../services/organization/organization.service';
-import { ClientService } from '../../client.service';
-
 
 @Component({
     selector: 'app-org-dashboard',
@@ -22,7 +20,6 @@ export class OrgDashboardComponent implements OnInit {
   constructor(
     private userService: UserService,
     private organizationService: OrganizationService,
-    private clientService: ClientService,
     private router: Router,
     private ngZone: NgZone,
     private cdr: ChangeDetectorRef
@@ -62,7 +59,7 @@ export class OrgDashboardComponent implements OnInit {
     this.organizationService.getLocations().subscribe(locations => {
       this.locations = locations.filter(l => !l.offsite);
     });
-    this.clientService.getClients().subscribe(clients => {
+    this.organizationService.getClients().subscribe(clients => {
       this.clients = clients;
     });
 

@@ -13,6 +13,7 @@ import { Vaccine } from 'src/app/models/vaccine';
 import { CalendarEvent } from 'src/app/models/event';
 import { Location } from 'src/app/models/location';
 import { User } from 'src/app/models/user';
+import { Owner } from 'src/app/models/owner';
 
 @Injectable({
   providedIn: 'root'
@@ -142,6 +143,15 @@ export class OrganizationService {
   // DELETE /organization/user/{id}
   deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/user/${id}`, this.options);
+  }
+
+  // ── Client methods ────────────────────────────────────────────────────────
+
+  // GET /organization/owner/all
+  getClients(): Observable<Owner[]> {
+    return this.http.get<Owner[]>(`${this.apiUrl}/owner/all`, this.options).pipe(
+      catchError(() => of([]))
+    );
   }
 
   // ── Registration Requests ─────────────────────────────────────────────────
