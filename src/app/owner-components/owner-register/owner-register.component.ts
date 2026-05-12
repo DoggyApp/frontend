@@ -13,9 +13,6 @@ export class OwnerRegisterComponent implements AfterViewInit {
 
   @ViewChild('autocompleteContainer') autocompleteContainerRef!: ElementRef<HTMLDivElement>;
 
-  step = 1;
-
-  // Step 1 — owner info
   firstName = '';
   lastName = '';
   email = '';
@@ -31,16 +28,7 @@ export class OwnerRegisterComponent implements AfterViewInit {
   handleChecking = false;
   handleValid = false;
 
-  // Step 2 — dog info (optional)
-  dogName = '';
-  dogBreed = '';
-  dogBirthday = '';
-  dogWeight: number | null = null;
-  bordetellaDate = this.todayStr();
-  rabiesDate = this.todayStr();
-
   submitError = '';
-  registeredOwnerId: number | null = null;
 
   constructor(
     private ownerService: OwnerService,
@@ -51,10 +39,6 @@ export class OwnerRegisterComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.initAutocomplete();
-  }
-
-  todayStr(): string {
-    return new Date().toISOString().split('T')[0];
   }
 
   private async initAutocomplete(): Promise<void> {
@@ -84,7 +68,6 @@ export class OwnerRegisterComponent implements AfterViewInit {
               const loc = results[0].geometry.location;
               console.log('[Geocoder] location object:', loc);
               console.log('[Geocoder] typeof loc.lat:', typeof loc.lat);
-              // Guard against SDK returning a plain object instead of a LatLng instance
               const lat = typeof loc.lat === 'function' ? loc.lat() : loc.lat;
               const lng = typeof loc.lng === 'function' ? loc.lng() : loc.lng;
               console.log('[Geocoder] resolved coords:', { lat, lng });
@@ -158,7 +141,7 @@ export class OwnerRegisterComponent implements AfterViewInit {
     }
   }
 
-  isStep1Valid(): boolean {
+  isFormValid(): boolean {
     return !!(
       this.firstName.trim() &&
       this.lastName.trim() &&
@@ -174,20 +157,8 @@ export class OwnerRegisterComponent implements AfterViewInit {
     );
   }
 
-  isDogFormValid(): boolean {
-    return !!(
-      this.dogName.trim() &&
-      this.dogBreed.trim() &&
-      this.dogBirthday.trim() &&
-      this.dogWeight !== null && this.dogWeight > 0 &&
-      this.bordetellaDate &&
-      this.rabiesDate
-    );
-  }
-
-  // Step 1 submit: register owner and advance to step 2
-  onRegisterOwner(): void {
-    if (!this.isStep1Valid()) return;
+  onRegister(): void {
+    if (!this.isFormValid()) return;
     this.submitError = '';
 
     this.ownerService.register({
@@ -207,32 +178,11 @@ export class OwnerRegisterComponent implements AfterViewInit {
           this.submitError = 'Registration failed. Please try again.';
           return;
         }
-        this.step = 2;
+        this.router.navigate(['/owner-login']);
       },
       error: () => {
         this.submitError = 'Registration failed. Please try again.';
       }
     });
-  }
-
-  // Step 2: add dog then go to dashboard
-  onAddDog(): void {
-    if (!this.isDogFormValid()) return;
-
-    this.ownerService.addDog(
-      { name: this.dogName, breed: this.dogBreed, birthday: this.dogBirthday, weight: this.dogWeight!, image: '' },
-      this.bordetellaDate,
-      this.rabiesDate
-    ).subscribe({
-      next: () => this.router.navigate(['/owner-dashboard']),
-      error: () => {
-        this.submitError = 'Failed to add dog. You can add one from your dashboard.';
-      }
-    });
-  }
-
-  // Step 2: skip dog and go to dashboard
-  skipDog(): void {
-    this.router.navigate(['/owner-dashboard']);
   }
 }
