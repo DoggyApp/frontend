@@ -73,31 +73,53 @@ export class OwnerRegisterComponent implements AfterViewInit {
     container.innerHTML = '';
     container.appendChild(placeAutocomplete);
 
+    const geocode = (address: string): Promise<{ lat: number; lng: number }> => {
+      const geocoder = new (window as any).google.maps.Geocoder();
+      return new Promise((resolve, reject) => {
+        geocoder.geocode({ address }, (results: any[], status: string) => {
+          if (status === 'OK' && results[0]) {
+            resolve({
+              lat: results[0].geometry.location.lat(),
+              lng: results[0].geometry.location.lng()
+            });
+          } else {
+            reject(new Error(`Geocoding failed: ${status}`));
+          }
+        });
+      });
+    };
+
     const handleSelect = async (event: any) => {
       const place = event.place ?? event.detail?.place;
+      const rawAddress = (placeAutocomplete as any).value ?? '';
+
+      let resolvedAddress = rawAddress;
+      let lat: number | null = null;
+      let lng: number | null = null;
+
       if (place) {
         try {
           await place.fetchFields({ fields: ['formattedAddress', 'location'] });
-          this.ngZone.run(() => {
-            this.address = place.formattedAddress ?? (placeAutocomplete as any).value ?? '';
-            this.lat = place.location?.lat() ?? null;
-            this.lng = place.location?.lng() ?? null;
-            this.cdr.detectChanges();
-          });
-        } catch {
-          this.ngZone.run(() => {
-            this.address = (placeAutocomplete as any).value ?? '';
-            this.lat = null;
-            this.lng = null;
-            this.cdr.detectChanges();
-          });
-        }
-      } else {
-        this.ngZone.run(() => {
-          this.address = (placeAutocomplete as any).value ?? '';
-          this.cdr.detectChanges();
-        });
+          resolvedAddress = place.formattedAddress ?? rawAddress;
+          lat = place.location?.lat() ?? null;
+          lng = place.location?.lng() ?? null;
+        } catch { /* fall through to geocoder */ }
       }
+
+      if (lat === null || lng === null) {
+        try {
+          const coords = await geocode(resolvedAddress);
+          lat = coords.lat;
+          lng = coords.lng;
+        } catch { /* coordinates unavailable */ }
+      }
+
+      this.ngZone.run(() => {
+        this.address = resolvedAddress;
+        this.lat = lat;
+        this.lng = lng;
+        this.cdr.detectChanges();
+      });
     };
 
     placeAutocomplete.addEventListener('gmp-placeselect', handleSelect);
@@ -128,6 +150,8 @@ export class OwnerRegisterComponent implements AfterViewInit {
       this.phoneNumber.trim() &&
       this.birthday.trim() &&
       this.address.trim() &&
+      this.lat !== null &&
+      this.lng !== null &&
       this.handle.length >= 3 &&
       this.handleValid
     );
