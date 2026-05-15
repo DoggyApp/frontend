@@ -29,6 +29,7 @@ import { OwnerFriendsComponent } from './owner-components/owner-friends/owner-fr
 import { OwnerSearchOrgsComponent } from './owner-components/owner-search-orgs/owner-search-orgs.component';
 import { PublicOrgProfileComponent } from './owner-components/public-org-profile/public-org-profile.component';
 import { OwnerPublicProfileComponent } from './owner-components/owner-public-profile/owner-public-profile.component';
+import { OrgRegisterComponent } from './organization-components/org-register/org-register.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import { OwnerPublicProfileComponent } from './owner-components/owner-public-pro
     OwnerFriendsComponent,
     OwnerSearchOrgsComponent,
     PublicOrgProfileComponent,
-    OwnerPublicProfileComponent
+    OwnerPublicProfileComponent,
+    OrgRegisterComponent
   ],
   imports: [
     BrowserModule,

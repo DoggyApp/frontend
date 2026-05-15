@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { OwnerService } from '../../services/owner/owner.service';
+import { STANDARD_VACCINES } from '../../models/standard-vaccines';
 
 @Component({
   selector: 'app-add-dog',
@@ -18,16 +19,24 @@ export class AddDogComponent implements OnInit {
   ngOnInit(): void { }
 
   newDog = { name: '', breed: '', birthday: '', weight: 0, image: '' };
-  bordetellaDate = this.todayStr();
-  rabiesDate = this.todayStr();
   submitError = '';
+
+  standardVaccines = STANDARD_VACCINES;
+
+  vaccinatedDates: Record<string, string> = Object.fromEntries(
+    STANDARD_VACCINES.map(v => [v.name, this.todayStr()])
+  );
 
   todayStr(): string {
     return new Date().toISOString().split('T')[0];
   }
 
   onSubmit() {
-    this.ownerService.addDog(this.newDog, this.bordetellaDate, this.rabiesDate).subscribe({
+    const vaccines = this.standardVaccines
+      .filter(v => this.vaccinatedDates[v.name])
+      .map(v => ({ name: v.name, vaccinatedDate: this.vaccinatedDates[v.name] }));
+
+    this.ownerService.addDog(this.newDog, vaccines).subscribe({
       next: () => this.location.back(),
       error: () => { this.submitError = 'Failed to add dog. Please check all fields and try again.'; }
     });

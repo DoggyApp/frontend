@@ -47,15 +47,9 @@
       <h6 class="form-section-heading">Vaccination Dates</h6>
       <p class="text-muted small mb-3">Expiration dates are calculated automatically. Pre-filled with today — change if vaccines were given on a different date.</p>
 
-      <div class="mb-3">
-        <label class="form-label text-muted">Bordetella Date Given</label>
-        <input type="date" [(ngModel)]="bordetellaDate" name="bordetellaDate" required
-               [max]="todayStr()" class="form-control rounded-pill" />
-      </div>
-
-      <div class="mb-4">
-        <label class="form-label text-muted">Rabies Date Given</label>
-        <input type="date" [(ngModel)]="rabiesDate" name="rabiesDate" required
+      <div *ngFor="let v of standardVaccines; let last = last" [class.mb-4]="last" [class.mb-3]="!last">
+        <label class="form-label text-muted">{{ v.name }} Date Given</label>
+        <input type="date" [(ngModel)]="vaccinatedDates[v.name]" [name]="v.name"
                [max]="todayStr()" class="form-control rounded-pill" />
       </div>
 

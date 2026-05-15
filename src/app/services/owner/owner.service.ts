@@ -105,15 +105,12 @@ export class OwnerService {
   // ── Dogs ──────────────────────────────────────────────────────────────────
 
   // POST /owner/dog/add
+  // vaccines is optional — each entry needs name and vaccinatedDate; expiration is computed server-side.
   addDog(
     dog: { name: string; breed: string; birthday: string; weight: number; image: string },
-    bordetellaDate: string,
-    rabiesDate: string
+    vaccines: { name: string; vaccinatedDate: string }[] = []
   ): Observable<Dog> {
-    const params = new HttpParams()
-      .set('bordetellaDate', bordetellaDate)
-      .set('rabiesDate', rabiesDate);
-    return this.http.post<Dog>(`${this.apiUrl}/dog/add`, dog, { ...this.options, params });
+    return this.http.post<Dog>(`${this.apiUrl}/dog/add`, { ...dog, vaccines }, this.options);
   }
 
   // PUT /owner/dog/{id}

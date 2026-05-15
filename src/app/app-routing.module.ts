@@ -23,12 +23,14 @@ import { OwnerFriendsComponent } from './owner-components/owner-friends/owner-fr
 import { OwnerSearchOrgsComponent } from './owner-components/owner-search-orgs/owner-search-orgs.component';
 import { PublicOrgProfileComponent } from './owner-components/public-org-profile/public-org-profile.component';
 import { OwnerPublicProfileComponent } from './owner-components/owner-public-profile/owner-public-profile.component';
+import { OrgRegisterComponent } from './organization-components/org-register/org-register.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'user-login', component: UserLoginComponent },
   { path: 'org-login', component: OrgLoginComponent },
+  { path: 'org-register', component: OrgRegisterComponent },
   { path: 'org-dashboard', component: OrgDashboardComponent },
   { path: 'org-calendar', component: OrgCalendarComponent },
   { path: 'org-profile', component: OrgProfileComponent },
