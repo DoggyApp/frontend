@@ -179,7 +179,7 @@
     <p *ngIf="dog.likes.length === 0" class="text-muted fst-italic">No likes yet.</p>
   </div>
 
-  <button class="btn btn-primary rounded-pill mb-5" routerLink="/user-dashboard">← Back to Dashboard</button>
+  <button class="btn btn-primary rounded-pill mb-5" [routerLink]="dashboardRoute">← Back to Dashboard</button>
 
 </div>
 

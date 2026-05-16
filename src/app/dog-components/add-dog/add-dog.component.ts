@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { OwnerService } from '../../services/owner/owner.service';
 import { UserService } from '../../services/user/user.service';
@@ -18,7 +17,6 @@ export class AddDogComponent implements OnInit {
     private ownerService: OwnerService,
     private userService: UserService,
     private authService: AuthService,
-    private location: Location,
     private router: Router
   ) { }
 
@@ -27,6 +25,13 @@ export class AddDogComponent implements OnInit {
     if (s === 'owner') return this.ownerService;
     if (s === 'user')  return this.userService;
     return null;
+  }
+
+  get dashboardRoute(): string {
+    const s = this.authService.currentSession;
+    if (s === 'owner') return '/owner-dashboard';
+    if (s === 'user')  return '/user-dashboard';
+    return '/home';
   }
 
   ngOnInit(): void {
@@ -53,13 +58,13 @@ export class AddDogComponent implements OnInit {
       .map(v => ({ name: v.name, vaccinatedDate: this.vaccinatedDates[v.name] }));
 
     this.svc.addDog(this.newDog, vaccines).subscribe({
-      next: () => this.location.back(),
+      next: () => this.router.navigate([this.dashboardRoute]),
       error: () => { this.submitError = 'Failed to add dog. Please check all fields and try again.'; }
     });
   }
 
   goBack() {
-    this.location.back();
+    this.router.navigate([this.dashboardRoute]);
   }
 
 }

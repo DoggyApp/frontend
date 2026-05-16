@@ -11,6 +11,7 @@ import { Like } from 'src/app/models/like';
 import { Vaccine } from 'src/app/models/vaccine';
 import { CalendarEvent } from 'src/app/models/event';
 import { Location } from 'src/app/models/location';
+import { Room } from 'src/app/models/room';
 
 @Injectable({
   providedIn: 'root'
@@ -206,6 +207,13 @@ export class UserService {
   // GET /user/locations
   getLocations(): Observable<Location[]> {
     return this.http.get<Location[]>(`${this.apiUrl}/locations`, this.options).pipe(
+      catchError(() => of([]))
+    );
+  }
+
+  // GET /user/rooms
+  getRooms(): Observable<Room[]> {
+    return this.http.get<Room[]>(`${this.apiUrl}/rooms`, this.options).pipe(
       catchError(() => of([]))
     );
   }

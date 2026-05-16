@@ -44,6 +44,14 @@ export class DogProfileComponent implements OnInit {
     return this.authService.currentSession === 'org';
   }
 
+  get dashboardRoute(): string {
+    const s = this.authService.currentSession;
+    if (s === 'owner') return '/owner-dashboard';
+    if (s === 'user')  return '/user-dashboard';
+    if (s === 'org')   return '/org-dashboard';
+    return '/home';
+  }
+
   dog: Dog | null = null;
   dogId!: number;
 

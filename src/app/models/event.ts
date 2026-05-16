@@ -1,7 +1,7 @@
 import { User } from "./user";
 import { Owner } from "./owner";
 import { Dog } from "./dog";
-import { Location } from "./location";
+import { Room } from "./room";
 
 export interface CalendarEvent {
   id: number;
@@ -9,7 +9,7 @@ export interface CalendarEvent {
   description: string;
   startTime: string;   // ISO: "2026-04-06T09:00:00"
   endTime: string;
-  location?: Location;
+  room?: Room;
   address?: string;
   userCreator?: User;    // set when a User created the event
   ownerCreator?: Owner;  // set when an Owner created the event
