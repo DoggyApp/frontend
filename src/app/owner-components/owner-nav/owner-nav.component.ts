@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Owner } from '../../models/owner';
 import { OwnerService } from '../../services/owner/owner.service';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-owner-nav',
@@ -16,6 +17,7 @@ export class OwnerNavComponent implements OnInit {
 
   constructor(
     private ownerService: OwnerService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
@@ -30,8 +32,8 @@ export class OwnerNavComponent implements OnInit {
 
   logout(): void {
     this.ownerService.logout().subscribe({
-      next: () => this.router.navigate(['/']),
-      error: () => this.router.navigate(['/'])
+      next: () => { this.authService.clearSession(); this.router.navigate(['/']); },
+      error: () => { this.authService.clearSession(); this.router.navigate(['/']); }
     });
   }
 }

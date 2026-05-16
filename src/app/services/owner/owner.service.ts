@@ -207,6 +207,13 @@ export class OwnerService {
 
   // ── Events ────────────────────────────────────────────────────────────────
 
+  // GET /owner/event/dog/{dogId}
+  getEventsByDog(dogId: number): Observable<CalendarEvent[]> {
+    return this.http.get<CalendarEvent[]>(`${this.apiUrl}/event/dog/${dogId}`, this.options).pipe(
+      catchError(() => of([]))
+    );
+  }
+
   // GET /owner/my-events
   getMyEvents(): Observable<CalendarEvent[]> {
     return this.http.get<CalendarEvent[]>(`${this.apiUrl}/my-events`, this.options).pipe(

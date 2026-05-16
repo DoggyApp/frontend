@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../services/user/user.service';
 import { OwnerService } from '../../services/owner/owner.service';
+import { OrganizationService } from '../../services/organization/organization.service';
+import { AuthService } from '../../services/auth/auth.service';
 import { Dog } from '../../models/dog';
 import { Note } from '../../models/Note';
 import { Alert } from '../../models/alert';
@@ -20,8 +22,27 @@ export class DogProfileComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private userService: UserService,
-    private ownerService: OwnerService
+    private ownerService: OwnerService,
+    private organizationService: OrganizationService,
+    private authService: AuthService
   ) { }
+
+  private get svc(): any {
+    const s = this.authService.currentSession;
+    if (s === 'owner') return this.ownerService;
+    if (s === 'user')  return this.userService;
+    if (s === 'org')   return this.organizationService;
+    return null;
+  }
+
+  get canEdit(): boolean {
+    const s = this.authService.currentSession;
+    return s === 'owner' || s === 'user';
+  }
+
+  get isOrg(): boolean {
+    return this.authService.currentSession === 'org';
+  }
 
   dog: Dog | null = null;
   dogId!: number;
@@ -47,8 +68,8 @@ export class DogProfileComponent implements OnInit {
   }
 
   saveDogEdit(): void {
-    if (!this.dog) return;
-    this.ownerService.updateDog(this.dog.id, this.dogEditForm).subscribe(updated => {
+    if (!this.dog || !this.canEdit) return;
+    this.svc.updateDog(this.dog.id, this.dogEditForm).subscribe((updated: Dog) => {
       this.dog = updated;
       this.showEditDogModal = false;
     });
@@ -77,16 +98,14 @@ export class DogProfileComponent implements OnInit {
   newVaccine = { name: '', vaccinatedDate: this.todayStr(), expirationDate: '' };
 
   ngOnInit(): void {
+    if (!this.svc) { this.router.navigate(['/']); return; }
     this.dogId = Number(this.route.snapshot.paramMap.get('id'));
-    this.userService.getDogById(this.dogId).subscribe(dog => {
+    this.svc.getDogById(this.dogId).subscribe((dog: Dog | null) => {
       this.dog = dog;
-    });
-    this.userService.getVaccines(this.dogId).subscribe(vaccines => {
-      this.vaccines = vaccines;
-      // Pre-fill each vaccine's date picker with today
-      vaccines.forEach(v => {
-        this.vaccinationDates[v.id] = this.todayStr();
-      });
+      if (dog) {
+        this.vaccines = dog.vaccines;
+        dog.vaccines.forEach((v: Vaccine) => { this.vaccinationDates[v.id] = this.todayStr(); });
+      }
     });
   }
 
@@ -97,7 +116,7 @@ export class DogProfileComponent implements OnInit {
   // ── Notes ──────────────────────────────────────────────
   addNote() {
     if (!this.dog || !this.newNote.trim()) return;
-    this.userService.addNote(this.dog.id, this.newNote.trim()).subscribe(note => {
+    this.svc.addNote(this.dog.id, this.newNote.trim()).subscribe((note: Note) => {
       this.dog!.notes.push(note);
       this.newNote = '';
     });
@@ -110,7 +129,7 @@ export class DogProfileComponent implements OnInit {
 
   saveNote(noteId: number) {
     if (!this.dog || !this.editingNoteText.trim()) return;
-    this.userService.updateNote(this.dog.id, noteId, this.editingNoteText.trim()).subscribe(updated => {
+    this.svc.updateNote(this.dog.id, noteId, this.editingNoteText.trim()).subscribe((updated: Note) => {
       const i = this.dog!.notes.findIndex(n => n.id === noteId);
       if (i !== -1) this.dog!.notes[i] = updated;
       this.editingNoteId = null;
@@ -121,7 +140,7 @@ export class DogProfileComponent implements OnInit {
 
   deleteNote(noteId: number) {
     if (!this.dog) return;
-    this.userService.deleteNote(this.dog.id, noteId).subscribe(() => {
+    this.svc.deleteNote(this.dog.id, noteId).subscribe(() => {
       this.dog!.notes = this.dog!.notes.filter(n => n.id !== noteId);
     });
   }
@@ -129,7 +148,7 @@ export class DogProfileComponent implements OnInit {
   // ── Alerts ─────────────────────────────────────────────
   addAlert() {
     if (!this.dog || !this.newAlert.trim()) return;
-    this.userService.addAlert(this.dog.id, this.newAlert.trim()).subscribe(alert => {
+    this.svc.addAlert(this.dog.id, this.newAlert.trim()).subscribe((alert: Alert) => {
       this.dog!.alerts.push(alert);
       this.newAlert = '';
     });
@@ -142,7 +161,7 @@ export class DogProfileComponent implements OnInit {
 
   saveAlert(alertId: number) {
     if (!this.dog || !this.editingAlertText.trim()) return;
-    this.userService.updateAlert(this.dog.id, alertId, this.editingAlertText.trim()).subscribe(updated => {
+    this.svc.updateAlert(this.dog.id, alertId, this.editingAlertText.trim()).subscribe((updated: Alert) => {
       const i = this.dog!.alerts.findIndex(a => a.id === alertId);
       if (i !== -1) this.dog!.alerts[i] = updated;
       this.editingAlertId = null;
@@ -153,7 +172,7 @@ export class DogProfileComponent implements OnInit {
 
   deleteAlert(alertId: number) {
     if (!this.dog) return;
-    this.userService.deleteAlert(this.dog.id, alertId).subscribe(() => {
+    this.svc.deleteAlert(this.dog.id, alertId).subscribe(() => {
       this.dog!.alerts = this.dog!.alerts.filter(a => a.id !== alertId);
     });
   }
@@ -161,7 +180,7 @@ export class DogProfileComponent implements OnInit {
   // ── Likes ──────────────────────────────────────────────
   addLike() {
     if (!this.dog || !this.newLike.trim()) return;
-    this.userService.addLike(this.dog.id, this.newLike.trim()).subscribe(like => {
+    this.svc.addLike(this.dog.id, this.newLike.trim()).subscribe((like: Like) => {
       this.dog!.likes.push(like);
       this.newLike = '';
     });
@@ -174,7 +193,7 @@ export class DogProfileComponent implements OnInit {
 
   saveLike(likeId: number) {
     if (!this.dog || !this.editingLikeText.trim()) return;
-    this.userService.updateLike(this.dog.id, likeId, this.editingLikeText.trim()).subscribe(updated => {
+    this.svc.updateLike(this.dog.id, likeId, this.editingLikeText.trim()).subscribe((updated: Like) => {
       const i = this.dog!.likes.findIndex(l => l.id === likeId);
       if (i !== -1) this.dog!.likes[i] = updated;
       this.editingLikeId = null;
@@ -185,7 +204,7 @@ export class DogProfileComponent implements OnInit {
 
   deleteLike(likeId: number) {
     if (!this.dog) return;
-    this.userService.deleteLike(this.dog.id, likeId).subscribe(() => {
+    this.svc.deleteLike(this.dog.id, likeId).subscribe(() => {
       this.dog!.likes = this.dog!.likes.filter(l => l.id !== likeId);
     });
   }
@@ -194,10 +213,10 @@ export class DogProfileComponent implements OnInit {
   markAsGiven(vaccine: Vaccine) {
     const selectedDate = this.vaccinationDates[vaccine.id];
     const obs = selectedDate === this.todayStr()
-      ? this.userService.renewVaccine(this.dogId, vaccine.id)
-      : this.userService.setVaccinationDate(this.dogId, vaccine.id, selectedDate);
+      ? this.svc.renewVaccine(this.dogId, vaccine.id)
+      : this.svc.setVaccinationDate(this.dogId, vaccine.id, selectedDate);
 
-    obs.subscribe(updated => {
+    obs.subscribe((updated: Vaccine) => {
       const i = this.vaccines.findIndex(v => v.id === vaccine.id);
       if (i !== -1) this.vaccines[i] = updated;
     });
@@ -225,7 +244,7 @@ export class DogProfileComponent implements OnInit {
 
   submitAddVaccine() {
     if (!this.newVaccine.name.trim() || !this.newVaccine.vaccinatedDate || !this.newVaccine.expirationDate) return;
-    this.userService.addCustomVaccine(this.dogId, this.newVaccine).subscribe(vaccine => {
+    this.svc.addCustomVaccine(this.dogId, this.newVaccine).subscribe((vaccine: Vaccine) => {
       this.vaccines.push(vaccine);
       this.vaccinationDates[vaccine.id] = this.todayStr();
       this.showAddVaccineForm = false;
@@ -233,7 +252,7 @@ export class DogProfileComponent implements OnInit {
   }
 
   deleteVaccine(vaccineId: number) {
-    this.userService.deleteVaccine(this.dogId, vaccineId).subscribe(() => {
+    this.svc.deleteVaccine(this.dogId, vaccineId).subscribe(() => {
       this.vaccines = this.vaccines.filter(v => v.id !== vaccineId);
     });
   }

@@ -36,7 +36,7 @@
 </div>
 
 <!-- Floating Add Button -->
-<button class="add-fab" (click)="openAddEventForm()">+ Event</button>
+<button *ngIf="!isOrg" class="add-fab" (click)="openAddEventForm()">+ Event</button>
 
 <!-- ── Create Event Modal ─────────────────────────────── -->
 <div class="modal-backdrop" *ngIf="showAddEventForm">
@@ -153,7 +153,7 @@
     </ng-container>
 
     <!-- Non-creator actions -->
-    <ng-container *ngIf="!isCreator">
+    <ng-container *ngIf="!isCreator && !isOrg">
       <button class="btn btn-primary btn-sm"
               [disabled]="isAlreadyJoined()"
               (click)="joinEvent()">

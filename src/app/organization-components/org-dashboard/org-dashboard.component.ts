@@ -8,6 +8,7 @@ import { Owner } from '../../models/owner';
 import { RegistrationRequest } from '../../models/registration-request';
 import { UserService } from '../../services/user/user.service';
 import { OrganizationService } from '../../services/organization/organization.service';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
     selector: 'app-org-dashboard',
@@ -20,6 +21,7 @@ export class OrgDashboardComponent implements OnInit {
   constructor(
     private userService: UserService,
     private organizationService: OrganizationService,
+    private authService: AuthService,
     private router: Router,
     private ngZone: NgZone,
     private cdr: ChangeDetectorRef
@@ -183,8 +185,8 @@ export class OrgDashboardComponent implements OnInit {
 
   logout() {
     this.organizationService.logout().subscribe({
-      next: () => this.router.navigate(['/']),
-      error: () => this.router.navigate(['/'])
+      next: () => { this.authService.clearSession(); this.router.navigate(['/']); },
+      error: () => { this.authService.clearSession(); this.router.navigate(['/']); }
     });
   }
 

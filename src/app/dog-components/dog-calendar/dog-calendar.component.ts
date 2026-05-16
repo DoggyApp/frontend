@@ -4,8 +4,10 @@ import { forkJoin } from 'rxjs';
 import { CalendarEvent } from '../../models/event';
 import { Location } from '../../models/location';
 import { Dog } from '../../models/dog';
-import { User } from '../../models/user';
 import { UserService } from '../../services/user/user.service';
+import { OwnerService } from '../../services/owner/owner.service';
+import { OrganizationService } from '../../services/organization/organization.service';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-dog-calendar',
@@ -18,11 +20,24 @@ export class DogCalendarComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private ownerService: OwnerService,
+    private organizationService: OrganizationService,
+    private authService: AuthService
   ) {}
 
+  private get svc(): any {
+    const s = this.authService.currentSession;
+    if (s === 'owner') return this.ownerService;
+    if (s === 'user')  return this.userService;
+    if (s === 'org')   return this.organizationService;
+    return null;
+  }
+
+  get isOrg(): boolean { return this.authService.currentSession === 'org'; }
+
   dogId!: number;
-  currentUser: User | null = null;
+  currentUser: any = null;
   profileDog: Dog | null = null;
   events: CalendarEvent[] = [];
   locations: Location[] = [];
@@ -52,20 +67,16 @@ export class DogCalendarComponent implements OnInit {
   popupFilteredDogs: Dog[] = [];
 
   ngOnInit(): void {
+    if (!this.svc) { this.router.navigate(['/']); return; }
     this.dogId = Number(this.route.snapshot.paramMap.get('id'));
     this.generateWeek();
-    this.userService.getSession().subscribe(user => {
-      if (!user) { this.router.navigate(['/user-login']); return; }
-      this.currentUser = user;
-    });
-    this.userService.getEventsByDog(this.dogId).subscribe(events => this.events = events);
-    this.userService.getDogById(this.dogId).subscribe(dog => this.profileDog = dog);
-    this.userService.getLocations().subscribe(locs => this.locations = locs);
-    this.userService.getDogs().subscribe(dogs => this.allDogs = dogs);
+    this.svc.getSession().subscribe((entity: any) => { this.currentUser = entity; });
+    this.svc.getEventsByDog(this.dogId).subscribe((events: CalendarEvent[]) => this.events = events);
+    this.svc.getDogs().subscribe((dogs: Dog[]) => this.allDogs = dogs);
   }
 
   loadEvents(): void {
-    this.userService.getEventsByDog(this.dogId).subscribe(events => this.events = events);
+    this.svc.getEventsByDog(this.dogId).subscribe((events: CalendarEvent[]) => this.events = events);
   }
 
   // ── Week grid ──────────────────────────────────────────
@@ -96,7 +107,12 @@ export class DogCalendarComponent implements OnInit {
     const top = (start.getHours() - 6) * hourH + (start.getMinutes() / 60) * hourH;
     const end = new Date(event.endTime);
     const height = Math.max(((end.getTime() - start.getTime()) / 3600000) * hourH, 20);
-    const mine = this.currentUser && event.creator?.id === this.currentUser.id;
+    const s = this.authService.currentSession;
+    const mine = this.currentUser && (
+      s === 'owner' ? event.ownerCreator?.id === this.currentUser.id :
+      s === 'user'  ? event.userCreator?.id === this.currentUser.id :
+      false
+    );
     return {
       position: 'absolute', top: `${top}px`, left: '2px', right: '2px',
       height: `${height}px`, backgroundColor: mine ? '#198754' : '#0d6efd',
@@ -108,6 +124,7 @@ export class DogCalendarComponent implements OnInit {
   // ── Create event ───────────────────────────────────────
 
   openAddEventForm(): void {
+    if (this.isOrg) return;
     this.newEvent = { event: '', description: '', location: undefined, startTime: '', endTime: '' };
     // Pre-select the profile dog
     this.selectedDogs = this.profileDog ? [this.profileDog] : [];
@@ -139,8 +156,9 @@ export class DogCalendarComponent implements OnInit {
   }
 
   submitAddEvent(): void {
-    this.userService.createEvent(this.newEvent).subscribe(created => {
-      const ops = this.selectedDogs.map(d => this.userService.addDogToEvent(created.id, d.id));
+    if (this.isOrg) return;
+    this.svc.createEvent(this.newEvent).subscribe((created: CalendarEvent) => {
+      const ops = this.selectedDogs.map(d => this.svc.addDogToEvent(created.id, d.id));
       if (ops.length === 0) {
         this.loadEvents();
         this.closeAddEventForm();
@@ -157,7 +175,14 @@ export class DogCalendarComponent implements OnInit {
 
   openEventDetails(event: CalendarEvent): void {
     this.selectedEvent = event;
-    this.isCreator = !!this.currentUser && event.creator?.id === this.currentUser.id;
+    const s = this.authService.currentSession;
+    if (s === 'owner') {
+      this.isCreator = !!this.currentUser && event.ownerCreator?.id === this.currentUser.id;
+    } else if (s === 'user') {
+      this.isCreator = !!this.currentUser && event.userCreator?.id === this.currentUser.id;
+    } else {
+      this.isCreator = false;
+    }
     this.showEditForm = false;
     this.popupDogSearch = '';
     this.popupFilteredDogs = [];
@@ -166,13 +191,19 @@ export class DogCalendarComponent implements OnInit {
   closeEventDetails(): void { this.selectedEvent = null; this.showEditForm = false; }
 
   isAlreadyJoined(): boolean {
-    return !!this.currentUser &&
-      (this.selectedEvent?.attendees ?? []).some(t => t.id === this.currentUser!.id);
+    if (!this.currentUser || !this.selectedEvent) return false;
+    const s = this.authService.currentSession;
+    if (s === 'owner') {
+      return (this.selectedEvent.ownerAttendees ?? []).some(t => t.id === this.currentUser.id);
+    } else if (s === 'user') {
+      return (this.selectedEvent.attendees ?? []).some(t => t.id === this.currentUser.id);
+    }
+    return false;
   }
 
   joinEvent(): void {
-    if (!this.selectedEvent) return;
-    this.userService.joinEvent(this.selectedEvent.id).subscribe();
+    if (this.isOrg || !this.selectedEvent) return;
+    this.svc.joinEvent(this.selectedEvent.id).subscribe();
   }
 
   // ── Edit ──────────────────────────────────────────────
@@ -192,8 +223,8 @@ export class DogCalendarComponent implements OnInit {
   closeEditForm(): void { this.showEditForm = false; }
 
   submitEdit(): void {
-    if (!this.selectedEvent) return;
-    this.userService.editEvent(this.selectedEvent.id, this.editForm).subscribe(updated => {
+    if (this.isOrg || !this.selectedEvent) return;
+    this.svc.editEvent(this.selectedEvent.id, this.editForm).subscribe((updated: CalendarEvent) => {
       this.replaceEvent(updated);
       this.selectedEvent = updated;
       this.showEditForm = false;
@@ -212,8 +243,8 @@ export class DogCalendarComponent implements OnInit {
   }
 
   addDogToEvent(dog: Dog): void {
-    if (!this.selectedEvent) return;
-    this.userService.addDogToEvent(this.selectedEvent.id, dog.id).subscribe(() => {
+    if (this.isOrg || !this.selectedEvent) return;
+    this.svc.addDogToEvent(this.selectedEvent.id, dog.id).subscribe(() => {
       this.popupDogSearch = '';
       this.popupFilteredDogs = [];
     });
@@ -222,8 +253,8 @@ export class DogCalendarComponent implements OnInit {
   // ── Delete ────────────────────────────────────────────
 
   deleteEvent(): void {
-    if (!this.selectedEvent) return;
-    this.userService.deleteEvent(this.selectedEvent.id).subscribe(() => {
+    if (this.isOrg || !this.selectedEvent) return;
+    this.svc.deleteEvent(this.selectedEvent.id).subscribe(() => {
       this.events = this.events.filter(e => e.id !== this.selectedEvent!.id);
       this.closeEventDetails();
     });

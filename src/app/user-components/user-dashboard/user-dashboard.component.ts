@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user/user.service';
+import { AuthService } from '../../services/auth/auth.service';
 import { Dog } from '../../models/dog';
 import { Router } from '@angular/router';
 
@@ -13,6 +14,7 @@ export class UserDashboardComponent implements OnInit {
 
   constructor(
     private userService: UserService,
+    private authService: AuthService,
     private router: Router
   ) { }
 
@@ -33,6 +35,7 @@ export class UserDashboardComponent implements OnInit {
 
   logout() {
     this.userService.logout().subscribe(() => {
+      this.authService.clearSession();
       this.router.navigate(['/']);
     });
   }

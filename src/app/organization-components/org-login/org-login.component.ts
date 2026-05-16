@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { OrganizationService } from '../../services/organization/organization.service';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
     selector: 'app-org-login',
@@ -12,7 +13,8 @@ export class OrgLoginComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private organizationService: OrganizationService
+    private organizationService: OrganizationService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -26,6 +28,7 @@ export class OrgLoginComponent implements OnInit {
     this.organizationService.login(this.email, this.password).subscribe(org => {
       if (org) {
         this.loginError = false;
+        this.authService.setSession('org');
         this.router.navigate(['/org-dashboard']);
       } else {
         this.loginError = true;

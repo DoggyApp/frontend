@@ -11,7 +11,7 @@ export interface CalendarEvent {
   endTime: string;
   location?: Location;
   address?: string;
-  creator?: User;        // set when an org User created the event
+  userCreator?: User;    // set when a User created the event
   ownerCreator?: Owner;  // set when an Owner created the event
   attendees: User[];
   ownerAttendees: Owner[];

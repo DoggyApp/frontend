@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { OwnerService } from '../../services/owner/owner.service';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-owner-login',
@@ -16,6 +17,7 @@ export class OwnerLoginComponent {
 
   constructor(
     private ownerService: OwnerService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
@@ -23,6 +25,7 @@ export class OwnerLoginComponent {
     this.ownerService.login(this.email, this.password).subscribe(owner => {
       if (owner) {
         this.loginError = false;
+        this.authService.setSession('owner');
         this.router.navigate(['/owner-dashboard']);
       } else {
         this.loginError = true;

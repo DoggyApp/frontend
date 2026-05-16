@@ -65,7 +65,15 @@ export class UserService {
 
   // USERS SHOULD NOT BE ABLE TO REGISTER — they can only be created by organizations
 
-  // ── Dog methods (read and care-related — users cannot create or delete dogs) ──
+  // ── Dog methods ───────────────────────────────────────────────────────────
+
+  // POST /user/dog/add
+  addDog(
+    dog: { name: string; breed: string; birthday: string; weight: number; image: string },
+    vaccines: { name: string; vaccinatedDate: string }[] = []
+  ): Observable<Dog> {
+    return this.http.post<Dog>(`${this.apiUrl}/dog/add`, { ...dog, vaccines }, this.options);
+  }
 
   // GET /user/dogs
   getDogs(): Observable<Dog[]> {

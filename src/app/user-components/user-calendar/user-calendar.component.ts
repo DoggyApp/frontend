@@ -95,7 +95,7 @@ export class UserCalendarComponent implements OnInit {
     const top = (start.getHours() - 6) * hourH + (start.getMinutes() / 60) * hourH;
     const end = new Date(event.endTime);
     const height = Math.max(((end.getTime() - start.getTime()) / 3600000) * hourH, 20);
-    const mine = this.currentUser && event.creator?.id === this.currentUser.id;
+    const mine = this.currentUser && event.userCreator?.id === this.currentUser.id;
     return {
       position: 'absolute', top: `${top}px`, left: '2px', right: '2px',
       height: `${height}px`, backgroundColor: mine ? '#198754' : '#0d6efd',
@@ -153,7 +153,7 @@ export class UserCalendarComponent implements OnInit {
 
   openEventDetails(event: CalendarEvent): void {
     this.selectedEvent = event;
-    this.isCreator = !!this.currentUser && event.creator?.id === this.currentUser.id;
+    this.isCreator = !!this.currentUser && event.userCreator?.id === this.currentUser.id;
     this.showEditForm = false;
     this.popupDogSearch = '';
     this.popupFilteredDogs = [];
