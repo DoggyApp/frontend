@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { CalendarEvent } from '../../models/event';
-import { Location } from '../../models/location';
+import { Room } from '../../models/room';
 import { Dog } from '../../models/dog';
 import { User } from '../../models/user';
 import { UserService } from '../../services/user/user.service';
@@ -22,7 +22,7 @@ export class UserCalendarComponent implements OnInit {
 
   currentUser: User | null = null;
   events: CalendarEvent[] = [];
-  locations: Location[] = [];
+  rooms: Room[] = [];
   allDogs: Dog[] = [];
   allUsers: User[] = [];
 
@@ -56,7 +56,7 @@ export class UserCalendarComponent implements OnInit {
       this.loadEvents();
     });
     this.generateWeek();
-    this.userService.getLocations().subscribe(locs => this.locations = locs);
+    this.userService.getRooms().subscribe(rooms => this.rooms = rooms);
     this.userService.getDogs().subscribe(dogs => this.allDogs = dogs);
   }
 
@@ -107,7 +107,7 @@ export class UserCalendarComponent implements OnInit {
   // ── Create event ───────────────────────────────────────
 
   openAddEventForm(): void {
-    this.newEvent = { event: '', description: '', location: undefined, startTime: '', endTime: '' };
+    this.newEvent = { event: '', description: '', room: undefined, startTime: '', endTime: '' };
     this.selectedDogs = [];
     this.dogSearch = '';
     this.filteredDogs = [];
@@ -163,7 +163,7 @@ export class UserCalendarComponent implements OnInit {
 
   isAlreadyJoined(): boolean {
     return !!this.currentUser &&
-      (this.selectedEvent?.attendees ?? []).some(t => t.id === this.currentUser!.id);
+      (this.selectedEvent?.userAttendees ?? []).some(t => t.id === this.currentUser!.id);
   }
 
   joinEvent(): void {
@@ -178,7 +178,7 @@ export class UserCalendarComponent implements OnInit {
     this.editForm = {
       event: this.selectedEvent.event,
       description: this.selectedEvent.description,
-      location: this.selectedEvent.location,
+      room: this.selectedEvent.room,
       startTime: this.selectedEvent.startTime,
       endTime: this.selectedEvent.endTime
     };

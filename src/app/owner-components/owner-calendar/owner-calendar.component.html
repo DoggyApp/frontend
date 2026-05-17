@@ -29,7 +29,7 @@
           <p class="event-desc" *ngIf="item.event!.description">{{ item.event!.description }}</p>
           <div class="event-meta">
             <span *ngIf="item.event!.address">📍 {{ item.event!.address }}</span>
-            <span *ngIf="item.event!.location">📍 {{ item.event!.location!.name }}, {{ item.event!.location!.address }}</span>
+            <span *ngIf="item.event!.room">📍 {{ item.event!.room!.name }}, {{ item.event!.room!.location?.address }}</span>
             <span class="event-time">{{ item.event!.startTime | date:'h:mm a' }} – {{ item.event!.endTime | date:'h:mm a' }}</span>
           </div>
           <div class="avatar-row mt-2" *ngIf="item.event!.dogs?.length">
@@ -156,7 +156,7 @@
     <p class="popup-desc" *ngIf="selectedEvent.description">{{ selectedEvent.description }}</p>
     <div class="popup-meta">
       <div *ngIf="selectedEvent.address">📍 {{ selectedEvent.address }}</div>
-      <div *ngIf="selectedEvent.location">📍 {{ selectedEvent.location!.name }}, {{ selectedEvent.location!.address }}</div>
+      <div *ngIf="selectedEvent.room">📍 {{ selectedEvent.room!.name }}, {{ selectedEvent.room!.location?.address }}</div>
       <div>🕐 {{ selectedEvent.startTime | date:'MMM d, y · h:mm a' }} – {{ selectedEvent.endTime | date:'h:mm a' }}</div>
     </div>
 
@@ -185,10 +185,10 @@
     </div>
 
     <!-- User attendees -->
-    <div class="popup-section" *ngIf="selectedEvent.attendees?.length">
+    <div class="popup-section" *ngIf="selectedEvent.userAttendees?.length">
       <div class="detail-label">Staff Attending</div>
       <div class="attendee-list">
-        <div class="attendee-row" *ngFor="let u of selectedEvent.attendees">
+        <div class="attendee-row" *ngFor="let u of selectedEvent.userAttendees">
           <div class="avatar-circle user-circle">{{ u.firstName[0] }}{{ u.lastName[0] }}</div>
           <span>{{ u.firstName }} {{ u.lastName }}</span>
         </div>

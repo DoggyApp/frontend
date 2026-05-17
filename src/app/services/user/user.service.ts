@@ -174,7 +174,9 @@ export class UserService {
 
   // POST /user/event/add
   createEvent(event: Partial<CalendarEvent>): Observable<CalendarEvent> {
-    return this.http.post<CalendarEvent>(`${this.apiUrl}/event/add`, event, this.options);
+    const { room, ...rest } = event as any;
+    const body = { ...rest, ...(room?.id ? { roomId: room.id } : {}) };
+    return this.http.post<CalendarEvent>(`${this.apiUrl}/event/add`, body, this.options);
   }
 
   // DELETE /user/event/{id}
@@ -184,7 +186,9 @@ export class UserService {
 
   // PUT /user/event/{id}/edit
   editEvent(id: number, updates: Partial<CalendarEvent>): Observable<CalendarEvent> {
-    return this.http.put<CalendarEvent>(`${this.apiUrl}/event/${id}/edit`, updates, this.options);
+    const { room, ...rest } = updates as any;
+    const body = { ...rest, ...(room?.id ? { roomId: room.id } : {}) };
+    return this.http.put<CalendarEvent>(`${this.apiUrl}/event/${id}/edit`, body, this.options);
   }
 
   // POST /user/event/{id}/attend

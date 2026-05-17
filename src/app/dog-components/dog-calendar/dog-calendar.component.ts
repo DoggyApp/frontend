@@ -201,7 +201,7 @@ export class DogCalendarComponent implements OnInit {
     if (s === 'owner') {
       return (this.selectedEvent.ownerAttendees ?? []).some(t => t.id === this.currentUser.id);
     } else if (s === 'user') {
-      return (this.selectedEvent.attendees ?? []).some(t => t.id === this.currentUser.id);
+      return (this.selectedEvent.userAttendees ?? []).some(t => t.id === this.currentUser.id);
     }
     return false;
   }

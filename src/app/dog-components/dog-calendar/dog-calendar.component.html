@@ -100,10 +100,10 @@
     <p class="mb-1"><strong>Start:</strong> {{ selectedEvent.startTime | date:'medium' }}</p>
     <p class="mb-1 mb-3"><strong>End:</strong> {{ selectedEvent.endTime | date:'medium' }}</p>
 
-    <div class="mb-3" *ngIf="selectedEvent.attendees?.length">
+    <div class="mb-3" *ngIf="selectedEvent.userAttendees?.length">
       <div class="detail-label">Attendees</div>
       <div class="avatar-row">
-        <div class="avatar-bubble" *ngFor="let t of selectedEvent.attendees">
+        <div class="avatar-bubble" *ngFor="let t of selectedEvent.userAttendees">
           <div class="avatar-circle user-circle">{{ t.firstName[0] }}{{ t.lastName[0] }}</div>
           <span class="avatar-name">{{ t.firstName }} {{ t.lastName }}</span>
         </div>

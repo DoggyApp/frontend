@@ -13,7 +13,7 @@ export interface CalendarEvent {
   address?: string;
   userCreator?: User;    // set when a User created the event
   ownerCreator?: Owner;  // set when an Owner created the event
-  attendees: User[];
+  userAttendees: User[];
   ownerAttendees: Owner[];
   dogs: Dog[];
 }
