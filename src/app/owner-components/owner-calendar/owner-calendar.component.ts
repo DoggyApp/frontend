@@ -77,7 +77,7 @@ export class OwnerCalendarComponent implements OnInit {
   ngOnInit(): void {
     this.ownerService.getSession().subscribe(owner => {
       if (!owner) {
-        this.router.navigate(['/owner-login']);
+        this.router.navigate(['/']);
         return;
       }
       this.currentOwner = owner;

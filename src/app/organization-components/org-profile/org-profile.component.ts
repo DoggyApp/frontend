@@ -32,7 +32,7 @@ export class OrgProfileComponent implements OnInit {
   ngOnInit(): void {
     this.organizationService.getSession().subscribe(org => {
       if (!org) {
-        this.router.navigate(['/org-login']);
+        this.router.navigate(['/']);
         return;
       }
       this.org = org;

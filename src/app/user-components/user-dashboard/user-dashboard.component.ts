@@ -23,9 +23,10 @@ export class UserDashboardComponent implements OnInit {
   ngOnInit(): void {
     this.userService.getSession().subscribe(user => {
       if (!user) {
-        this.router.navigate(['/user-login']);
+        this.router.navigate(['/']);
         return;
       }
+      this.authService.setSession('user');
     });
 
     this.userService.getDogs().subscribe(dogs => {

@@ -6,6 +6,7 @@ import { OrgPublic } from '../../models/org-public';
 import { FriendRequest } from '../../models/friend-request';
 import { EventInvitation } from '../../models/event-invitation';
 import { OwnerService } from '../../services/owner/owner.service';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-owner-dashboard',
@@ -30,15 +31,17 @@ export class OwnerDashboardComponent implements OnInit {
 
   constructor(
     private ownerService: OwnerService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.ownerService.getSession().subscribe(owner => {
       if (!owner) {
-        this.router.navigate(['/owner-login']);
+        this.router.navigate(['/']);
         return;
       }
+      this.authService.setSession('owner');
       this.currentOwner = owner;
     });
 

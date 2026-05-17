@@ -28,7 +28,7 @@ export class OrgCalendarComponent implements OnInit {
 
   ngOnInit(): void {
     this.organizationService.getSession().subscribe(org => {
-      if (!org) { this.router.navigate(['/org-login']); return; }
+      if (!org) { this.router.navigate(['/']); return; }
     });
     this.generateWeek();
     this.organizationService.getLocations().subscribe(locs => {

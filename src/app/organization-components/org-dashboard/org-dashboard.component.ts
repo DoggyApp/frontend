@@ -47,9 +47,10 @@ export class OrgDashboardComponent implements OnInit {
   ngOnInit(): void {
     this.organizationService.getSession().subscribe(org => {
       if (!org) {
-        this.router.navigate(['/org-login']);
+        this.router.navigate(['/']);
         return;
       }
+      this.authService.setSession('org');
     });
 
     this.organizationService.getDogs().subscribe(dogs => {

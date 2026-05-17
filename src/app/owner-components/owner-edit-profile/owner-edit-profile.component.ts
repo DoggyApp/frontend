@@ -41,7 +41,7 @@ export class OwnerEditProfileComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.ownerService.getSession().subscribe(owner => {
       if (!owner) {
-        this.router.navigate(['/owner-login']);
+        this.router.navigate(['/']);
         return;
       }
       this.owner = owner;
