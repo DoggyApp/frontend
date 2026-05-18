@@ -144,7 +144,6 @@ export class DogCalendarComponent implements OnInit {
 
   closeAddEventForm(): void {
     this.showAddEventForm = false;
-    this.autocompleteCreate?.unbindAll();
     this.autocompleteCreate = null;
   }
 
@@ -246,7 +245,6 @@ export class DogCalendarComponent implements OnInit {
 
   closeEditForm(): void {
     this.showEditForm = false;
-    this.autocompleteEdit?.unbindAll();
     this.autocompleteEdit = null;
   }
 
@@ -299,19 +297,19 @@ export class DogCalendarComponent implements OnInit {
 
   private attachCreateAutocomplete(): void {
     setTimeout(() => {
-      const input = document.getElementById('createAddressInput') as HTMLInputElement;
-      if (!input) return;
-      this.placesService.attachAutocomplete(input, addr => { this.newEvent.address = addr; })
-        .then(ac => { this.autocompleteCreate = ac; });
+      const container = document.getElementById('createAddressContainer') as HTMLDivElement;
+      if (!container) return;
+      this.placesService.attachPlaceElement(container, addr => { this.newEvent.address = addr; })
+        .then(el => { this.autocompleteCreate = el; });
     }, 100);
   }
 
   private attachEditAutocomplete(): void {
     setTimeout(() => {
-      const input = document.getElementById('editAddressInput') as HTMLInputElement;
-      if (!input) return;
-      this.placesService.attachAutocomplete(input, addr => { this.editForm.address = addr; })
-        .then(ac => { this.autocompleteEdit = ac; });
+      const container = document.getElementById('editAddressContainer') as HTMLDivElement;
+      if (!container) return;
+      this.placesService.attachPlaceElement(container, addr => { this.editForm.address = addr; })
+        .then(el => { this.autocompleteEdit = el; });
     }, 100);
   }
 }

@@ -54,7 +54,7 @@
       <option *ngFor="let r of rooms" [ngValue]="r.id">{{ r.name }}<span *ngIf="r.location"> — {{ r.location.name }}</span></option>
     </select>
 
-    <input *ngIf="!isOrg" id="createAddressInput" type="text" [(ngModel)]="newEvent.address" placeholder="Address" class="form-control mb-2" />
+    <div *ngIf="!isOrg" id="createAddressContainer" class="mb-2"></div>
 
     <label class="form-label small">Start</label>
     <input type="datetime-local" [(ngModel)]="newEvent.startTime" class="form-control mb-2" />
@@ -142,7 +142,10 @@
           <option [ngValue]="null">Select room…</option>
           <option *ngFor="let r of rooms" [ngValue]="r.id">{{ r.name }}<span *ngIf="r.location"> — {{ r.location.name }}</span></option>
         </select>
-        <input *ngIf="!isOrg" id="editAddressInput" type="text" [(ngModel)]="editForm.address" placeholder="Address" class="form-control mb-2" />
+        <ng-container *ngIf="!isOrg">
+          <div *ngIf="editForm.address" class="small text-muted mb-1">📍 {{ editForm.address }}</div>
+          <div id="editAddressContainer" class="mb-2"></div>
+        </ng-container>
         <label class="form-label small">Start</label>
         <input type="datetime-local" [(ngModel)]="editForm.startTime" class="form-control mb-2" />
         <label class="form-label small">End</label>
