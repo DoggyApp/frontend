@@ -52,9 +52,8 @@ export class EventDetailModalComponent implements OnInit, OnChanges, OnDestroy, 
 
   get isCreator(): boolean {
     if (!this.currentUser || !this.event) return false;
-    if (this.isOwner) return this.event.ownerCreator?.id === this.currentUser.id;
-    if (this.isUser)  return this.event.userCreator?.id === this.currentUser.id;
-    return false;
+    const creator = this.isOwner ? this.event.ownerCreator : this.event.userCreator;
+    return !!creator && creator.id === this.currentUser.id;
   }
 
   get isAlreadyAttending(): boolean {

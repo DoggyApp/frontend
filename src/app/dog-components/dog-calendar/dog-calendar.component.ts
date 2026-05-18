@@ -96,10 +96,8 @@ export class DogCalendarComponent implements OnInit {
     const end = new Date(event.endTime);
     const height = Math.max(((end.getTime() - start.getTime()) / 3600000) * hourH, 20);
     const s = this.authService.currentSession;
-    const mine = this.currentUser && (
-      s === 'owner' ? event.ownerCreator?.id === this.currentUser.id :
-      s === 'user'  ? event.userCreator?.id === this.currentUser.id : false
-    );
+    const creator = s === 'owner' ? event.ownerCreator : event.userCreator;
+    const mine = this.currentUser && !!creator && creator.id === this.currentUser.id;
     return {
       position: 'absolute', top: `${top}px`, left: '2px', right: '2px',
       height: `${height}px`, backgroundColor: mine ? '#198754' : '#0d6efd',

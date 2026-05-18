@@ -3,6 +3,12 @@ import { Owner } from "./owner";
 import { Dog } from "./dog";
 import { Room } from "./room";
 
+export interface EventCreator {
+  id: number;
+  firstName: string;
+  lastName: string;
+}
+
 export interface CalendarEvent {
   id: number;
   event: string;       // event name / title
@@ -11,8 +17,8 @@ export interface CalendarEvent {
   endTime: string;
   room?: Room;
   address?: string;
-  userCreator?: User;    // set when a User created the event
-  ownerCreator?: Owner;  // set when an Owner created the event
+  userCreator?: EventCreator;
+  ownerCreator?: EventCreator;
   userAttendees: User[];
   ownerAttendees: Owner[];
   dogs: Dog[];
