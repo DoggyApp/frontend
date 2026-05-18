@@ -49,12 +49,12 @@
     <input type="text" [(ngModel)]="newEvent.event" placeholder="Title" class="form-control mb-2" />
     <input type="text" [(ngModel)]="newEvent.description" placeholder="Description" class="form-control mb-2" />
 
-    <select *ngIf="isUser" class="form-select mb-2" [(ngModel)]="selectedRoomId">
+    <select *ngIf="isUser" class="form-select mb-2" [(ngModel)]="selectedRoomId" (change)="onRoomChange('create')">
       <option [ngValue]="null">Select room…</option>
       <option *ngFor="let r of rooms" [ngValue]="r.id">{{ r.name }}<span *ngIf="r.location"> — {{ r.location.name }}</span></option>
     </select>
 
-    <input *ngIf="!isOrg" type="text" [(ngModel)]="newEvent.address" placeholder="Address" class="form-control mb-2" />
+    <input *ngIf="!isOrg" id="createAddressInput" type="text" [(ngModel)]="newEvent.address" placeholder="Address" class="form-control mb-2" />
 
     <label class="form-label small">Start</label>
     <input type="datetime-local" [(ngModel)]="newEvent.startTime" class="form-control mb-2" />
@@ -138,11 +138,11 @@
       <div *ngIf="showEditForm" class="mt-2 border-top pt-3">
         <input type="text" [(ngModel)]="editForm.event" placeholder="Title" class="form-control mb-2" />
         <input type="text" [(ngModel)]="editForm.description" placeholder="Description" class="form-control mb-2" />
-        <select *ngIf="isUser" class="form-select mb-2" [(ngModel)]="selectedRoomId">
+        <select *ngIf="isUser" class="form-select mb-2" [(ngModel)]="selectedRoomId" (change)="onRoomChange('edit')">
           <option [ngValue]="null">Select room…</option>
           <option *ngFor="let r of rooms" [ngValue]="r.id">{{ r.name }}<span *ngIf="r.location"> — {{ r.location.name }}</span></option>
         </select>
-        <input *ngIf="!isOrg" type="text" [(ngModel)]="editForm.address" placeholder="Address" class="form-control mb-2" />
+        <input *ngIf="!isOrg" id="editAddressInput" type="text" [(ngModel)]="editForm.address" placeholder="Address" class="form-control mb-2" />
         <label class="form-label small">Start</label>
         <input type="datetime-local" [(ngModel)]="editForm.startTime" class="form-control mb-2" />
         <label class="form-label small">End</label>

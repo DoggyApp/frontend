@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { environment } from '../environments/environment';
+import { GooglePlacesService } from './services/google-places/google-places.service';
 
 @Component({
     selector: 'app-root',
@@ -9,15 +9,10 @@ import { environment } from '../environments/environment';
 })
 export class AppComponent implements OnInit {
 
-  static mapsReady: Promise<void> = new Promise(resolve => {
-    (window as any)['onGoogleMapsReady'] = resolve;
-  });
+  constructor(private googlePlacesService: GooglePlacesService) {}
 
   ngOnInit(): void {
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${environment.googleMapsApiKey}&v=weekly&callback=onGoogleMapsReady`;
-    script.async = true;
-    document.head.appendChild(script);
+    this.googlePlacesService.preload();
   }
 
 }

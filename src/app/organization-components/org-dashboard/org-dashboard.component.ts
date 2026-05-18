@@ -1,6 +1,5 @@
-import { Component, OnInit, ViewChild, ElementRef, NgZone, ChangeDetectorRef, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
-import { AppComponent } from '../../app.component';
 import { Dog } from '../../models/dog';
 import { User } from '../../models/user';
 import { Location } from '../../models/location';
@@ -9,6 +8,7 @@ import { RegistrationRequest } from '../../models/registration-request';
 import { UserService } from '../../services/user/user.service';
 import { OrganizationService } from '../../services/organization/organization.service';
 import { AuthService } from '../../services/auth/auth.service';
+import { GooglePlacesService } from '../../services/google-places/google-places.service';
 
 @Component({
     selector: 'app-org-dashboard',
@@ -23,8 +23,8 @@ export class OrgDashboardComponent implements OnInit {
     private organizationService: OrganizationService,
     private authService: AuthService,
     private router: Router,
-    private ngZone: NgZone,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private placesService: GooglePlacesService
   ) { }
 
   @ViewChild('autocompleteContainer') autocompleteContainerRef!: ElementRef<HTMLDivElement>;
@@ -134,35 +134,15 @@ export class OrgDashboardComponent implements OnInit {
   openAddLocationModal() {
     this.showAddLocationForm = true;
     this.newLocation = { name: '', address: '' };
-    setTimeout(() => this.initAutocomplete(), 0);
-  }
-
-  private async initAutocomplete(): Promise<void> {
-    await AppComponent.mapsReady;
-
-    const container = this.autocompleteContainerRef?.nativeElement;
-    if (!container) return;
-
-    const { PlaceAutocompleteElement } = await (window as any).google.maps.importLibrary('places') as any;
-
-    const placeAutocomplete = new PlaceAutocompleteElement({
-      types: ['address'],
-      includedRegionCodes: ['us']
-    });
-
-    container.innerHTML = '';
-    container.appendChild(placeAutocomplete);
-
-    const handleSelect = () => {
-      const address: string = (placeAutocomplete as any).value ?? '';
-      this.ngZone.run(() => {
-        this.newLocation.address = address;
-        this.cdr.detectChanges();
-      });
-    };
-
-    placeAutocomplete.addEventListener('gmp-placeselect', handleSelect);
-    placeAutocomplete.addEventListener('gmp-select', handleSelect);
+    setTimeout(() => {
+      const container = this.autocompleteContainerRef?.nativeElement;
+      if (container) {
+        this.placesService.attachPlaceElement(container, addr => {
+          this.newLocation.address = addr;
+          this.cdr.detectChanges();
+        }, { includedRegionCodes: ['us'] });
+      }
+    }, 0);
   }
 
   closeAddLocationModal() {

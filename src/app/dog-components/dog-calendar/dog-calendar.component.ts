@@ -8,6 +8,7 @@ import { UserService } from '../../services/user/user.service';
 import { OwnerService } from '../../services/owner/owner.service';
 import { OrganizationService } from '../../services/organization/organization.service';
 import { AuthService } from '../../services/auth/auth.service';
+import { GooglePlacesService } from '../../services/google-places/google-places.service';
 
 @Component({
   selector: 'app-dog-calendar',
@@ -23,7 +24,8 @@ export class DogCalendarComponent implements OnInit {
     private userService: UserService,
     private ownerService: OwnerService,
     private organizationService: OrganizationService,
-    private authService: AuthService
+    private authService: AuthService,
+    private placesService: GooglePlacesService
   ) {}
 
   private get svc(): any {
@@ -67,6 +69,9 @@ export class DogCalendarComponent implements OnInit {
   // Add dog in popup
   popupDogSearch = '';
   popupFilteredDogs: Dog[] = [];
+
+  private autocompleteCreate: any = null;
+  private autocompleteEdit: any = null;
 
   ngOnInit(): void {
     if (!this.svc) { this.router.navigate(['/']); return; }
@@ -134,9 +139,14 @@ export class DogCalendarComponent implements OnInit {
     this.dogSearch = '';
     this.filteredDogs = [];
     this.showAddEventForm = true;
+    this.attachCreateAutocomplete();
   }
 
-  closeAddEventForm(): void { this.showAddEventForm = false; }
+  closeAddEventForm(): void {
+    this.showAddEventForm = false;
+    this.autocompleteCreate?.unbindAll();
+    this.autocompleteCreate = null;
+  }
 
   onDogSearch(): void {
     const q = this.dogSearch.toLowerCase();
@@ -153,9 +163,16 @@ export class DogCalendarComponent implements OnInit {
   }
 
   removeDogFromForm(dogId: number): void {
-    // Don't allow removing the profile dog
     if (dogId === this.dogId) return;
     this.selectedDogs = this.selectedDogs.filter(d => d.id !== dogId);
+  }
+
+  onRoomChange(form: 'create' | 'edit'): void {
+    const room = this.rooms.find(r => r.id === this.selectedRoomId);
+    const address = room?.location?.address ?? '';
+    if (!address) return;
+    if (form === 'create') this.newEvent.address = address;
+    else this.editForm.address = address;
   }
 
   submitAddEvent(): void {
@@ -163,7 +180,7 @@ export class DogCalendarComponent implements OnInit {
     const payload: any = { ...this.newEvent };
     if (this.selectedRoomId) payload.roomId = this.selectedRoomId;
     this.svc.createEvent(payload).subscribe((created: CalendarEvent) => {
-      const ops = this.selectedDogs.map(d => this.svc.addDogToEvent(created.id, d.id));
+      const ops = this.selectedDogs.map((d: Dog) => this.svc.addDogToEvent(created.id, d.id));
       if (ops.length === 0) {
         this.loadEvents();
         this.closeAddEventForm();
@@ -224,9 +241,14 @@ export class DogCalendarComponent implements OnInit {
     };
     this.selectedRoomId = this.selectedEvent.room?.id ?? null;
     this.showEditForm = true;
+    this.attachEditAutocomplete();
   }
 
-  closeEditForm(): void { this.showEditForm = false; }
+  closeEditForm(): void {
+    this.showEditForm = false;
+    this.autocompleteEdit?.unbindAll();
+    this.autocompleteEdit = null;
+  }
 
   submitEdit(): void {
     if (this.isOrg || !this.selectedEvent) return;
@@ -271,5 +293,25 @@ export class DogCalendarComponent implements OnInit {
   private replaceEvent(updated: CalendarEvent): void {
     const i = this.events.findIndex(e => e.id === updated.id);
     if (i !== -1) this.events[i] = updated;
+  }
+
+  // ── Google Places autocomplete ────────────────────────
+
+  private attachCreateAutocomplete(): void {
+    setTimeout(() => {
+      const input = document.getElementById('createAddressInput') as HTMLInputElement;
+      if (!input) return;
+      this.placesService.attachAutocomplete(input, addr => { this.newEvent.address = addr; })
+        .then(ac => { this.autocompleteCreate = ac; });
+    }, 100);
+  }
+
+  private attachEditAutocomplete(): void {
+    setTimeout(() => {
+      const input = document.getElementById('editAddressInput') as HTMLInputElement;
+      if (!input) return;
+      this.placesService.attachAutocomplete(input, addr => { this.editForm.address = addr; })
+        .then(ac => { this.autocompleteEdit = ac; });
+    }, 100);
   }
 }

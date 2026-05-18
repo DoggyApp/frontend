@@ -1,7 +1,7 @@
-import { Component, AfterViewInit, ViewChild, ElementRef, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { AppComponent } from '../../app.component';
 import { OwnerService } from '../../services/owner/owner.service';
+import { GooglePlacesService } from '../../services/google-places/google-places.service';
 
 @Component({
   selector: 'app-owner-register',
@@ -33,97 +33,23 @@ export class OwnerRegisterComponent implements AfterViewInit {
   constructor(
     private ownerService: OwnerService,
     private router: Router,
-    private ngZone: NgZone,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private placesService: GooglePlacesService
   ) {}
 
   ngAfterViewInit(): void {
-    this.initAutocomplete();
-  }
-
-  private async initAutocomplete(): Promise<void> {
-    await AppComponent.mapsReady;
-
     const container = this.autocompleteContainerRef?.nativeElement;
-    if (!container) return;
-
-    const { PlaceAutocompleteElement } = await (window as any).google.maps.importLibrary('places') as any;
-
-    const placeAutocomplete = new PlaceAutocompleteElement({
-      types: ['address'],
-      includedRegionCodes: ['us']
-    });
-
-    container.innerHTML = '';
-    container.appendChild(placeAutocomplete);
-
-    const geocode = (address: string): Promise<{ lat: number; lng: number }> => {
-      const geocoder = new (window as any).google.maps.Geocoder();
-      return new Promise((resolve, reject) => {
-        geocoder.geocode({ address }, (results: any[], status: string) => {
-          console.log('[Geocoder] status:', status);
-          console.log('[Geocoder] results:', results);
-          try {
-            if (status === 'OK' && results[0]) {
-              const loc = results[0].geometry.location;
-              console.log('[Geocoder] location object:', loc);
-              console.log('[Geocoder] typeof loc.lat:', typeof loc.lat);
-              const lat = typeof loc.lat === 'function' ? loc.lat() : loc.lat;
-              const lng = typeof loc.lng === 'function' ? loc.lng() : loc.lng;
-              console.log('[Geocoder] resolved coords:', { lat, lng });
-              resolve({ lat, lng });
-            } else {
-              reject(new Error(`Geocoding failed: ${status}`));
-            }
-          } catch (err) {
-            reject(err);
-          }
-        });
-      });
-    };
-
-    const handleSelect = async (event: any) => {
-      const place = event.place ?? event.detail?.place;
-      const rawAddress = (placeAutocomplete as any).value ?? '';
-
-      let resolvedAddress = rawAddress;
-      let lat: number | null = null;
-      let lng: number | null = null;
-
-      if (place) {
-        try {
-          await place.fetchFields({ fields: ['formattedAddress', 'location'] });
-          resolvedAddress = place.formattedAddress ?? rawAddress;
-          lat = place.location?.lat() ?? null;
-          lng = place.location?.lng() ?? null;
-        } catch { /* fall through to geocoder */ }
-      }
-
-      if (lat === null || lng === null) {
-        try {
-          const coords = await geocode(resolvedAddress);
-          lat = coords.lat;
-          lng = coords.lng;
-        } catch (err) {
-          console.error('Geocoding failed:', err);
-        }
-      }
-
-      console.log('[handleSelect] final lat/lng before zone:', { lat, lng, resolvedAddress });
-      this.ngZone.run(() => {
-        this.address = resolvedAddress;
+    if (container) {
+      this.placesService.attachPlaceElementWithCoords(container, (addr, lat, lng) => {
+        this.address = addr;
         this.lat = lat;
         this.lng = lng;
-        console.log('[handleSelect] this.lat/lng after zone:', { lat: this.lat, lng: this.lng });
         if (lat === null || lng === null) {
           this.submitError = 'Could not determine location coordinates. Please try selecting the address again.';
         }
         this.cdr.detectChanges();
-      });
-    };
-
-    placeAutocomplete.addEventListener('gmp-placeselect', handleSelect);
-    placeAutocomplete.addEventListener('gmp-select', handleSelect);
+      }, { includedRegionCodes: ['us'] });
+    }
   }
 
   onHandleInput(): void {

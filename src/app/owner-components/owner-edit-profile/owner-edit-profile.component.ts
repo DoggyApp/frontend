@@ -1,8 +1,8 @@
-import { Component, AfterViewInit, ViewChild, ElementRef, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { AppComponent } from '../../app.component';
 import { Owner } from '../../models/owner';
 import { OwnerService } from '../../services/owner/owner.service';
+import { GooglePlacesService } from '../../services/google-places/google-places.service';
 
 @Component({
   selector: 'app-owner-edit-profile',
@@ -34,8 +34,8 @@ export class OwnerEditProfileComponent implements AfterViewInit {
   constructor(
     private ownerService: OwnerService,
     private router: Router,
-    private ngZone: NgZone,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private placesService: GooglePlacesService
   ) {}
 
   ngAfterViewInit(): void {
@@ -50,36 +50,15 @@ export class OwnerEditProfileComponent implements AfterViewInit {
       this.email = owner.email;
       this.phoneNumber = owner.phoneNumber;
       this.address = owner.address ?? '';
-      this.initAutocomplete();
+
+      const container = this.autocompleteContainerRef?.nativeElement;
+      if (container) {
+        this.placesService.attachPlaceElement(container, addr => {
+          this.address = addr;
+          this.cdr.detectChanges();
+        }, { includedRegionCodes: ['us'] });
+      }
     });
-  }
-
-  private async initAutocomplete(): Promise<void> {
-    await AppComponent.mapsReady;
-
-    const container = this.autocompleteContainerRef?.nativeElement;
-    if (!container) return;
-
-    const { PlaceAutocompleteElement } = await (window as any).google.maps.importLibrary('places') as any;
-
-    const placeAutocomplete = new PlaceAutocompleteElement({
-      types: ['address'],
-      includedRegionCodes: ['us']
-    });
-
-    container.innerHTML = '';
-    container.appendChild(placeAutocomplete);
-
-    const handleSelect = () => {
-      const selected: string = (placeAutocomplete as any).value ?? '';
-      this.ngZone.run(() => {
-        this.address = selected;
-        this.cdr.detectChanges();
-      });
-    };
-
-    placeAutocomplete.addEventListener('gmp-placeselect', handleSelect);
-    placeAutocomplete.addEventListener('gmp-select', handleSelect);
   }
 
   isFormValid(): boolean {
