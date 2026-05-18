@@ -77,7 +77,7 @@
       <div class="dog-bubble-row mb-3">
         <div *ngFor="let d of allDogs"
              class="dog-bubble"
-             [class.dog-bubble-selected]="selectedDogs.some(s => s.id === d.id)"
+             [class.dog-bubble-selected]="isDogSelected(d)"
              (click)="toggleOwnerDog(d)">
           <img [src]="d.image" class="dog-bubble-img" [alt]="d.name" />
           <span class="dog-bubble-name">{{ d.name }}</span>
@@ -101,7 +101,7 @@
         <span class="chip" *ngFor="let d of selectedDogs">
           <img [src]="d.image" class="chip-dog-img" [alt]="d.name" />
           {{ d.name }}
-          <button class="chip-remove" (click)="removeDogFromForm(d.id)" [disabled]="d.id === dogId">✕</button>
+          <button class="chip-remove" (click)="removeDogFromForm(d.id)" [disabled]="isProfileDog(d)">✕</button>
         </span>
       </div>
     </ng-container>

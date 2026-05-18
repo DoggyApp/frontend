@@ -151,6 +151,14 @@ export class CreateEventModalComponent implements OnInit, OnDestroy, AfterViewIn
     this.selectedDogs = this.selectedDogs.filter(d => d.id !== dogId);
   }
 
+  isDogSelected(dog: Dog): boolean {
+    return this.selectedDogs.some(s => s.id === dog.id);
+  }
+
+  isProfileDog(dog: Dog): boolean {
+    return dog.id === this.dogId;
+  }
+
   onFriendSearch(): void { this.friendSearchSubject.next(this.friendSearch); }
 
   addFriendToInvite(friend: OwnerPublicSearch): void {
