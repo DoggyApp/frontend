@@ -1,0 +1,114 @@
+<div class="modal-backdrop">
+  <div class="modal-bubble p-4 rounded-4 shadow-lg">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="fw-bold mb-0">New Event</h5>
+      <button class="btn-close" (click)="closed.emit()"></button>
+    </div>
+
+    <input type="text" [(ngModel)]="newEvent.event" placeholder="Title" class="form-control mb-2" />
+    <input type="text" [(ngModel)]="newEvent.description" placeholder="Description" class="form-control mb-2" />
+
+    <select *ngIf="isUser" class="form-select mb-2" [(ngModel)]="selectedRoomId" (change)="onRoomChange()">
+      <option [ngValue]="null">Select room…</option>
+      <option *ngFor="let r of rooms" [ngValue]="r.id">
+        {{ r.name }}<span *ngIf="r.location"> — {{ r.location.name }}</span>
+      </option>
+    </select>
+
+    <div id="createAddressContainer" class="mb-2"></div>
+
+    <label class="form-label small">Start</label>
+    <input type="datetime-local" [(ngModel)]="newEvent.startTime" class="form-control mb-2" />
+    <label class="form-label small">End</label>
+    <input type="datetime-local" [(ngModel)]="newEvent.endTime" class="form-control mb-3" />
+
+    <!-- Friends (owners only) -->
+    <ng-container *ngIf="isOwner">
+      <label class="form-label small fw-semibold">Invite Friends</label>
+      <div class="position-relative mb-1">
+        <input type="text" [(ngModel)]="friendSearch" (input)="onFriendSearch()"
+               placeholder="Search friends…" class="form-control" />
+        <ul class="autocomplete-list" *ngIf="filteredFriends.length > 0">
+          <li *ngFor="let f of filteredFriends" (click)="addFriendToInvite(f)" class="autocomplete-item">
+            {{ f.firstName }} {{ f.lastName }}
+          </li>
+        </ul>
+      </div>
+      <div class="chips mb-3">
+        <span class="chip chip-selected" *ngFor="let f of invitedFriends">
+          {{ f.firstName }} {{ f.lastName }}
+          <button class="chip-remove" (click)="removeFriendFromInvite(f.handle)">✕</button>
+        </span>
+      </div>
+    </ng-container>
+
+    <!-- Attendees (users only) -->
+    <ng-container *ngIf="isUser">
+      <label class="form-label small fw-semibold">Add Attendees</label>
+      <div class="position-relative mb-1">
+        <input type="text" [(ngModel)]="attendeeSearch" (input)="onAttendeeSearch()"
+               placeholder="Search coworkers or clients…" class="form-control" />
+        <ul class="autocomplete-list" *ngIf="filteredAttendees.length > 0">
+          <li *ngFor="let a of filteredAttendees" (click)="selectAttendee(a)" class="autocomplete-item">
+            {{ a.firstName }} {{ a.lastName }}
+            <span class="attendee-type-badge">{{ a.type === 'user' ? 'Coworker' : 'Client' }}</span>
+          </li>
+        </ul>
+      </div>
+      <div class="chips mb-3">
+        <span class="chip chip-selected" *ngFor="let a of selectedUserAttendees">
+          {{ a.firstName }} {{ a.lastName }}
+          <span class="attendee-type-badge">Coworker</span>
+          <button class="chip-remove" (click)="removeUserAttendee(a.id)">✕</button>
+        </span>
+        <span class="chip chip-selected" *ngFor="let a of selectedOwnerAttendees">
+          {{ a.firstName }} {{ a.lastName }}
+          <span class="attendee-type-badge">Client</span>
+          <button class="chip-remove" (click)="removeOwnerAttendee(a.id)">✕</button>
+        </span>
+      </div>
+    </ng-container>
+
+    <!-- Dogs -->
+    <label class="form-label small fw-semibold">Dogs</label>
+
+    <!-- Owners: clickable bubbles -->
+    <ng-container *ngIf="isOwner">
+      <div class="dog-bubble-row mb-3">
+        <div *ngFor="let d of allDogs"
+             class="dog-bubble"
+             [class.dog-bubble-selected]="selectedDogs.some(s => s.id === d.id)"
+             (click)="toggleOwnerDog(d)">
+          <img [src]="d.image" class="dog-bubble-img" [alt]="d.name" />
+          <span class="dog-bubble-name">{{ d.name }}</span>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Users: debounced search -->
+    <ng-container *ngIf="isUser">
+      <div class="position-relative mb-1">
+        <input type="text" [(ngModel)]="dogSearch" (input)="onDogSearch()"
+               placeholder="Search dogs…" class="form-control" />
+        <ul class="autocomplete-list" *ngIf="filteredDogs.length > 0">
+          <li *ngFor="let d of filteredDogs" (click)="addDogToForm(d)" class="dog-search-item">
+            <img [src]="d.image" class="dog-search-img" [alt]="d.name" />
+            <span>{{ d.name }}</span>
+          </li>
+        </ul>
+      </div>
+      <div class="chips mb-3">
+        <span class="chip" *ngFor="let d of selectedDogs">
+          <img [src]="d.image" class="chip-dog-img" [alt]="d.name" />
+          {{ d.name }}
+          <button class="chip-remove" (click)="removeDogFromForm(d.id)" [disabled]="d.id === dogId">✕</button>
+        </span>
+      </div>
+    </ng-container>
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary flex-grow-1" (click)="submit()">Create</button>
+      <button class="btn btn-outline-secondary flex-grow-1" (click)="closed.emit()">Cancel</button>
+    </div>
+  </div>
+</div>

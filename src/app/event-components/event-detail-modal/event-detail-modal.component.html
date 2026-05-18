@@ -1,0 +1,113 @@
+<div class="modal-backdrop">
+  <div class="modal-bubble p-4 rounded-4 shadow-lg">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+      <h5 class="fw-bold mb-0">{{ event.event }}</h5>
+      <button class="btn-close" (click)="closed.emit()"></button>
+    </div>
+
+    <p class="mb-1"><strong>Description:</strong> {{ event.description }}</p>
+    <div class="mb-2" *ngIf="event.room || event.address">
+      <div *ngIf="event.room">
+        <strong>Room:</strong> {{ event.room.name }}
+        <span *ngIf="event.room.location"> — {{ event.room.location.name }}</span>
+      </div>
+      <div *ngIf="event.address" class="text-muted small">📍 {{ event.address }}</div>
+    </div>
+    <p class="mb-1"><strong>Start:</strong> {{ event.startTime | date:'medium' }}</p>
+    <p class="mb-1 mb-3"><strong>End:</strong> {{ event.endTime | date:'medium' }}</p>
+
+    <div class="mb-3" *ngIf="event.userAttendees?.length">
+      <div class="detail-label">Attendees</div>
+      <div class="avatar-row">
+        <div class="avatar-bubble" *ngFor="let t of event.userAttendees">
+          <div class="avatar-circle user-circle">{{ t.firstName[0] }}{{ t.lastName[0] }}</div>
+          <span class="avatar-name">{{ t.firstName }} {{ t.lastName }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3" *ngIf="event.dogs?.length">
+      <div class="detail-label">Dogs</div>
+      <div class="avatar-row">
+        <div class="avatar-bubble" *ngFor="let d of event.dogs">
+          <div class="avatar-circle dog-circle">{{ d.name[0] }}</div>
+          <span class="avatar-name">{{ d.name }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Creator actions -->
+    <ng-container *ngIf="isCreator">
+      <div class="mb-2">
+        <label class="form-label small fw-semibold">Add Dog</label>
+
+        <!-- Owners: bubbles for dogs not yet in the event -->
+        <ng-container *ngIf="isOwner">
+          <div class="dog-bubble-row" *ngIf="ownerDogsNotInEvent.length > 0; else allDogsAdded">
+            <div *ngFor="let d of ownerDogsNotInEvent"
+                 class="dog-bubble"
+                 (click)="addDogToEvent(d)">
+              <img [src]="d.image" class="dog-bubble-img" [alt]="d.name" />
+              <span class="dog-bubble-name">{{ d.name }}</span>
+            </div>
+          </div>
+          <ng-template #allDogsAdded>
+            <p class="text-muted small mb-0">All your dogs are already in this event.</p>
+          </ng-template>
+        </ng-container>
+
+        <!-- Users: debounced search -->
+        <ng-container *ngIf="isUser">
+          <div class="position-relative">
+            <input type="text" [(ngModel)]="popupDogSearch" (input)="onPopupDogSearch()"
+                   placeholder="Search dogs…" class="form-control" />
+            <ul class="autocomplete-list" *ngIf="popupFilteredDogs.length > 0">
+              <li *ngFor="let d of popupFilteredDogs" (click)="addDogToEvent(d)" class="dog-search-item">
+                <img [src]="d.image" class="dog-search-img" [alt]="d.name" />
+                <span>{{ d.name }}</span>
+              </li>
+            </ul>
+          </div>
+        </ng-container>
+      </div>
+
+      <button class="btn btn-outline-primary btn-sm mb-2 me-2" (click)="openEditForm()" *ngIf="!showEditForm">
+        Edit Event
+      </button>
+      <button class="btn btn-danger btn-sm mb-2" (click)="deleteEvent()">Delete</button>
+
+      <div *ngIf="showEditForm" class="mt-2 border-top pt-3">
+        <input type="text" [(ngModel)]="editForm.event" placeholder="Title" class="form-control mb-2" />
+        <input type="text" [(ngModel)]="editForm.description" placeholder="Description" class="form-control mb-2" />
+        <select *ngIf="isUser" class="form-select mb-2" [(ngModel)]="selectedRoomId" (change)="onRoomChange()">
+          <option [ngValue]="null">Select room…</option>
+          <option *ngFor="let r of rooms" [ngValue]="r.id">
+            {{ r.name }}<span *ngIf="r.location"> — {{ r.location.name }}</span>
+          </option>
+        </select>
+        <ng-container *ngIf="!isOrg">
+          <div *ngIf="editForm.address" class="small text-muted mb-1">📍 {{ editForm.address }}</div>
+          <div id="editAddressContainer" class="mb-2"></div>
+        </ng-container>
+        <label class="form-label small">Start</label>
+        <input type="datetime-local" [(ngModel)]="editForm.startTime" class="form-control mb-2" />
+        <label class="form-label small">End</label>
+        <input type="datetime-local" [(ngModel)]="editForm.endTime" class="form-control mb-2" />
+        <div class="d-flex gap-2">
+          <button class="btn btn-success btn-sm flex-grow-1" (click)="submitEdit()">Save</button>
+          <button class="btn btn-outline-secondary btn-sm flex-grow-1" (click)="closeEditForm()">Cancel</button>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Non-creator actions -->
+    <ng-container *ngIf="!isCreator && !isOrg">
+      <button class="btn btn-primary btn-sm"
+              [disabled]="isAlreadyJoined()"
+              (click)="joinEvent()">
+        {{ isAlreadyJoined() ? 'Already Joined' : 'Join Event' }}
+      </button>
+    </ng-container>
+
+  </div>
+</div>

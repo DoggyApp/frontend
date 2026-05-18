@@ -30,6 +30,8 @@ import { OwnerSearchOrgsComponent } from './owner-components/owner-search-orgs/o
 import { PublicOrgProfileComponent } from './owner-components/public-org-profile/public-org-profile.component';
 import { OwnerPublicProfileComponent } from './owner-components/owner-public-profile/owner-public-profile.component';
 import { OrgRegisterComponent } from './organization-components/org-register/org-register.component';
+import { CreateEventModalComponent } from './event-components/create-event-modal/create-event-modal.component';
+import { EventDetailModalComponent } from './event-components/event-detail-modal/event-detail-modal.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +60,9 @@ import { OrgRegisterComponent } from './organization-components/org-register/org
     OwnerSearchOrgsComponent,
     PublicOrgProfileComponent,
     OwnerPublicProfileComponent,
-    OrgRegisterComponent
+    OrgRegisterComponent,
+    CreateEventModalComponent,
+    EventDetailModalComponent
   ],
   imports: [
     BrowserModule,

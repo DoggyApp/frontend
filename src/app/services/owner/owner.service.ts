@@ -260,6 +260,14 @@ export class OwnerService {
     );
   }
 
+  // GET /owner/friends/search?q={query}
+  searchFriends(query: string): Observable<OwnerPublicSearch[]> {
+    return this.http.get<OwnerPublicSearch[]>(`${this.apiUrl}/friends/search`, {
+      ...this.options,
+      params: { q: query }
+    }).pipe(catchError(() => of([])));
+  }
+
   // DELETE /owner/friend/{handle}
   removeFriend(handle: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/friend/${handle}`, this.options);

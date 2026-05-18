@@ -5,6 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { User } from 'src/app/models/user';
 import { Dog } from 'src/app/models/dog';
+import { OwnerSearchResult } from 'src/app/models/owner-public';
 import { Note } from 'src/app/models/Note';
 import { Alert } from 'src/app/models/alert';
 import { Like } from 'src/app/models/like';
@@ -81,6 +82,14 @@ export class UserService {
     return this.http.get<Dog[]>(`${this.apiUrl}/dogs`, this.options).pipe(
       catchError(() => of([]))
     );
+  }
+
+  // GET /user/dogs/search?q={query}
+  searchDogs(query: string): Observable<Dog[]> {
+    return this.http.get<Dog[]>(`${this.apiUrl}/dogs/search`, {
+      ...this.options,
+      params: { q: query }
+    }).pipe(catchError(() => of([])));
   }
 
   // GET /user/dog/{id}
@@ -204,6 +213,32 @@ export class UserService {
   // DELETE /user/event/{eventId}/dog/{dogId}
   removeDogFromEvent(eventId: number, dogId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/event/${eventId}/dog/${dogId}`, this.options);
+  }
+
+  // POST /user/event/{eventId}/attendee/user/{userId}
+  addUserAttendee(eventId: number, userId: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/event/${eventId}/attendee/user/${userId}`, {}, this.options);
+  }
+
+  // POST /user/event/{eventId}/attendee/owner/{ownerId}
+  addOwnerAttendee(eventId: number, ownerId: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/event/${eventId}/attendee/owner/${ownerId}`, {}, this.options);
+  }
+
+  // GET /user/coworkers/search?q={query}
+  searchCoworkers(query: string): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/coworkers/search`, {
+      ...this.options,
+      params: { q: query }
+    }).pipe(catchError(() => of([])));
+  }
+
+  // GET /user/clients/search?q={query}
+  searchClients(query: string): Observable<OwnerSearchResult[]> {
+    return this.http.get<OwnerSearchResult[]>(`${this.apiUrl}/clients/search`, {
+      ...this.options,
+      params: { q: query }
+    }).pipe(catchError(() => of([])));
   }
 
   // ── Location methods ──────────────────────────────────────────────────────
