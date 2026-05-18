@@ -9,6 +9,7 @@ import { OwnerService } from '../../services/owner/owner.service';
 import { OrganizationService } from '../../services/organization/organization.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { GooglePlacesService } from '../../services/google-places/google-places.service';
+import { OwnerPublicFriend } from '../../models/owner-public';
 
 @Component({
   selector: 'app-dog-calendar',
@@ -36,8 +37,9 @@ export class DogCalendarComponent implements OnInit {
     return null;
   }
 
-  get isOrg(): boolean  { return this.authService.currentSession === 'org'; }
-  get isUser(): boolean { return this.authService.currentSession === 'user'; }
+  get isOrg(): boolean   { return this.authService.currentSession === 'org'; }
+  get isUser(): boolean  { return this.authService.currentSession === 'user'; }
+  get isOwner(): boolean { return this.authService.currentSession === 'owner'; }
 
   dogId!: number;
   currentUser: any = null;
@@ -70,6 +72,9 @@ export class DogCalendarComponent implements OnInit {
   popupDogSearch = '';
   popupFilteredDogs: Dog[] = [];
 
+  friends: OwnerPublicFriend[] = [];
+  invitedFriendHandles: Set<string> = new Set();
+
   private autocompleteCreate: any = null;
   private autocompleteEdit: any = null;
 
@@ -80,7 +85,8 @@ export class DogCalendarComponent implements OnInit {
     this.svc.getSession().subscribe((entity: any) => { this.currentUser = entity; });
     this.svc.getEventsByDog(this.dogId).subscribe((events: CalendarEvent[]) => this.events = events);
     this.svc.getDogs().subscribe((dogs: Dog[]) => this.allDogs = dogs);
-    if (this.isUser) this.userService.getRooms().subscribe((rooms: Room[]) => this.rooms = rooms);
+    if (this.isUser)  this.userService.getRooms().subscribe((rooms: Room[]) => this.rooms = rooms);
+    if (this.isOwner) this.ownerService.getFriends().subscribe((fs: OwnerPublicFriend[]) => this.friends = fs);
   }
 
   loadEvents(): void {
@@ -136,6 +142,7 @@ export class DogCalendarComponent implements OnInit {
     this.newEvent = { event: '', description: '', address: '', startTime: '', endTime: '' };
     this.selectedRoomId = null;
     this.selectedDogs = this.profileDog ? [this.profileDog] : [];
+    this.invitedFriendHandles = new Set();
     this.dogSearch = '';
     this.filteredDogs = [];
     this.showAddEventForm = true;
@@ -174,21 +181,26 @@ export class DogCalendarComponent implements OnInit {
     else this.editForm.address = address;
   }
 
+  toggleFriend(handle: string): void {
+    if (this.invitedFriendHandles.has(handle)) {
+      this.invitedFriendHandles.delete(handle);
+    } else {
+      this.invitedFriendHandles.add(handle);
+    }
+  }
+
   submitAddEvent(): void {
     if (this.isOrg) return;
     const payload: any = { ...this.newEvent };
     if (this.selectedRoomId) payload.roomId = this.selectedRoomId;
     this.svc.createEvent(payload).subscribe((created: CalendarEvent) => {
-      const ops = this.selectedDogs.map((d: Dog) => this.svc.addDogToEvent(created.id, d.id));
-      if (ops.length === 0) {
-        this.loadEvents();
-        this.closeAddEventForm();
-      } else {
-        forkJoin(ops).subscribe(() => {
-          this.loadEvents();
-          this.closeAddEventForm();
-        });
-      }
+      const dogOps = this.selectedDogs.map((d: Dog) => this.svc.addDogToEvent(created.id, d.id));
+      const inviteOps = this.isOwner
+        ? [...this.invitedFriendHandles].map(h => this.ownerService.sendInvitation(created.id, h))
+        : [];
+      const all = [...dogOps, ...inviteOps];
+      const finish = () => { this.loadEvents(); this.closeAddEventForm(); };
+      if (all.length === 0) { finish(); } else { forkJoin(all).subscribe({ next: finish, error: finish }); }
     });
   }
 

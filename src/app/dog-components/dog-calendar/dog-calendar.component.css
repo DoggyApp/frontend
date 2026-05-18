@@ -171,6 +171,14 @@
   font-size: 13px;
 }
 
+.chip-selected {
+  background: #6366f1;
+  color: white;
+  cursor: pointer;
+}
+
+.chip:not(.chip-selected) { cursor: pointer; }
+
 .chip-remove {
   background: none;
   border: none;

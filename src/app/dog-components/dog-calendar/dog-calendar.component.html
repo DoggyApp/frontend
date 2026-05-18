@@ -61,6 +61,19 @@
     <label class="form-label small">End</label>
     <input type="datetime-local" [(ngModel)]="newEvent.endTime" class="form-control mb-3" />
 
+    <!-- Friends (owners only) -->
+    <ng-container *ngIf="isOwner && friends.length > 0">
+      <label class="form-label small fw-semibold">Invite Friends</label>
+      <div class="chips mb-3">
+        <span *ngFor="let f of friends"
+              class="chip"
+              [class.chip-selected]="invitedFriendHandles.has(f.handle)"
+              (click)="toggleFriend(f.handle)">
+          {{ f.firstName }} {{ f.lastName }}
+        </span>
+      </div>
+    </ng-container>
+
     <!-- Dog search -->
     <label class="form-label small fw-semibold">Dogs</label>
     <div class="position-relative mb-1">
