@@ -85,7 +85,7 @@
     <!-- Dogs -->
     <div class="mb-3">
       <div class="detail-label mb-1">Dogs</div>
-      <ng-container *ngIf="event.dogs?.length > 0; else noDogs">
+      <ng-container *ngIf="event.dogs?.length; else noDogs">
         <div class="chips">
           <span class="chip chip-dog" *ngFor="let d of event.dogs">
             <img [src]="d.image" class="chip-dog-img" [alt]="d.name" />
