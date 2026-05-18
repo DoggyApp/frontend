@@ -1,68 +1,129 @@
 <div class="modal-backdrop">
   <div class="modal-bubble p-4 rounded-4 shadow-lg">
+
+    <!-- Header -->
     <div class="d-flex justify-content-between align-items-start mb-3">
       <h5 class="fw-bold mb-0">{{ event.event }}</h5>
-      <button class="btn-close" (click)="closed.emit()"></button>
-    </div>
-
-    <p class="mb-1"><strong>Description:</strong> {{ event.description }}</p>
-    <div class="mb-2" *ngIf="event.room || event.address">
-      <div *ngIf="event.room">
-        <strong>Room:</strong> {{ event.room.name }}
-        <span *ngIf="event.room.location"> — {{ event.room.location.name }}</span>
+      <div class="d-flex gap-2 align-items-center">
+        <button *ngIf="isCreator && !showEditForm" class="btn btn-sm btn-outline-primary" (click)="openEditForm()">Edit</button>
+        <button *ngIf="isCreator" class="btn btn-sm btn-outline-danger" (click)="deleteEvent()">Delete</button>
+        <button class="btn-close" (click)="closed.emit()"></button>
       </div>
-      <div *ngIf="event.address" class="text-muted small">📍 {{ event.address }}</div>
     </div>
-    <p class="mb-1"><strong>Start:</strong> {{ event.startTime | date:'medium' }}</p>
-    <p class="mb-1 mb-3"><strong>End:</strong> {{ event.endTime | date:'medium' }}</p>
 
-    <div class="mb-3" *ngIf="event.userAttendees?.length">
-      <div class="detail-label">Attendees</div>
-      <div class="avatar-row">
-        <div class="avatar-bubble" *ngFor="let t of event.userAttendees">
-          <div class="avatar-circle user-circle">{{ t.firstName[0] }}{{ t.lastName[0] }}</div>
-          <span class="avatar-name">{{ t.firstName }} {{ t.lastName }}</span>
+    <!-- Edit Form -->
+    <div *ngIf="showEditForm" class="edit-form border rounded-3 p-3 mb-3">
+      <h6 class="fw-semibold mb-3">Edit Event</h6>
+      <input type="text" [(ngModel)]="editForm.event" placeholder="Title" class="form-control mb-2" />
+      <input type="text" [(ngModel)]="editForm.description" placeholder="Description" class="form-control mb-2" />
+
+      <select *ngIf="isUser" class="form-select mb-2" [(ngModel)]="editRoomId" (change)="onEditRoomChange()">
+        <option [ngValue]="null">Select room…</option>
+        <option *ngFor="let r of rooms" [ngValue]="r.id">
+          {{ r.name }}<span *ngIf="r.location"> — {{ r.location.name }}</span>
+        </option>
+      </select>
+
+      <div *ngIf="editForm.address" class="small text-muted mb-1">📍 {{ editForm.address }}</div>
+      <div id="editAddressContainer" class="mb-2"></div>
+
+      <label class="form-label small">Start</label>
+      <input type="datetime-local" [(ngModel)]="editForm.startTime" class="form-control mb-2" />
+      <label class="form-label small">End</label>
+      <input type="datetime-local" [(ngModel)]="editForm.endTime" class="form-control mb-3" />
+
+      <div class="d-flex gap-2">
+        <button class="btn btn-success btn-sm flex-grow-1" (click)="submitEdit()">Save</button>
+        <button class="btn btn-outline-secondary btn-sm flex-grow-1" (click)="closeEditForm()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <p class="mb-2 text-secondary" *ngIf="event.description">{{ event.description }}</p>
+
+    <!-- Location / Room -->
+    <div class="mb-2" *ngIf="event.room">
+      <span class="detail-label">Room</span>
+      <span class="ms-2">{{ event.room.name }}<span *ngIf="event.room.location"> — {{ event.room.location.name }}</span></span>
+    </div>
+    <div class="mb-2" *ngIf="event.address">
+      <span class="small text-muted">📍 {{ event.address }}</span>
+    </div>
+
+    <!-- Times -->
+    <div class="d-flex gap-3 mb-3 small text-secondary">
+      <span><strong>Start:</strong> {{ event.startTime | date:'medium' }}</span>
+      <span><strong>End:</strong> {{ event.endTime | date:'medium' }}</span>
+    </div>
+
+    <!-- Host -->
+    <div class="mb-3">
+      <div class="detail-label mb-1">Host</div>
+      <span class="chip chip-host">{{ creatorName }}</span>
+    </div>
+
+    <!-- Attendees -->
+    <div class="mb-3">
+      <div class="detail-label mb-1">Attendees</div>
+      <ng-container *ngIf="(event.ownerAttendees?.length || 0) + (event.userAttendees?.length || 0) > 0; else noAttendees">
+        <div class="chips">
+          <span class="chip chip-owner" *ngFor="let a of event.ownerAttendees">
+            {{ a.firstName }} {{ a.lastName }}
+            <button *ngIf="isCreator" class="chip-remove" (click)="isOwner ? removeOwnerAttendeeOwner(a.id) : removeOwnerAttendeeUser(a.id)">✕</button>
+          </span>
+          <span class="chip chip-user" *ngFor="let a of event.userAttendees">
+            {{ a.firstName }} {{ a.lastName }}
+            <button *ngIf="isCreator && isUser" class="chip-remove" (click)="removeUserAttendee(a.id)">✕</button>
+          </span>
         </div>
-      </div>
+      </ng-container>
+      <ng-template #noAttendees>
+        <span class="badge bg-secondary">No attendees</span>
+      </ng-template>
     </div>
 
-    <div class="mb-3" *ngIf="event.dogs?.length">
-      <div class="detail-label">Dogs</div>
-      <div class="avatar-row">
-        <div class="avatar-bubble" *ngFor="let d of event.dogs">
-          <div class="avatar-circle dog-circle">{{ d.name[0] }}</div>
-          <span class="avatar-name">{{ d.name }}</span>
+    <!-- Dogs -->
+    <div class="mb-3">
+      <div class="detail-label mb-1">Dogs</div>
+      <ng-container *ngIf="event.dogs?.length > 0; else noDogs">
+        <div class="chips">
+          <span class="chip chip-dog" *ngFor="let d of event.dogs">
+            <img [src]="d.image" class="chip-dog-img" [alt]="d.name" />
+            {{ d.name }}
+            <button *ngIf="isCreator" class="chip-remove" (click)="removeDogFromEvent(d.id)">✕</button>
+          </span>
         </div>
-      </div>
+      </ng-container>
+      <ng-template #noDogs>
+        <span class="badge bg-secondary">No dogs</span>
+      </ng-template>
     </div>
 
-    <!-- Creator actions -->
+    <!-- Creator: Add dog -->
     <ng-container *ngIf="isCreator">
-      <div class="mb-2">
-        <label class="form-label small fw-semibold">Add Dog</label>
+      <div class="mb-3">
+        <div class="detail-label mb-1">Add Dog</div>
 
-        <!-- Owners: bubbles for dogs not yet in the event -->
+        <!-- Owners: clickable bubbles -->
         <ng-container *ngIf="isOwner">
           <div class="dog-bubble-row" *ngIf="ownerDogsNotInEvent.length > 0; else allDogsAdded">
-            <div *ngFor="let d of ownerDogsNotInEvent"
-                 class="dog-bubble"
-                 (click)="addDogToEvent(d)">
+            <div *ngFor="let d of ownerDogsNotInEvent" class="dog-bubble" (click)="addDogToEvent(d)">
               <img [src]="d.image" class="dog-bubble-img" [alt]="d.name" />
               <span class="dog-bubble-name">{{ d.name }}</span>
             </div>
           </div>
           <ng-template #allDogsAdded>
-            <p class="text-muted small mb-0">All your dogs are already in this event.</p>
+            <p class="text-muted small">All your dogs are in this event.</p>
           </ng-template>
         </ng-container>
 
         <!-- Users: debounced search -->
         <ng-container *ngIf="isUser">
           <div class="position-relative">
-            <input type="text" [(ngModel)]="popupDogSearch" (input)="onPopupDogSearch()"
-                   placeholder="Search dogs…" class="form-control" />
-            <ul class="autocomplete-list" *ngIf="popupFilteredDogs.length > 0">
-              <li *ngFor="let d of popupFilteredDogs" (click)="addDogToEvent(d)" class="dog-search-item">
+            <input type="text" [(ngModel)]="dogSearch" (input)="onDogSearch()"
+                   placeholder="Search dogs…" class="form-control form-control-sm" />
+            <ul class="autocomplete-list" *ngIf="filteredDogs.length > 0">
+              <li *ngFor="let d of filteredDogs" (click)="addDogToEvent(d)" class="dog-search-item">
                 <img [src]="d.image" class="dog-search-img" [alt]="d.name" />
                 <span>{{ d.name }}</span>
               </li>
@@ -70,44 +131,63 @@
           </div>
         </ng-container>
       </div>
+    </ng-container>
 
-      <button class="btn btn-outline-primary btn-sm mb-2 me-2" (click)="openEditForm()" *ngIf="!showEditForm">
-        Edit Event
-      </button>
-      <button class="btn btn-danger btn-sm mb-2" (click)="deleteEvent()">Delete</button>
-
-      <div *ngIf="showEditForm" class="mt-2 border-top pt-3">
-        <input type="text" [(ngModel)]="editForm.event" placeholder="Title" class="form-control mb-2" />
-        <input type="text" [(ngModel)]="editForm.description" placeholder="Description" class="form-control mb-2" />
-        <select *ngIf="isUser" class="form-select mb-2" [(ngModel)]="selectedRoomId" (change)="onRoomChange()">
-          <option [ngValue]="null">Select room…</option>
-          <option *ngFor="let r of rooms" [ngValue]="r.id">
-            {{ r.name }}<span *ngIf="r.location"> — {{ r.location.name }}</span>
-          </option>
-        </select>
-        <ng-container *ngIf="!isOrg">
-          <div *ngIf="editForm.address" class="small text-muted mb-1">📍 {{ editForm.address }}</div>
-          <div id="editAddressContainer" class="mb-2"></div>
-        </ng-container>
-        <label class="form-label small">Start</label>
-        <input type="datetime-local" [(ngModel)]="editForm.startTime" class="form-control mb-2" />
-        <label class="form-label small">End</label>
-        <input type="datetime-local" [(ngModel)]="editForm.endTime" class="form-control mb-2" />
-        <div class="d-flex gap-2">
-          <button class="btn btn-success btn-sm flex-grow-1" (click)="submitEdit()">Save</button>
-          <button class="btn btn-outline-secondary btn-sm flex-grow-1" (click)="closeEditForm()">Cancel</button>
+    <!-- Creator: Add attendees (users only) -->
+    <ng-container *ngIf="isCreator && isUser">
+      <div class="mb-3">
+        <div class="detail-label mb-1">Add Attendees</div>
+        <div class="position-relative">
+          <input type="text" [(ngModel)]="attendeeSearch" (input)="onAttendeeSearch()"
+                 placeholder="Search coworkers or clients…" class="form-control form-control-sm" />
+          <ul class="autocomplete-list" *ngIf="filteredAttendees.length > 0">
+            <li *ngFor="let a of filteredAttendees" (click)="addAttendee(a)" class="autocomplete-item">
+              {{ a.firstName }} {{ a.lastName }}
+              <span class="attendee-type-badge">{{ a.type === 'user' ? 'Coworker' : 'Client' }}</span>
+            </li>
+          </ul>
         </div>
       </div>
     </ng-container>
 
-    <!-- Non-creator actions -->
-    <ng-container *ngIf="!isCreator && !isOrg">
-      <button class="btn btn-primary btn-sm"
-              [disabled]="isAlreadyJoined()"
-              (click)="joinEvent()">
-        {{ isAlreadyJoined() ? 'Already Joined' : 'Join Event' }}
-      </button>
+    <!-- Creator: Invite friends (owners only) -->
+    <ng-container *ngIf="isCreator && isOwner">
+      <div class="mb-3">
+        <div class="detail-label mb-1">Invite Friends</div>
+        <div class="position-relative">
+          <input type="text" [(ngModel)]="friendSearch" (input)="onFriendSearch()"
+                 placeholder="Search friends…" class="form-control form-control-sm" />
+          <ul class="autocomplete-list" *ngIf="filteredFriends.length > 0">
+            <li *ngFor="let f of filteredFriends" (click)="inviteFriend(f)" class="autocomplete-item">
+              {{ f.firstName }} {{ f.lastName }}
+            </li>
+          </ul>
+        </div>
+      </div>
     </ng-container>
+
+    <!-- Invited (pending invitations — owner hosts only) -->
+    <ng-container *ngIf="isCreator && isOwner">
+      <div class="mb-3">
+        <div class="detail-label mb-1">Invited</div>
+        <ng-container *ngIf="pendingInvitations.length > 0; else noInvited">
+          <div class="chips">
+            <span class="chip chip-pending" *ngFor="let inv of pendingInvitations">
+              {{ inv.recipient.firstName }} {{ inv.recipient.lastName }}
+              <button class="chip-remove" (click)="cancelInvitation(inv.id)">✕</button>
+            </span>
+          </div>
+        </ng-container>
+        <ng-template #noInvited>
+          <span class="badge bg-secondary">No pending invitations</span>
+        </ng-template>
+      </div>
+    </ng-container>
+
+    <!-- Join button (non-hosts and non-attendees only) -->
+    <div *ngIf="!isCreator && !isAlreadyAttending && !isOrg" class="mt-2">
+      <button class="btn btn-primary btn-sm w-100" (click)="joinEvent()">Join Event</button>
+    </div>
 
   </div>
 </div>

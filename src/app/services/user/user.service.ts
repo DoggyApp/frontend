@@ -225,6 +225,16 @@ export class UserService {
     return this.http.post<void>(`${this.apiUrl}/event/${eventId}/attendee/owner/${ownerId}`, {}, this.options);
   }
 
+  // DELETE /user/event/{eventId}/attendee/user/{userId}
+  removeUserAttendee(eventId: number, userId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/event/${eventId}/attendee/user/${userId}`, this.options);
+  }
+
+  // DELETE /user/event/{eventId}/attendee/owner/{ownerId}
+  removeOwnerAttendee(eventId: number, ownerId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/event/${eventId}/attendee/owner/${ownerId}`, this.options);
+  }
+
   // GET /user/coworkers/search?q={query}
   searchCoworkers(query: string): Observable<User[]> {
     return this.http.get<User[]>(`${this.apiUrl}/coworkers/search`, {

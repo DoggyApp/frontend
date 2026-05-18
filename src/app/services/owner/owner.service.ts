@@ -345,6 +345,23 @@ export class OwnerService {
     return this.http.delete<void>(`${this.apiUrl}/invitation/${id}`, this.options);
   }
 
+  // GET /owner/event/{eventId}/invitations  (host sees pending invitations they sent)
+  getEventInvitations(eventId: number): Observable<EventInvitation[]> {
+    return this.http.get<EventInvitation[]>(`${this.apiUrl}/event/${eventId}/invitations`, this.options).pipe(
+      catchError(() => of([]))
+    );
+  }
+
+  // DELETE /owner/event/{eventId}/invitation/{invitationId}  (host cancels a sent invitation)
+  cancelEventInvitation(eventId: number, invitationId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/event/${eventId}/invitation/${invitationId}`, this.options);
+  }
+
+  // DELETE /owner/event/{eventId}/attendee/{attendeeId}  (host removes an owner attendee)
+  removeOwnerAttendeeFromEvent(eventId: number, attendeeId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/event/${eventId}/attendee/${attendeeId}`, this.options);
+  }
+
   // ── Favorite Organizations ─────────────────────────────────────────────────
 
   // GET /owner/favorites
