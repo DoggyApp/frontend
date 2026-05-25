@@ -176,9 +176,12 @@ export class EventDetailModalComponent implements OnInit, OnChanges, OnDestroy, 
   }
 
   loadPendingInvitations(): void {
-    this.ownerService.getEventInvitations(this.event.id).subscribe(invitations => {
-      this.pendingInvitations = invitations;
-    });
+    this.subs.add(
+      this.ownerService.getEventInvitations(this.event.id).subscribe({
+        next: invitations => { this.pendingInvitations = invitations; },
+        error: () => {}
+      })
+    );
   }
 
   // ── Edit ────────────────────────────────────────────────────────────────────

@@ -1,5 +1,5 @@
-<div class="modal-backdrop">
-  <div class="modal-bubble p-4 rounded-4 shadow-lg">
+<div class="modal-backdrop" (click)="closed.emit()">
+  <div class="modal-bubble p-4 rounded-4 shadow-lg" (click)="$event.stopPropagation()">
 
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-start mb-3">
