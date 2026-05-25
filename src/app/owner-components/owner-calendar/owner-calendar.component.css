@@ -48,12 +48,6 @@
 .event-meta { font-size: 12px; color: #6c757d; display: flex; gap: 16px; flex-wrap: wrap; }
 .event-time { font-weight: 500; }
 
-.detail-label {
-  font-size: 11px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.06em;
-  color: #6c757d; margin-bottom: 6px;
-}
-
 .avatar-row { display: flex; flex-wrap: wrap; gap: 6px; }
 .avatar-bubble {
   display: inline-flex; align-items: center; gap: 5px;
@@ -66,15 +60,7 @@
   font-size: 8px; font-weight: 700; color: white;
 }
 .dog-circle { background: #f59e0b; }
-.user-circle { background: #6366f1; }
 .avatar-name { font-size: 12px; font-weight: 500; }
-
-.attendee-list { display: flex; flex-direction: column; gap: 6px; }
-.attendee-row {
-  display: flex; align-items: center; gap: 8px;
-  padding: 6px 10px; background: #f8f9fa;
-  border-radius: 10px; font-size: 14px;
-}
 
 .fab {
   position: fixed; bottom: 32px; right: 32px;
@@ -87,8 +73,8 @@
 }
 .fab:hover { background: #d97706; transform: scale(1.07); }
 
+/* Invitation popup */
 .popup-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 100; }
-
 .popup {
   position: fixed; top: 50%; left: 50%;
   transform: translate(-50%,-50%); z-index: 101;
@@ -96,52 +82,15 @@
   width: 100%; max-width: 480px; max-height: 85vh;
   overflow-y: auto; box-shadow: 0 8px 40px rgba(0,0,0,0.18);
 }
-.create-popup { max-width: 520px; }
 .invitation-popup { border-top: 4px solid #3b82f6; }
-
 .popup-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
 .popup-title { font-weight: 700; margin: 0; flex: 1; }
-.popup-badges { display: flex; gap: 6px; }
 .btn-close-popup {
   background: none; border: none; font-size: 16px;
   color: #6c757d; cursor: pointer; padding: 0 0 0 8px; line-height: 1;
 }
 .popup-desc { font-size: 14px; color: #495057; margin-bottom: 10px; }
 .popup-meta { font-size: 13px; color: #6c757d; display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; }
-.popup-section { margin-bottom: 16px; }
-
-.dog-list { display: flex; flex-direction: column; gap: 8px; }
-.dog-row { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: #f8f9fa; border-radius: 10px; }
-.dog-name { font-size: 14px; font-weight: 500; flex: 1; }
-
-.popup-actions {
-  display: flex; gap: 8px; flex-wrap: wrap;
-  padding-top: 8px; border-top: 1px solid #dee2e6; margin-top: 4px;
-}
+.popup-actions { display: flex; gap: 8px; flex-wrap: wrap; padding-top: 8px; }
 .invite-respond-actions { justify-content: center; border-top: none; margin-top: 16px; padding-top: 0; }
 .invite-from-detail { font-size: 13px; color: #6c757d; margin-bottom: 10px; }
-
-.invite-list { display: flex; flex-direction: column; gap: 6px; }
-.invite-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; }
-
-.req-avatar {
-  width: 32px; height: 32px; border-radius: 50%;
-  background: #f59e0b; color: white; font-size: 11px; font-weight: 700;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.req-avatar.sm { width: 28px; height: 28px; font-size: 10px; }
-
-.pill-selector { display: flex; flex-wrap: wrap; gap: 8px; }
-.pill-btn {
-  background: #f8f9fa; border: 1.5px solid #dee2e6;
-  border-radius: 50px; padding: 4px 14px;
-  font-size: 13px; font-weight: 500; cursor: pointer;
-  transition: background 0.12s, border-color 0.12s, color 0.12s; color: #212529;
-}
-.pill-btn.selected { background: #f59e0b; border-color: #f59e0b; color: white; }
-.pill-btn.dog-pill.selected { background: #d97706; border-color: #d97706; }
-.pill-btn:hover:not(.selected) { border-color: #adb5bd; }
-
-.create-form, .edit-form { padding-top: 4px; }
-.create-actions, .edit-actions { display: flex; gap: 8px; }
-.create-actions { margin-top: 4px; }

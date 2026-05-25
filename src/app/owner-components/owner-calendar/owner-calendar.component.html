@@ -12,7 +12,6 @@
 
   <div class="event-list" *ngIf="!loading && calendarItems.length > 0">
 
-    <!-- Event card -->
     <ng-container *ngFor="let item of calendarItems">
 
       <!-- Regular event -->
@@ -65,214 +64,33 @@
   </div>
 </div>
 
-<!-- ── Create event FAB ───────────────────────────────────────────────── -->
-<button class="fab" (click)="openCreateForm()" title="Create event">+</button>
+<!-- Create event FAB -->
+<button class="fab" (click)="showCreateModal = true" title="Create event">+</button>
 
-<!-- ── Create event popup ─────────────────────────────────────────────── -->
-<div class="popup-backdrop" *ngIf="showCreateForm" (click)="closeCreateForm()"></div>
-<div class="popup create-popup" *ngIf="showCreateForm" (click)="$event.stopPropagation()">
-  <div class="popup-header">
-    <h5 class="popup-title">New Event</h5>
-    <button class="btn-close-popup" (click)="closeCreateForm()">✕</button>
-  </div>
+<!-- Create event modal -->
+<app-create-event-modal
+  *ngIf="showCreateModal"
+  [dogId]="0"
+  [profileDog]="null"
+  [rooms]="[]"
+  [allDogs]="ownerDogs"
+  (eventCreated)="onEventCreated()"
+  (closed)="showCreateModal = false">
+</app-create-event-modal>
 
-  <div class="create-form">
-    <div class="mb-3">
-      <label class="form-label">Title <span class="text-danger">*</span></label>
-      <input class="form-control" [(ngModel)]="createForm.event" placeholder="e.g. Dog Park Morning" />
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Description</label>
-      <textarea class="form-control" rows="2" [(ngModel)]="createForm.description" placeholder="Optional details…"></textarea>
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Address</label>
-      <input class="form-control" [(ngModel)]="createForm.address" placeholder="e.g. 123 Park Ave" />
-    </div>
-    <div class="row mb-3">
-      <div class="col">
-        <label class="form-label">Start <span class="text-danger">*</span></label>
-        <input class="form-control" type="datetime-local" [(ngModel)]="createForm.startTime" />
-      </div>
-      <div class="col">
-        <label class="form-label">End <span class="text-danger">*</span></label>
-        <input class="form-control" type="datetime-local" [(ngModel)]="createForm.endTime" />
-      </div>
-    </div>
+<!-- Event detail modal -->
+<app-event-detail-modal
+  *ngIf="selectedEvent"
+  [event]="selectedEvent"
+  [currentUser]="currentOwner"
+  [rooms]="[]"
+  [allDogs]="ownerDogs"
+  (eventUpdated)="onEventUpdated($event)"
+  (eventDeleted)="onEventDeleted($event)"
+  (closed)="selectedEvent = null">
+</app-event-detail-modal>
 
-    <!-- Invite friends -->
-    <div class="mb-3" *ngIf="friends.length > 0">
-      <label class="form-label">Invite Friends</label>
-      <div class="pill-selector">
-        <button
-          *ngFor="let f of friends"
-          class="pill-btn"
-          [class.selected]="createInvitedFriendIds.has(f.handle)"
-          (click)="toggleCreateFriend(f.handle)">
-          {{ f.firstName }} {{ f.lastName }}
-        </button>
-      </div>
-    </div>
-
-    <!-- Add your dogs -->
-    <div class="mb-3" *ngIf="currentOwner?.dogs?.length">
-      <label class="form-label">Bring Your Dogs</label>
-      <div class="pill-selector">
-        <button
-          *ngFor="let d of currentOwner!.dogs"
-          class="pill-btn dog-pill"
-          [class.selected]="createAddedDogIds.has(d.id)"
-          (click)="toggleCreateDog(d.id)">
-          {{ d.name }}
-        </button>
-      </div>
-    </div>
-
-    <div class="create-actions">
-      <button
-        class="btn btn-primary rounded-pill px-4"
-        (click)="submitCreateEvent()"
-        [disabled]="createLoading || !createForm.event || !createForm.startTime || !createForm.endTime">
-        {{ createLoading ? 'Creating…' : 'Create Event' }}
-      </button>
-      <button class="btn btn-outline-secondary rounded-pill" (click)="closeCreateForm()">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── Event detail popup ─────────────────────────────────────────────── -->
-<div class="popup-backdrop" *ngIf="selectedEvent" (click)="closeEvent()"></div>
-<div class="popup" *ngIf="selectedEvent" (click)="$event.stopPropagation()">
-  <div class="popup-header">
-    <h5 class="popup-title">{{ selectedEvent.event }}</h5>
-    <div class="popup-badges">
-      <span class="badge-creator" *ngIf="isMyEvent(selectedEvent)">Created by you</span>
-    </div>
-    <button class="btn-close-popup" (click)="closeEvent()">✕</button>
-  </div>
-
-  <!-- View mode -->
-  <ng-container *ngIf="!showEditForm && !showLeaveConfirm">
-    <p class="popup-desc" *ngIf="selectedEvent.description">{{ selectedEvent.description }}</p>
-    <div class="popup-meta">
-      <div *ngIf="selectedEvent.address">📍 {{ selectedEvent.address }}</div>
-      <div *ngIf="selectedEvent.room">📍 {{ selectedEvent.room!.name }}, {{ selectedEvent.room!.location?.address }}</div>
-      <div>🕐 {{ selectedEvent.startTime | date:'MMM d, y · h:mm a' }} – {{ selectedEvent.endTime | date:'h:mm a' }}</div>
-    </div>
-
-    <!-- Dogs attending -->
-    <div class="popup-section" *ngIf="selectedEvent.dogs?.length">
-      <div class="detail-label">Dogs Attending</div>
-      <div class="dog-list">
-        <div class="dog-row" *ngFor="let d of selectedEvent.dogs">
-          <div class="avatar-circle dog-circle">{{ d.name[0] }}</div>
-          <span class="dog-name">{{ d.name }}</span>
-          <button class="btn btn-sm btn-outline-danger rounded-pill ms-auto"
-                  (click)="removeDog(d)">Remove</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Owner attendees -->
-    <div class="popup-section" *ngIf="selectedEvent.ownerAttendees?.length">
-      <div class="detail-label">Owners Attending</div>
-      <div class="attendee-list">
-        <div class="attendee-row" *ngFor="let o of selectedEvent.ownerAttendees">
-          <div class="avatar-circle">{{ o.firstName[0] }}{{ o.lastName[0] }}</div>
-          <span>{{ o.firstName }} {{ o.lastName }} <span class="text-muted small">&#64;{{ o.handle }}</span></span>
-        </div>
-      </div>
-    </div>
-
-    <!-- User attendees -->
-    <div class="popup-section" *ngIf="selectedEvent.userAttendees?.length">
-      <div class="detail-label">Staff Attending</div>
-      <div class="attendee-list">
-        <div class="attendee-row" *ngFor="let u of selectedEvent.userAttendees">
-          <div class="avatar-circle user-circle">{{ u.firstName[0] }}{{ u.lastName[0] }}</div>
-          <span>{{ u.firstName }} {{ u.lastName }}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Add your dogs -->
-    <div class="popup-section" *ngIf="myDogsNotInEvent.length > 0">
-      <div class="detail-label">Bring Your Dog</div>
-      <div class="pill-selector">
-        <button
-          *ngFor="let d of myDogsNotInEvent"
-          class="pill-btn dog-pill"
-          (click)="addDogToEvent(d)">
-          + {{ d.name }}
-        </button>
-      </div>
-    </div>
-
-    <!-- Invite friends (creator only) -->
-    <div class="popup-section" *ngIf="isMyEvent(selectedEvent) && friends.length > 0">
-      <button class="btn btn-outline-primary btn-sm rounded-pill" (click)="toggleInvitePanel()">
-        {{ showInvitePanel ? 'Hide' : 'Invite Friends' }}
-      </button>
-      <div class="invite-list mt-2" *ngIf="showInvitePanel">
-        <p class="text-muted small" *ngIf="invitableFriends.length === 0">All friends already invited.</p>
-        <div class="invite-row" *ngFor="let f of invitableFriends">
-          <div class="req-avatar sm">{{ f.firstName[0] }}{{ f.lastName[0] }}</div>
-          <span class="flex-grow-1">{{ f.firstName }} {{ f.lastName }}</span>
-          <button class="btn btn-sm btn-outline-primary rounded-pill" (click)="inviteFriend(f)">Invite</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Creator actions -->
-    <div class="popup-actions" *ngIf="isMyEvent(selectedEvent)">
-      <button class="btn btn-outline-secondary btn-sm rounded-pill" (click)="openEdit()">Edit</button>
-      <button class="btn btn-outline-danger btn-sm rounded-pill" (click)="deleteEvent()">Delete Event</button>
-    </div>
-
-    <!-- Attendee leave action -->
-    <div class="popup-actions" *ngIf="!isMyEvent(selectedEvent)">
-      <button class="btn btn-outline-danger btn-sm rounded-pill" (click)="initiateLeave()">Leave Event</button>
-    </div>
-  </ng-container>
-
-  <!-- Edit form -->
-  <ng-container *ngIf="showEditForm">
-    <div class="edit-form">
-      <div class="mb-3">
-        <label class="form-label">Title</label>
-        <input class="form-control" [(ngModel)]="editForm.event" />
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Description</label>
-        <textarea class="form-control" rows="2" [(ngModel)]="editForm.description"></textarea>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Start</label>
-        <input class="form-control" type="datetime-local" [(ngModel)]="editForm.startTime" />
-      </div>
-      <div class="mb-3">
-        <label class="form-label">End</label>
-        <input class="form-control" type="datetime-local" [(ngModel)]="editForm.endTime" />
-      </div>
-      <div class="edit-actions">
-        <button class="btn btn-primary btn-sm rounded-pill" (click)="submitEdit()">Save</button>
-        <button class="btn btn-outline-secondary btn-sm rounded-pill" (click)="cancelEdit()">Cancel</button>
-      </div>
-    </div>
-  </ng-container>
-
-  <!-- Leave confirmation -->
-  <ng-container *ngIf="showLeaveConfirm">
-    <p class="popup-desc">You have dogs attending this event. Remove them too?</p>
-    <div class="popup-actions">
-      <button class="btn btn-danger btn-sm rounded-pill" (click)="confirmLeaveWithDogs()">Leave &amp; Remove Dogs</button>
-      <button class="btn btn-outline-danger btn-sm rounded-pill" (click)="confirmLeaveOnly()">Leave Only</button>
-      <button class="btn btn-outline-secondary btn-sm rounded-pill" (click)="cancelLeave()">Cancel</button>
-    </div>
-  </ng-container>
-</div>
-
-<!-- ── Invitation popup ────────────────────────────────────────────────── -->
+<!-- Invitation popup -->
 <div class="popup-backdrop" *ngIf="selectedInvitation" (click)="closeInvitation()"></div>
 <div class="popup invitation-popup" *ngIf="selectedInvitation" (click)="$event.stopPropagation()">
   <div class="popup-header">
