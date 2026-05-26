@@ -1,0 +1,24 @@
+.login-bubble {
+  background-color: #000;
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-error {
+  color: #fff;
+  background: rgba(255,255,255,0.15);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 14px;
+  width: 100%;
+  text-align: center;
+}
+
+::placeholder {
+  color: #d1d1d1;
+  opacity: 1;
+}
+
+a {
+  color: #f59e0b !important;
+}

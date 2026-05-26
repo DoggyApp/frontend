@@ -73,7 +73,7 @@ export class OwnerDashboardComponent implements OnInit {
   // ── Friend Search & Requests ─────────────────────────────────────────────
 
   onFriendSearch(): void {
-    const q = this.friendSearch.trim();
+    const q = this.friendSearch.trim().replace(/^@/, '');
     this.friendSearchResult = null;
     this.friendSearchError = '';
     this.requestSent = false;
