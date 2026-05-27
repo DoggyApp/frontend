@@ -5,7 +5,6 @@ import { User } from '../../models/user';
 import { Location } from '../../models/location';
 import { Owner } from '../../models/owner';
 import { RegistrationRequest } from '../../models/registration-request';
-import { UserService } from '../../services/user/user.service';
 import { OrganizationService } from '../../services/organization/organization.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { GooglePlacesService } from '../../services/google-places/google-places.service';
@@ -19,7 +18,6 @@ import { GooglePlacesService } from '../../services/google-places/google-places.
 export class OrgDashboardComponent implements OnInit {
 
   constructor(
-    private userService: UserService,
     private organizationService: OrganizationService,
     private authService: AuthService,
     private router: Router,
@@ -42,7 +40,7 @@ export class OrgDashboardComponent implements OnInit {
   newEmployee: Omit<User, 'id'> = { firstName: '', lastName: '', email: '', password: '' };
 
   showAddLocationForm = false;
-  newLocation = { name: '', address: '' };
+  newLocation = { name: '', address: '', latitude: null as number | null, longitude: null as number | null };
 
   ngOnInit(): void {
     this.organizationService.getSession().subscribe(org => {
@@ -56,7 +54,7 @@ export class OrgDashboardComponent implements OnInit {
     this.organizationService.getDogs().subscribe(dogs => {
       this.dogs = dogs;
     });
-    this.userService.getUsers().subscribe(employees => {
+    this.organizationService.getUsers().subscribe(employees => {
       this.employees = employees;
     });
     this.organizationService.getLocations().subscribe(locations => {
@@ -133,12 +131,14 @@ export class OrgDashboardComponent implements OnInit {
 
   openAddLocationModal() {
     this.showAddLocationForm = true;
-    this.newLocation = { name: '', address: '' };
+    this.newLocation = { name: '', address: '', latitude: null, longitude: null };
     setTimeout(() => {
       const container = this.autocompleteContainerRef?.nativeElement;
       if (container) {
-        this.placesService.attachPlaceElement(container, addr => {
+        this.placesService.attachPlaceElementWithCoords(container, (addr, lat, lng) => {
           this.newLocation.address = addr;
+          this.newLocation.latitude = lat;
+          this.newLocation.longitude = lng;
           this.cdr.detectChanges();
         }, { includedRegionCodes: ['us'] });
       }
@@ -147,12 +147,17 @@ export class OrgDashboardComponent implements OnInit {
 
   closeAddLocationModal() {
     this.showAddLocationForm = false;
-    this.newLocation = { name: '', address: '' };
+    this.newLocation = { name: '', address: '', latitude: null, longitude: null };
   }
 
   submitAddLocation() {
     if (!this.newLocation.name.trim() || !this.newLocation.address.trim()) return;
-    this.organizationService.addLocation(this.newLocation.name, this.newLocation.address).subscribe(created => {
+    this.organizationService.addLocation(
+      this.newLocation.name,
+      this.newLocation.address,
+      this.newLocation.latitude,
+      this.newLocation.longitude
+    ).subscribe(created => {
       this.locations.push(created);
       this.closeAddLocationModal();
     });

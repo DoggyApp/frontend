@@ -6,4 +6,6 @@ export interface Location {
   organization: Organization;
   address: string;
   offsite: boolean;
+  latitude?: number | null;
+  longitude?: number | null;
 }

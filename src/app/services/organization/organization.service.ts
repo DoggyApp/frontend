@@ -124,8 +124,8 @@ export class OrganizationService {
   }
 
   // POST /organization/location/add
-  addLocation(name: string, address: string): Observable<Location> {
-    return this.http.post<Location>(`${this.apiUrl}/location/add`, { name, address, offsite: false }, this.options);
+  addLocation(name: string, address: string, latitude: number | null, longitude: number | null): Observable<Location> {
+    return this.http.post<Location>(`${this.apiUrl}/location/add`, { name, address, offsite: false, latitude, longitude }, this.options);
   }
 
   // DELETE /organization/location/{id}
@@ -134,6 +134,13 @@ export class OrganizationService {
   }
 
   // ── User management ───────────────────────────────────────────────────────
+
+  // GET /organization/users
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/users`, this.options).pipe(
+      catchError(() => of([]))
+    );
+  }
 
   // POST /organization/user/add
   addUser(user: Omit<User, 'id'>): Observable<User> {
