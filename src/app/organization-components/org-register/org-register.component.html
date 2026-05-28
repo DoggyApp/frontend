@@ -25,7 +25,12 @@
 
       <div class="mb-4">
         <input type="password" placeholder="Password" [(ngModel)]="password" name="password" required
+               appPasswordStrength #pw="ngModel"
                class="form-control form-control-lg rounded-pill text-muted" />
+        <div *ngIf="pw.dirty && pw.errors" class="mt-1 ps-2">
+          <small *ngIf="pw.errors?.['minLength']" class="d-block text-danger-light">✗ Must be at least 8 characters</small>
+          <small *ngIf="pw.errors?.['tooWeak'] as msg" class="d-block text-danger-light">✗ Password is too easy to guess — {{ msg }}</small>
+        </div>
       </div>
 
       <button type="submit" [disabled]="!isFormValid()"

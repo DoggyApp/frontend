@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { OrganizationService } from '../../services/organization/organization.service';
+import { PasswordValidatorService } from '../../validators/password-validator.service';
 
 @Component({
   selector: 'app-org-register',
@@ -18,11 +19,12 @@ export class OrgRegisterComponent {
 
   constructor(
     private organizationService: OrganizationService,
-    private router: Router
+    private router: Router,
+    private passwordValidator: PasswordValidatorService
   ) {}
 
   isFormValid(): boolean {
-    return !!(this.name.trim() && this.email.trim() && this.password.trim());
+    return !!(this.name.trim() && this.email.trim() && this.passwordValidator.isValid(this.password));
   }
 
   onRegister(): void {

@@ -136,7 +136,12 @@
       </div>
       <div class="mb-4">
         <input type="password" placeholder="Password" [(ngModel)]="newEmployee.password"
-               name="password" required class="form-control rounded-pill" />
+               name="password" required appPasswordStrength #pw="ngModel"
+               class="form-control rounded-pill" />
+        <div *ngIf="pw.dirty && pw.errors" class="mt-1 ps-2">
+          <small *ngIf="pw.errors?.['minLength']" class="d-block text-danger">✗ Must be at least 8 characters</small>
+          <small *ngIf="pw.errors?.['tooWeak'] as msg" class="d-block text-danger">✗ Password is too easy to guess — {{ msg }}</small>
+        </div>
       </div>
 
       <div class="d-flex gap-2">

@@ -2,6 +2,7 @@ import { Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } fr
 import { Router } from '@angular/router';
 import { OwnerService } from '../../services/owner/owner.service';
 import { GooglePlacesService } from '../../services/google-places/google-places.service';
+import { PasswordValidatorService } from '../../validators/password-validator.service';
 
 @Component({
   selector: 'app-owner-register',
@@ -34,7 +35,8 @@ export class OwnerRegisterComponent implements AfterViewInit {
     private ownerService: OwnerService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private placesService: GooglePlacesService
+    private placesService: GooglePlacesService,
+    private passwordValidator: PasswordValidatorService
   ) {}
 
   ngAfterViewInit(): void {
@@ -72,7 +74,7 @@ export class OwnerRegisterComponent implements AfterViewInit {
       this.firstName.trim() &&
       this.lastName.trim() &&
       this.email.trim() &&
-      this.password.trim() &&
+      this.passwordValidator.isValid(this.password) &&
       this.phoneNumber.trim() &&
       this.birthday.trim() &&
       this.address.trim() &&

@@ -32,6 +32,7 @@ import { OwnerPublicProfileComponent } from './owner-components/owner-public-pro
 import { OrgRegisterComponent } from './organization-components/org-register/org-register.component';
 import { CreateEventModalComponent } from './event-components/create-event-modal/create-event-modal.component';
 import { EventDetailModalComponent } from './event-components/event-detail-modal/event-detail-modal.component';
+import { PasswordStrengthDirective } from './validators/password-strength.directive';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import { EventDetailModalComponent } from './event-components/event-detail-modal
     OwnerPublicProfileComponent,
     OrgRegisterComponent,
     CreateEventModalComponent,
-    EventDetailModalComponent
+    EventDetailModalComponent,
+    PasswordStrengthDirective
   ],
   imports: [
     BrowserModule,

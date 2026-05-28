@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Owner } from '../../models/owner';
 import { OwnerService } from '../../services/owner/owner.service';
 import { GooglePlacesService } from '../../services/google-places/google-places.service';
+import { PasswordValidatorService } from '../../validators/password-validator.service';
 
 @Component({
   selector: 'app-owner-edit-profile',
@@ -35,7 +36,8 @@ export class OwnerEditProfileComponent implements AfterViewInit {
     private ownerService: OwnerService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private placesService: GooglePlacesService
+    private placesService: GooglePlacesService,
+    private passwordValidator: PasswordValidatorService
   ) {}
 
   ngAfterViewInit(): void {
@@ -95,7 +97,7 @@ export class OwnerEditProfileComponent implements AfterViewInit {
   isPasswordFormValid(): boolean {
     return !!(
       this.oldPassword &&
-      this.newPassword &&
+      this.passwordValidator.isValid(this.newPassword) &&
       this.confirmPassword &&
       this.newPassword === this.confirmPassword
     );
