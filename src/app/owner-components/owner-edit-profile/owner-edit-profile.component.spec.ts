@@ -1,8 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { FormsModule } from '@angular/forms';
 
 import { OwnerEditProfileComponent } from './owner-edit-profile.component';
+import { PasswordStrengthDirective } from '../../validators/password-strength.directive';
 
 describe('OwnerEditProfileComponent', () => {
   let component: OwnerEditProfileComponent;
@@ -10,8 +12,8 @@ describe('OwnerEditProfileComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [OwnerEditProfileComponent],
-      imports: [RouterTestingModule, HttpClientTestingModule]
+      declarations: [OwnerEditProfileComponent, PasswordStrengthDirective],
+      imports: [RouterTestingModule, HttpClientTestingModule, FormsModule]
     })
     .compileComponents();
 
