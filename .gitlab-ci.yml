@@ -55,7 +55,7 @@ deploy:
   environment:
     name: production
   script:
-    - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
+    # - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
     - sed -i "s|IMAGE_PLACEHOLDER|$IMAGE_NAME:$DOCKER_TAG|g" k8s/deployment.yaml
     - kubectl apply -f k8s/deployment.yaml
     - kubectl rollout status deployment/webapp -n default --timeout=180s
