@@ -51,7 +51,7 @@ build:
 
 deploy:
   stage: deploy
-  image: alpine/k8s:1.29.4
+  image: alpine/k8s:1.36.0
   environment:
     name: production
   script:
